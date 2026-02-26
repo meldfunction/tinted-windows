@@ -1,0 +1,50 @@
+{
+  "name": "pane",
+  "version": "0.1.0",
+  "description": "Tinted windows for the web. MCP server for personal privacy infrastructure.",
+  "type": "module",
+  "main": "server.js",
+  "bin": {
+    "pane": "./bin/pane.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "demo": "node demo-server.js",
+    "demo:dev": "node --watch demo-server.js",
+    "check": "node scripts/check-env.js",
+    "scramble": "python3 scrambler.py",
+    "test": "node scripts/test-browser.js",
+    "test:live": "node scripts/test-browser.js --live",
+    "test:addy": "node scripts/test-browser.js --live addy",
+    "test:all": "node scripts/test-browser.js --live all --verbose",
+    "test:cli": "node bin/pane.js help && node bin/pane.js list --json 2>&1 | head -5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.4.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "playwright": "^1.43.0",
+    "playwright-extra": "^4.3.6",
+    "playwright-extra-plugin-stealth": "^2.11.2"
+  },
+  "keywords": [
+    "privacy",
+    "opsec",
+    "mcp",
+    "email-alias",
+    "virtual-card",
+    "claude",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourhandle/pane"
+  },
+  "homepage": "https://yourhandle.github.io/pane"
+}

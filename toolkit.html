@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pane / toolkit — build with the envelope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#FAF8F4;--linen:#F3EEE6;--warm:#EDE8DF;
+  --ink:#1E1A14;--ink-soft:#504840;--ink-faint:#8C8070;
+  --teal:#3D9688;--teal-light:#D4ECEA;
+  --amber:#C07040;--amber-light:#F0DCC8;
+  --fog:#DDD6CA;
+  --mono:"DM Mono",monospace;
+  --serif:"Cormorant Garamond",serif;
+  --sans:"Outfit",sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden;}
+body::after{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+nav{position:sticky;top:0;z-index:200;background:rgba(250,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(180,170,158,.3);padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--ink);text-decoration:none;letter-spacing:.08em;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:.74rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);}
+.wrap{max-width:1160px;margin:0 auto;padding:0 4rem;}
+.section{padding:6rem 0;}
+.sl{font-family:var(--mono);font-size:.62rem;color:var(--teal);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;}
+.st{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;line-height:1.1;letter-spacing:-.02em;margin-bottom:.8rem;}
+.st em{font-style:italic;color:var(--teal);}
+.sb{font-size:.88rem;color:var(--ink-soft);line-height:1.85;max-width:620px;margin-bottom:3rem;}
+
+/* HERO */
+.hero{padding:9rem 4rem 6rem;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;}
+.h1{font-family:var(--serif);font-size:clamp(2.8rem,5vw,4.8rem);font-weight:300;line-height:1.05;letter-spacing:-.025em;margin-bottom:1.4rem;}
+.h1 em{font-style:italic;color:var(--teal);}
+.hsub{font-size:.95rem;color:var(--ink-soft);line-height:1.9;}
+.hnotice{margin-top:1.8rem;padding:.9rem 1.3rem;background:var(--amber-light);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;font-family:var(--mono);font-size:.67rem;color:var(--amber);line-height:1.6;}
+
+/* hero terminal */
+.hterm{background:#0E0C08;border-radius:10px;overflow:hidden;border:1px solid #2C261E;}
+.hterm-bar{padding:.6rem 1rem;background:#16120C;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid #2C261E;}
+.hdot{width:.5rem;height:.5rem;border-radius:50%;}
+.hterm-title{margin-left:auto;font-family:var(--mono);font-size:.6rem;color:#4A3C28;}
+.hterm-body{padding:1.4rem 1.8rem;font-family:var(--mono);font-size:.74rem;line-height:2;color:#6C6050;}
+.tc{color:#4A3C28;}.tp{color:#C07840;}.ts{color:#7CB890;}.tw{color:#9C9080;}.tk{color:#6090B0;}
+
+/* TOOL CARDS */
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;}
+.tc-card{background:white;border:1px solid var(--fog);border-radius:10px;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.tc-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(30,26,20,.07);}
+.tc-head{padding:1.5rem 1.8rem 1.1rem;border-bottom:1px solid var(--warm);}
+.tc-badge{font-family:var(--mono);font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;padding:.18rem .55rem;border-radius:3px;border:1px solid;display:inline-block;margin-bottom:.7rem;}
+.b-cli{background:var(--teal-light);color:var(--teal);border-color:#B8DDD8;}
+.b-lib{background:var(--amber-light);color:var(--amber);border-color:#E0C8A8;}
+.b-widget{background:#EFE8F8;color:#7060A0;border-color:#D4C8EC;}
+.b-proto{background:#E4F2E8;color:#306040;border-color:#B8D8C4;}
+.tc-name{font-family:var(--serif);font-size:1.45rem;font-weight:400;color:var(--ink);margin-bottom:.2rem;}
+.tc-tag{font-size:.75rem;color:var(--ink-faint);}
+.tc-body{padding:1.3rem 1.8rem;}
+.tc-desc{font-size:.81rem;color:var(--ink-soft);line-height:1.8;margin-bottom:1rem;}
+.tc-code{background:#F7F5F0;border-radius:5px;padding:.65rem .9rem;font-family:var(--mono);font-size:.68rem;color:var(--ink-soft);margin-bottom:.6rem;overflow-x:auto;white-space:nowrap;}
+.tc-links{display:flex;gap:1rem;margin-top:.8rem;flex-wrap:wrap;}
+.tc-a{font-family:var(--mono);font-size:.61rem;color:var(--teal);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid transparent;transition:border-color .15s;}
+.tc-a:hover{border-color:var(--teal);}
+.tc-a-dim{color:var(--ink-faint);}
+.tc-a-dim:hover{border-color:var(--ink-faint);}
+.tc-status{display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;font-family:var(--mono);font-size:.6rem;padding:.3rem .7rem;border-radius:3px;}
+.s-stable{background:var(--teal-light);color:var(--teal);}
+.s-beta{background:var(--amber-light);color:var(--amber);}
+.s-proto{background:var(--warm);color:var(--ink-faint);}
+.sdot{width:.4rem;height:.4rem;border-radius:50%;background:currentColor;}
+
+/* DASHBOARD PREVIEW */
+.dash{background:#0E0C08;border-radius:12px;border:1px solid #2C261E;overflow:hidden;margin-top:4rem;}
+.dash-top{background:#16120C;padding:.75rem 1.4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2C261E;}
+.dash-title{font-family:var(--mono);font-size:.68rem;color:#9C9080;}
+.tabs{display:flex;gap:.15rem;}
+.tab{font-family:var(--mono);font-size:.6rem;padding:.3rem .75rem;border-radius:3px;cursor:pointer;color:#5C5040;background:transparent;border:none;transition:all .15s;}
+.tab.on,.tab:hover{background:#1E1912;color:#C07840;}
+.dash-body{padding:1.6rem 2rem;overflow-x:auto;}
+.at{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.71rem;}
+.at th{color:#4A3C28;letter-spacing:.1em;text-transform:uppercase;font-weight:400;font-size:.58rem;padding:.45rem .75rem;border-bottom:1px solid #2C261E;text-align:left;}
+.at td{padding:.6rem .75rem;border-bottom:1px solid #14100A;color:#9C9080;vertical-align:middle;}
+.at tr:last-child td{border-bottom:none;}
+.at tr:hover td{background:#14100A;}
+.an{color:#D0C8B8;font-weight:500;}
+.aa{color:#6090B0;}
+.astat{display:inline-flex;align-items:center;gap:.4rem;}
+.adot{width:.42rem;height:.42rem;border-radius:50%;}
+.d-ok{background:#7CB890;}.d-warn{background:#D49050;}.d-bad{background:#C04040;}
+.c-ok{color:#7CB890;}.c-warn{color:#D49050;}.c-bad{color:#C04040;}
+.aact{color:#C07840;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;font-size:.59rem;}
+.aact:hover{text-decoration:underline;}
+.ilog{display:none;}
+.ilog.on{display:block;}
+.irow{display:flex;gap:1.5rem;padding:.52rem 0;border-bottom:1px solid #14100A;align-items:baseline;font-family:var(--mono);font-size:.7rem;color:#9C9080;}
+.irow:last-child{border-bottom:none;}
+.its{color:#4A3C28;flex-shrink:0;font-size:.61rem;}
+.ictx{color:#D0C8B8;}
+.imsg{flex:1;}
+.ibadge{padding:.13rem .5rem;border-radius:3px;font-size:.57rem;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;}
+.ib-breach{background:rgba(192,64,64,.14);color:#C04040;border:1px solid rgba(192,64,64,.28);}
+.ib-burn{background:rgba(192,112,64,.12);color:#C07840;border:1px solid rgba(192,112,64,.24);}
+.ib-clean{background:rgba(124,184,144,.1);color:#7CB890;border:1px solid rgba(124,184,144,.22);}
+
+/* COMMUNITY */
+.cg{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem;}
+.cg-card{padding:2rem 2.2rem;border-radius:10px;border:1px solid var(--fog);background:white;}
+.cg-n{font-family:var(--serif);font-size:5rem;font-weight:300;color:var(--warm);line-height:.85;margin-bottom:1rem;}
+.cg-t{font-weight:500;font-size:1rem;color:var(--ink);margin-bottom:.5rem;}
+.cg-b{font-size:.82rem;color:var(--ink-soft);line-height:1.8;}
+.cg-a{display:inline-block;margin-top:.9rem;font-family:var(--mono);font-size:.6rem;color:var(--teal);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid transparent;transition:border-color .2s;}
+.cg-a:hover{border-color:var(--teal);}
+
+/* TERMINAL FULL */
+.band{background:var(--linen);}
+.clf{background:#0E0C08;border-radius:10px;overflow:hidden;border:1px solid #2C261E;margin-top:2.5rem;}
+.clf-bar{background:#16120C;padding:.7rem 1rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid #2C261E;}
+.clf-title{margin-left:auto;font-family:var(--mono);font-size:.6rem;color:#4A3C28;}
+.clf-body{padding:1.6rem 2rem;font-family:var(--mono);font-size:.74rem;line-height:2;color:#6C6050;}
+.lp{color:#C07840;}.ls{color:#7CB890;}.lc{color:#4A3C28;}.lw{color:#D49050;}.lk{color:#6090B0;}
+
+footer{padding:2.5rem 3rem;border-top:1px solid var(--fog);display:flex;justify-content:space-between;align-items:center;max-width:1160px;margin:0 auto;}
+.ft-b{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);letter-spacing:.08em;}
+.ft-n{font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);font-style:italic;}
+
+@media(max-width:960px){
+  .hero,.wrap{padding-left:1.5rem;padding-right:1.5rem;}
+  .hero{grid-template-columns:1fr;gap:3rem;}
+  .tool-grid{grid-template-columns:1fr;}
+  .cg{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">pane</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Why it matters</a></li>
+    <li><a href="stack.html">The Stack</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="toolkit.html" class="active" style="color:var(--ink);">Toolkit</a></li>
+    <li><a href="workflows.html">Workflows</a></li>
+    <li><a href="demo.html">Live Demo</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub &#8599;</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div>
+    <div class="sl">Open toolkit</div>
+    <h1 class="h1">Already a<br>privacy buff?<br><em>Build with pane.</em></h1>
+    <p class="hsub">You don't have to use everything. pane's core components are independently usable. Drop the alias CLI into your own workflow, run the dashboard over your existing aliases, or use the breach monitor as a library. Take what works. Leave what doesn't. Fork it all.</p>
+    <div class="hnotice">
+      <strong>Community release &mdash;</strong> these are early tools built in the open. APIs may change. Nothing here is production-guaranteed. PRs, issues, and forks are the point.
+    </div>
+  </div>
+  <div class="hterm">
+    <div class="hterm-bar">
+      <div class="hdot" style="background:#F4B8A0;"></div>
+      <div class="hdot" style="background:#F4E0A0;"></div>
+      <div class="hdot" style="background:#A8D4A8;"></div>
+      <span class="hterm-title">pane &mdash; use one layer or all of them</span>
+    </div>
+    <div class="hterm-body">
+<span class="tc"># just the alias layer</span>
+<span class="tp">import</span> <span class="ts">{ AliasService }</span> <span class="tk">from</span> <span class="tw">'pane/alias'</span>
+<span class="tk">const</span> a = <span class="tk">await</span> alias.create({ name: <span class="tw">'notion'</span> })
+<br>
+<span class="tc"># just breach monitoring</span>
+<span class="tp">import</span> <span class="ts">{ BreachMonitor }</span> <span class="tk">from</span> <span class="tw">'pane/monitor'</span>
+m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
+<br>
+<span class="tc"># just the dashboard</span>
+<span class="tp">npx</span> pane dashboard <span class="tw">--port 7000</span>
+<br>
+<span class="tc"># or the whole thing</span>
+<span class="tp">npx</span> pane enroll <span class="tw">notion.so</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOOL CARDS -->
+<div class="section">
+  <div class="wrap">
+    <div class="sl">Modular components</div>
+    <h2 class="st">Use one layer.<br><em>Use all of them.</em></h2>
+    <p class="sb">Each component works standalone. Bring your own alias provider, your own card service, or drop the monitoring layer on top of aliases you already manage elsewhere. No lock-in.</p>
+
+    <div class="tool-grid">
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-cli">CLI</span>
+          <div class="tc-name">pane alias</div>
+          <div class="tc-tag">Alias management from your terminal</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Create, list, burn, and monitor alias emails without MCP, Claude, or any AI plumbing. Works standalone with your Addy.io or SimpleLogin API key. Output is plain text or JSON for piping into your own tools.</div>
+          <div class="tc-code">npx pane alias create notion</div>
+          <div class="tc-code">pane alias list --json | jq '.[] | select(.status=="warn")'</div>
+          <div class="tc-links">
+            <a href="https://github.com/yourhandle/pane/blob/main/src/alias.js" target="_blank" class="tc-a">source &rarr;</a>
+            <a href="https://github.com/yourhandle/pane" target="_blank" class="tc-a tc-a-dim">docs</a>
+          </div>
+          <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; v0.1</div>
+        </div>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-widget">Dashboard</span>
+          <div class="tc-name">pane dashboard</div>
+          <div class="tc-tag">Alias health at a glance</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Local web dashboard for all active aliases: health status, message counts, breach signals, incident log. Runs entirely local &mdash; no cloud, no telemetry, no accounts. Hit localhost:7000. Dark mode only. Bring your own aliases from any provider.</div>
+          <div class="tc-code">npx pane dashboard</div>
+          <div class="tc-code">npx pane dashboard --port 7000 --provider addy</div>
+          <div class="tc-links">
+            <a href="#dash" class="tc-a">live preview below &rarr;</a>
+          </div>
+          <div class="tc-status s-beta"><span class="sdot"></span>beta &middot; in development</div>
+        </div>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-lib">Library</span>
+          <div class="tc-name">pane monitor</div>
+          <div class="tc-tag">Continuous breach detection</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Node.js library for scheduled alias inbox monitoring. Emits events on unexpected senders, volume anomalies, and probable sale signals. Drop into any Node process or trigger via cron. No daemon required. Extend the event handlers for your own notification pipeline.</div>
+          <div class="tc-code">import { BreachMonitor } from 'pane'</div>
+          <div class="tc-code">m.on('breach', ctx => webhook(ctx))</div>
+          <div class="tc-links">
+            <a href="https://github.com/yourhandle/pane/blob/main/src/services.js" target="_blank" class="tc-a">source &rarr;</a>
+          </div>
+          <div class="tc-status s-beta"><span class="sdot"></span>beta &middot; API may change</div>
+        </div>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-cli">CLI</span>
+          <div class="tc-name">pane card</div>
+          <div class="tc-tag">Virtual cards, zero friction</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Create, fund, freeze, and expire Privacy.com virtual cards from the terminal. $0 default limit &mdash; fund only when you decide to pay. Each card is locked to a context name for auditability. US only (Privacy.com restriction).</div>
+          <div class="tc-code">npx pane card create figma --limit 0</div>
+          <div class="tc-code">npx pane card freeze shopsite-app</div>
+          <div class="tc-links">
+            <a href="https://github.com/yourhandle/pane/blob/main/src/card.js" target="_blank" class="tc-a">source &rarr;</a>
+          </div>
+          <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; US only</div>
+        </div>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-lib">Library</span>
+          <div class="tc-name">pane context</div>
+          <div class="tc-tag">Local SQLite envelope store</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Lightweight SQLite-backed store for alias + card contexts. Saves at ~/.pane/contexts.db. Import as a library if you're building your own tooling on top of pane's data layer. No cloud, no sync, no external accounts. Fully local.</div>
+          <div class="tc-code">import { ContextStore } from 'pane'</div>
+          <div class="tc-code">const ctx = await store.get('notion')</div>
+          <div class="tc-links">
+            <a href="https://github.com/yourhandle/pane/blob/main/src/context.js" target="_blank" class="tc-a">source &rarr;</a>
+          </div>
+          <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; local only</div>
+        </div>
+      </div>
+
+      <div class="tc-card">
+        <div class="tc-head">
+          <span class="tc-badge b-proto">Agent prototype</span>
+          <div class="tc-name">pane-agent</div>
+          <div class="tc-tag">Standalone &mdash; no MCP required</div>
+        </div>
+        <div class="tc-body">
+          <div class="tc-desc">Self-hostable Python agent for breach monitoring and command handling. Host in a privacy-respecting jurisdiction (Iceland, Switzerland, Germany). Accept commands via Signal bot or .onion endpoint. HMAC-signed auth. Includes placeholder account workflow. Read the disclaimer before deploying.</div>
+          <div class="tc-code">python3 pane-agent.py monitor</div>
+          <div class="tc-code">python3 pane-agent.py check-incidents</div>
+          <div class="tc-links">
+            <a href="https://github.com/yourhandle/pane/blob/main/AGENTS.md" target="_blank" class="tc-a">AGENTS.md &rarr;</a>
+            <a href="https://github.com/yourhandle/pane" target="_blank" class="tc-a tc-a-dim">disclaimer</a>
+          </div>
+          <div class="tc-status s-proto"><span class="sdot"></span>prototype &middot; read AGENTS.md first</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DASHBOARD PREVIEW -->
+    <div id="dash" class="dash" style="margin-top:4rem;">
+      <div class="dash-top">
+        <span class="dash-title">pane dashboard &middot; localhost:7000</span>
+        <div class="tabs">
+          <button class="tab on" onclick="switchTab('aliases',this)">aliases</button>
+          <button class="tab" onclick="switchTab('incidents',this)">incidents</button>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div id="tab-aliases">
+          <table class="at">
+            <thead>
+              <tr><th>context</th><th>alias</th><th>status</th><th>msgs</th><th>card</th><th>age</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="an">notion</td><td class="aa">notion-x7k@pane.alias</td>
+                <td><span class="astat"><span class="adot d-ok"></span><span class="c-ok">clean</span></span></td>
+                <td>3</td><td style="color:#4A3C28;">&middot;&middot;&middot;&middot;4242 $0</td><td style="color:#4A3C28;">14d</td>
+                <td><span class="aact">audit</span></td>
+              </tr>
+              <tr>
+                <td class="an">figma</td><td class="aa">figma-q2r@pane.alias</td>
+                <td><span class="astat"><span class="adot d-ok"></span><span class="c-ok">clean</span></span></td>
+                <td>1</td><td style="color:#4A3C28;">&middot;&middot;&middot;&middot;8821 $0</td><td style="color:#4A3C28;">3d</td>
+                <td><span class="aact">audit</span></td>
+              </tr>
+              <tr>
+                <td class="an">morning-brew</td><td class="aa">mbrew-p9x@pane.alias</td>
+                <td><span class="astat"><span class="adot d-warn"></span><span class="c-warn">&#9888; anomaly</span></span></td>
+                <td style="color:#D49050;">11</td><td style="color:#4A3C28;">no card</td><td style="color:#4A3C28;">47d</td>
+                <td><span class="aact" style="color:#D49050;">burn?</span></td>
+              </tr>
+              <tr>
+                <td class="an">shopsite-app</td><td class="aa">shop-z4k@pane.alias</td>
+                <td><span class="astat"><span class="adot d-bad"></span><span class="c-bad">breach</span></span></td>
+                <td style="color:#C04040;">34</td><td style="color:#7CB890;">&middot;&middot;&middot;&middot;1193 frozen</td><td style="color:#4A3C28;">62d</td>
+                <td><span class="aact" style="color:#C04040;">expire</span></td>
+              </tr>
+              <tr>
+                <td class="an">travel-aa</td><td class="aa">travel-aa-2025@pane.alias</td>
+                <td><span class="astat"><span class="adot d-ok"></span><span class="c-ok">placeholder</span></span></td>
+                <td>2</td><td style="color:#4A3C28;">&middot;&middot;&middot;&middot;3301 $0</td><td style="color:#4A3C28;">1d</td>
+                <td><span class="aact">audit</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:1rem;font-family:var(--mono);font-size:.59rem;color:#3C3020;display:flex;justify-content:space-between;">
+            <span>5 contexts &middot; 2 clean &middot; 1 anomaly &middot; 1 breach &middot; 1 placeholder &middot; last sweep: 4 min ago</span>
+            <span style="color:#C07840;cursor:pointer;">+ new context</span>
+          </div>
+        </div>
+        <div id="tab-incidents" class="ilog">
+          <div class="irow"><span class="its">2025-01-14 03:12</span><span class="ictx">shopsite-app</span><span class="imsg">unexpected sender: pharmaadvertiser.com &mdash; probable data sale event</span><span class="ibadge ib-breach">breach</span></div>
+          <div class="irow"><span class="its">2025-01-14 03:13</span><span class="ictx">shopsite-app</span><span class="imsg">card &middot;&middot;&middot;&middot;1193 frozen automatically &mdash; $0 limit confirmed, no charge possible</span><span class="ibadge ib-burn">card frozen</span></div>
+          <div class="irow"><span class="its">2025-01-13 09:44</span><span class="ictx">morning-brew</span><span class="imsg">volume anomaly &mdash; 8 messages in 24h across 3 sender domains</span><span class="ibadge ib-breach">anomaly</span></div>
+          <div class="irow"><span class="its">2025-01-10 14:20</span><span class="ictx">old-substack</span><span class="imsg">alias expired on request &mdash; context tombstoned, card frozen</span><span class="ibadge ib-burn">burned</span></div>
+          <div class="irow"><span class="its">2025-01-08 11:03</span><span class="ictx">all</span><span class="imsg">scheduled sweep complete &mdash; 5 aliases checked, 0 anomalies</span><span class="ibadge ib-clean">clean</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TERMINAL VIEW FULL -->
+<div class="band section">
+  <div class="wrap">
+    <div class="sl">Terminal view</div>
+    <h2 class="st">If a dashboard feels like<br><em>too much UI</em></h2>
+    <p class="sb">Everything the dashboard shows is available as plain-text terminal output. Pipe it. Script it. Put it in your tmux statusbar. pane is not opinionated about how you want to see the data.</p>
+    <div class="clf">
+      <div class="clf-bar">
+        <div class="hdot" style="background:#F4B8A0;"></div>
+        <div class="hdot" style="background:#F4E0A0;"></div>
+        <div class="hdot" style="background:#A8D4A8;"></div>
+        <span class="clf-title">pane &mdash; terminal</span>
+      </div>
+      <div class="clf-body">
+<span class="lc"># full status overview</span>
+<span class="lk">$</span> <span class="lp">pane list</span>
+<span class="ls">  notion        </span><span style="color:#4A3C28;">[Addy.io]  </span><span class="ls">clean      </span><span style="color:#4A3C28;">14d  3 msgs</span>
+<span class="ls">  figma         </span><span style="color:#4A3C28;">[Addy.io]  </span><span class="ls">clean      </span><span style="color:#4A3C28;">3d   1 msg</span>
+<span class="lw">  morning-brew  </span><span style="color:#4A3C28;">[Addy.io]  </span><span class="lw">&#9888; anomaly  </span><span style="color:#4A3C28;">47d  11 msgs from 3 domains</span>
+<span style="color:#C04040;">  shopsite-app  </span><span style="color:#4A3C28;">[Addy.io]  </span><span style="color:#C04040;">breach     </span><span style="color:#4A3C28;">62d  34 msgs &larr; pharmaadvertiser.com</span>
+<br>
+<span class="lc"># audit a specific context</span>
+<span class="lk">$</span> <span class="lp">pane audit shopsite-app</span>
+<span style="color:#C04040;">  &#9888; breach signal detected</span>
+<span style="color:#4A3C28;">  context:     shopsite-app</span>
+<span style="color:#4A3C28;">  alias:       shop-z4k@pane.alias</span>
+<span style="color:#4A3C28;">  enrolled:    shopsite-app.com</span>
+<span style="color:#C04040;">  unexpected:  pharmaadvertiser.com (34 msgs since Jan 14)</span>
+<span style="color:#4A3C28;">  verdict:     probable data sale event &rarr; run pane expire shopsite-app</span>
+<br>
+<span class="lc"># burn it</span>
+<span class="lk">$</span> <span class="lp">pane expire shopsite-app</span>
+<span class="ls">  &#10003; alias shop-z4k@pane.alias deleted</span>
+<span class="ls">  &#10003; card &middot;&middot;&middot;&middot;1193 frozen</span>
+<span class="ls">  &#10003; context tombstoned &mdash; they can no longer reach you</span>
+<br>
+<span class="lc"># pipe JSON into your own tooling</span>
+<span class="lk">$</span> <span class="lp">pane list --json</span> | jq <span class="lw">'.[].status'</span>
+<span style="color:#A8D4A8;">"clean"</span>
+<span style="color:#A8D4A8;">"clean"</span>
+<span style="color:#D4A870;">"warn"</span>
+<span style="color:#D08080;">"breach"</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<div class="section">
+  <div class="wrap">
+    <div class="sl">Community</div>
+    <h2 class="st">Build on it.<br><em>Improve it.</em></h2>
+    <p class="sb">pane is open source and designed to be extended. The surveillance industry has professional tooling. The privacy community should too.</p>
+
+    <div class="cg">
+      <div class="cg-card">
+        <div class="cg-n">01</div>
+        <div class="cg-t">Data broker sweep automation</div>
+        <div class="cg-b">The <a href="https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List" target="_blank" style="color:var(--teal);">Big-Ass Data Broker Opt-Out List</a> documents 200+ broker opt-out procedures. Many are automatable. A pane module that submits removal requests, tracks re-acquisition, and logs non-compliance for escalation would be high-value for the community. The legal escalation pipeline from AGENTS.md is the natural next step.</div>
+        <a href="https://github.com/yourhandle/pane/issues" target="_blank" class="cg-a">open an issue &rarr;</a>
+      </div>
+      <div class="cg-card">
+        <div class="cg-n">02</div>
+        <div class="cg-t">Non-US virtual card integrations</div>
+        <div class="cg-b">Privacy.com is US-only. Revolut and Wise cover non-US users but with weaker API surface. If you've built a working card module for Revolut, Wise, or a regional equivalent, a PR adding it to src/card.js as an alternative provider would extend pane to the rest of the world.</div>
+        <a href="https://github.com/yourhandle/pane" target="_blank" class="cg-a">pull request &rarr;</a>
+      </div>
+      <div class="cg-card">
+        <div class="cg-n">03</div>
+        <div class="cg-t">Photo cloaking pipeline</div>
+        <div class="cg-b">Fawkes and LowKey work but require manual per-image processing. A pane module that auto-runs Fawkes + EXIF strip on any image before it's attached to an outgoing alias email would close the photo metadata gap automatically. Python, runs locally, no cloud.</div>
+        <a href="https://sandlab.cs.uchicago.edu/fawkes/" target="_blank" class="cg-a">Fawkes docs &rarr;</a>
+      </div>
+      <div class="cg-card">
+        <div class="cg-n">04</div>
+        <div class="cg-t">Playwright enrollment &mdash; src/browser.js</div>
+        <div class="cg-b">The most-needed contribution. src/browser.js is currently a stub. The NEXT-tier feature &mdash; <code style="font-family:var(--mono);font-size:.85em;color:var(--teal);">pane enroll &lt;url&gt;</code> doing real stealth form fills with playwright-extra &mdash; is blocked on this file being written. The architecture is in server.js. The browser automation layer just needs to be built.</div>
+        <a href="https://github.com/yourhandle/pane/blob/main/src/services.js" target="_blank" class="cg-a">browser.js stub &rarr;</a>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem;padding:2rem 2.4rem;background:white;border-radius:10px;border:1px solid var(--fog);display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+      <div>
+        <div style="font-weight:500;font-size:.95rem;color:var(--ink);margin-bottom:.3rem;">Already running your own privacy stack?</div>
+        <div style="font-size:.82rem;color:var(--ink-soft);">If you've built something that works well with pane's components, open a PR or issue. The goal is an ecosystem of interoperable privacy tools, not a single product that does everything.</div>
+      </div>
+      <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);border:1px solid var(--fog);padding:.8rem 1.6rem;border-radius:4px;text-decoration:none;white-space:nowrap;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--fog)';this.style.color='var(--ink)'">GitHub &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="ft-b">pane / toolkit</span>
+  <div style="display:flex;gap:2rem;">
+    <a href="index.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Why it matters</a>
+    <a href="stack.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">The Stack</a>
+    <a href="services.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Services</a>
+    <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub &#8599;</a>
+  </div>
+  <span class="ft-n">Not hiding. Just not waving.</span>
+</footer>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tab-aliases').style.display = name === 'aliases' ? 'block' : 'none';
+  const il = document.getElementById('tab-incidents');
+  if (name === 'incidents') { il.classList.add('on'); } else { il.classList.remove('on'); }
+}
+</script>
+</body>
+</html>

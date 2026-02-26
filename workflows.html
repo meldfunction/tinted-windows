@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pane / workflows — test a workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#FAF8F4;--linen:#F3EEE6;--warm:#EDE8DF;
+  --ink:#1E1A14;--ink-soft:#504840;--ink-faint:#8C8070;
+  --teal:#3D9688;--teal-light:#D4ECEA;
+  --amber:#C07040;--amber-light:#F0DCC8;
+  --fog:#DDD6CA;--sage:#5A8060;--sage-light:#D4ECD8;
+  --lilac:#7060A0;--lilac-light:#DDD4F0;
+  --mono:"DM Mono",monospace;
+  --serif:"Cormorant Garamond",serif;
+  --sans:"Outfit",sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden;}
+body::after{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+
+nav{position:sticky;top:0;z-index:200;background:rgba(250,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(180,170,158,.3);padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--ink);text-decoration:none;letter-spacing:.08em;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:.74rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);}
+
+.wrap{max-width:1100px;margin:0 auto;padding:0 4rem;}
+.section{padding:5rem 0;}
+.sl{font-family:var(--mono);font-size:.62rem;color:var(--teal);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8rem;}
+.st{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;line-height:1.1;letter-spacing:-.02em;margin-bottom:.8rem;}
+.st em{font-style:italic;color:var(--teal);}
+.sb{font-size:.88rem;color:var(--ink-soft);line-height:1.85;max-width:640px;margin-bottom:2.5rem;}
+
+/* HERO */
+.hero{padding:8rem 4rem 5rem;max-width:1100px;margin:0 auto;}
+.h1{font-family:var(--serif);font-size:clamp(2.8rem,5vw,4.8rem);font-weight:300;line-height:1.05;letter-spacing:-.025em;margin-bottom:1.2rem;}
+.h1 em{font-style:italic;color:var(--teal);}
+.hsub{font-size:1rem;color:var(--ink-soft);line-height:1.9;max-width:580px;margin-bottom:2.5rem;}
+.pick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.5rem;}
+.pick{padding:1.4rem 1.6rem;border-radius:10px;border:2px solid var(--fog);background:white;cursor:pointer;transition:all .2s;text-align:left;}
+.pick:hover,.pick.sel{border-color:var(--teal);background:var(--teal-light);}
+.pick-icon{font-size:1.6rem;margin-bottom:.6rem;}
+.pick-title{font-weight:500;font-size:.92rem;color:var(--ink);margin-bottom:.3rem;}
+.pick-sub{font-size:.76rem;color:var(--ink-faint);line-height:1.5;}
+
+/* STEPS */
+.wf-section{display:none;}
+.wf-section.active{display:block;}
+.wf-header{padding:2.5rem 3rem;background:var(--linen);border-radius:12px 12px 0 0;border:1px solid var(--fog);border-bottom:none;margin-top:3rem;}
+.wf-label{font-family:var(--mono);font-size:.6rem;color:var(--teal);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem;}
+.wf-title{font-family:var(--serif);font-size:2rem;font-weight:300;color:var(--ink);}
+.wf-steps{border:1px solid var(--fog);border-radius:0 0 12px 12px;overflow:hidden;background:white;}
+
+.step{border-bottom:1px solid var(--fog);overflow:hidden;}
+.step:last-child{border-bottom:none;}
+.step-head{display:flex;align-items:center;gap:1.2rem;padding:1.2rem 2rem;cursor:pointer;transition:background .15s;}
+.step-head:hover{background:var(--warm);}
+.step.done .step-head{background:var(--sage-light);}
+.step-num{width:1.8rem;height:1.8rem;border-radius:50%;background:var(--fog);color:var(--ink-faint);font-family:var(--mono);font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.step.done .step-num{background:var(--sage);color:white;}
+.step-title{font-weight:500;font-size:.9rem;color:var(--ink);flex:1;}
+.step-badge{font-family:var(--mono);font-size:.57rem;padding:.15rem .5rem;border-radius:3px;border:1px solid;margin-left:auto;}
+.sb-req{background:var(--amber-light);color:var(--amber);border-color:#E0C8A8;}
+.sb-opt{background:var(--teal-light);color:var(--teal);border-color:#B8DDD8;}
+.sb-done{background:var(--sage-light);color:var(--sage);border-color:#B8D8C4;}
+.step-caret{color:var(--ink-faint);font-size:.7rem;transition:transform .2s;margin-left:.5rem;}
+.step.open .step-caret{transform:rotate(90deg);}
+.step-body{display:none;padding:1.4rem 2rem 1.8rem 4.4rem;border-top:1px solid var(--fog);background:var(--cream);}
+.step.open .step-body{display:block;}
+.step-body p{font-size:.85rem;color:var(--ink-soft);line-height:1.85;margin-bottom:.9rem;}
+.step-body p:last-child{margin-bottom:0;}
+.step-body strong{color:var(--ink);font-weight:500;}
+.code{background:#0E0C08;border-radius:7px;padding:1rem 1.4rem;font-family:var(--mono);font-size:.72rem;line-height:1.85;color:#9C9080;margin:1rem 0;overflow-x:auto;}
+.cp{color:#C07840;}.cs{color:#7CB890;}.cc{color:#4A3C28;}.ck{color:#6090B0;}
+.tip{padding:.8rem 1.1rem;background:var(--amber-light);border-left:3px solid var(--amber);border-radius:0 5px 5px 0;font-size:.78rem;color:var(--ink-soft);line-height:1.7;margin:1rem 0;}
+.tip strong{color:var(--amber);font-weight:500;}
+.info{padding:.8rem 1.1rem;background:var(--teal-light);border-left:3px solid var(--teal);border-radius:0 5px 5px 0;font-size:.78rem;color:var(--ink-soft);line-height:1.7;margin:1rem 0;}
+.check-btn{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;background:var(--teal);color:white;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;transition:background .15s;}
+.check-btn:hover{background:#2D8070;}
+
+/* seed scrambler widget */
+.scrambler{background:#0E0C08;border-radius:10px;overflow:hidden;border:1px solid #2C261E;margin:1.2rem 0;}
+.scrambler-bar{background:#16120C;padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2C261E;}
+.scrambler-title{font-family:var(--mono);font-size:.62rem;color:#9C9080;}
+.scrambler-btn{font-family:var(--mono);font-size:.6rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;padding:.3rem .8rem;border-radius:3px;cursor:pointer;letter-spacing:.08em;}
+.scrambler-btn:hover{background:#2C2418;}
+.scrambler-body{padding:1rem 1.4rem;font-family:var(--mono);font-size:.73rem;color:#6C6050;min-height:3rem;}
+.seed-row{display:flex;align-items:center;justify-content:space-between;padding:.35rem 0;border-bottom:1px solid #16120C;}
+.seed-row:last-child{border-bottom:none;}
+.seed-word{color:#D0C8B8;}.seed-alias{color:#6090B0;font-size:.65rem;}
+.seed-copy{color:#4A3C28;cursor:pointer;font-size:.6rem;letter-spacing:.08em;}
+.seed-copy:hover{color:#C07840;}
+
+/* alias map table */
+.amap{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.72rem;margin:1rem 0;}
+.amap th{color:var(--ink-faint);font-weight:400;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;padding:.45rem .8rem;border-bottom:1px solid var(--fog);text-align:left;background:var(--warm);}
+.amap td{padding:.55rem .8rem;border-bottom:1px solid var(--warm);color:var(--ink-soft);vertical-align:middle;}
+.amap tr:last-child td{border-bottom:none;}
+.amap tr:hover td{background:var(--warm);}
+.am-ctx{color:var(--ink);font-weight:500;}
+.am-alias{color:var(--teal);}
+.am-status{font-size:.6rem;padding:.15rem .5rem;border-radius:3px;}
+.st-assign{background:var(--warm);color:var(--ink-faint);border:1px solid var(--fog);}
+.st-active{background:var(--teal-light);color:var(--teal);border:1px solid #B8DDD8;}
+.st-burn{background:#FEE8E8;color:#C04040;border:1px solid #E8C0B8;}
+
+/* progress bar */
+.progress{margin:2rem 0;padding:1.2rem 1.6rem;background:white;border:1px solid var(--fog);border-radius:8px;}
+.prog-label{font-family:var(--mono);font-size:.6rem;color:var(--ink-faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;}
+.prog-bar-wrap{background:var(--fog);border-radius:4px;height:4px;overflow:hidden;}
+.prog-bar{background:var(--teal);height:100%;border-radius:4px;transition:width .4s;}
+.prog-steps{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;color:var(--ink-faint);margin-top:.4rem;}
+
+/* nav between workflows */
+.wf-nav{display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;}
+.wf-back{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);background:white;border:1px solid var(--fog);padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.wf-back:hover{border-color:var(--ink-faint);color:var(--ink);}
+.wf-next{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--teal);border:1px solid var(--teal);padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;transition:all .2s;}
+.wf-next:hover{background:#2D8070;}
+
+/* link cards */
+.link-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.5rem;}
+.link-card{padding:1.4rem 1.6rem;border-radius:8px;border:1px solid var(--fog);background:white;text-decoration:none;transition:all .2s;display:block;}
+.link-card:hover{border-color:var(--teal);transform:translateY(-1px);}
+.lc-label{font-family:var(--mono);font-size:.58rem;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;}
+.lc-title{font-weight:500;font-size:.9rem;color:var(--ink);margin-bottom:.3rem;}
+.lc-sub{font-size:.76rem;color:var(--ink-faint);line-height:1.5;}
+
+footer{padding:2.5rem 3rem;border-top:1px solid var(--fog);display:flex;justify-content:space-between;align-items:center;max-width:1100px;margin:0 auto;}
+.ft-b{font-family:var(--mono);font-size:.72rem;color:var(--ink-faint);}
+.ft-n{font-family:var(--mono);font-size:.66rem;color:var(--ink-faint);font-style:italic;}
+
+@media(max-width:960px){
+  .hero,.wrap{padding-left:1.5rem;padding-right:1.5rem;}
+  .pick-grid,.link-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">pane</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Why it matters</a></li>
+    <li><a href="stack.html">The Stack</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="toolkit.html">Toolkit</a></li>
+    <li><a href="workflows.html" class="active" style="color:var(--ink);">Workflows</a></li>
+    <li><a href="demo.html">Live Demo</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub &#8599;</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="sl">Interactive guide</div>
+  <h1 class="h1">Pick your<br><em>workflow</em></h1>
+  <p class="hsub">Select what you&#8217;re trying to do. The guide walks you through every step, from generating your first alias seed to burning a context that&#8217;s been compromised.</p>
+
+  <div id="picker" class="pick-grid">
+    <button class="pick" onclick="showWF('claude',this)">
+      <div class="pick-icon">🤖</div>
+      <div class="pick-title">Claude Desktop user</div>
+      <div class="pick-sub">Set up pane as an MCP server. Talk to Claude; pane handles the alias and card creation behind the scenes.</div>
+    </button>
+    <button class="pick" onclick="showWF('cli',this)">
+      <div class="pick-icon">⌨️</div>
+      <div class="pick-title">CLI / standalone</div>
+      <div class="pick-sub">No AI needed. Run pane directly from your terminal. Full alias management, breach monitoring, context control.</div>
+    </button>
+    <button class="pick" onclick="showWF('trial',this)">
+      <div class="pick-icon">🧾</div>
+      <div class="pick-title">Free trial backstop</div>
+      <div class="pick-sub">Sign up for any SaaS with a $0 virtual card. They cannot charge you when the trial ends. Decide to pay &#8212; fund it. Don&#8217;t &#8212; it stays at $0.</div>
+    </button>
+    <button class="pick" onclick="showWF('newsletter',this)">
+      <div class="pick-icon">📬</div>
+      <div class="pick-title">Newsletter / canary</div>
+      <div class="pick-sub">Every newsletter gets a unique alias. When they sell your email, you know exactly who sold it. Then burn it.</div>
+    </button>
+    <button class="pick" onclick="showWF('placeholder',this)">
+      <div class="pick-icon">✈️</div>
+      <div class="pick-title">Placeholder account</div>
+      <div class="pick-sub">Book a flight or hotel under a placeholder identity, then update your real name by phone at the last mile. No personal identity on the platform.</div>
+    </button>
+    <button class="pick" onclick="showWF('journalist',this)">
+      <div class="pick-icon">📡</div>
+      <div class="pick-title">Journalist / high-risk</div>
+      <div class="pick-sub">Separate your personal device from all account management. Agent handles the web interaction. You send a Signal message.</div>
+    </button>
+  </div>
+</div>
+
+<!-- WORKFLOW: CLAUDE DESKTOP -->
+<div id="wf-claude" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; Claude Desktop / Anthropic</div>
+      <div class="wf-title">Set up pane as an MCP server in Claude</div>
+    </div>
+    <div class="wf-steps">
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div class="step-title">Clone the repo and install</div>
+          <span class="step-badge sb-req">required</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>Open a terminal. Clone pane into your home folder and install dependencies:</p>
+          <div class="code"><span class="ck">$</span> <span class="cs">git clone</span> https://github.com/yourhandle/pane ~/pane<br><span class="ck">$</span> cd ~/pane<br><span class="ck">$</span> <span class="cs">npm install</span></div>
+          <p>This installs <code style="font-family:var(--mono);font-size:.85em;">dotenv</code> and <code style="font-family:var(--mono);font-size:.85em;">better-sqlite3</code>. No telemetry. Nothing phones home.</p>
+          <div class="tip"><strong>VPN first:</strong> Before cloning or creating any accounts, connect your VPN. The IP you use when creating Addy.io and Privacy.com accounts will be logged by those services.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div class="step-title">Create your Addy.io account and get an API key</div>
+          <span class="step-badge sb-req">required</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>Go to <a href="https://addy.io" target="_blank" style="color:var(--teal);">addy.io</a> and create a free account. Use a real email you control &#8212; this is your <strong>catch inbox</strong>, where all alias mail gets forwarded.</p>
+          <p>After verifying your email: go to <strong>Settings &#8594; API</strong> and click <strong>Create API key</strong>. Copy the key immediately &#8212; you won&#8217;t see it again.</p>
+          <div class="tip"><strong>Optional but worth it:</strong> Add a custom domain under Settings &#8594; Domains. Your aliases will then look like <code style="font-family:var(--mono);font-size:.85em;">notion-x7k@yourdomain.com</code> instead of <code style="font-family:var(--mono);font-size:.85em;">@addy.io</code>. Some platforms reject alias domains; a custom domain makes aliases look like normal email addresses.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div class="step-title">Create your Privacy.com account and get an API key</div>
+          <span class="step-badge sb-req">required &#8212; US only</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>Go to <a href="https://privacy.com" target="_blank" style="color:var(--teal);">privacy.com</a>. Create a free account and link a bank account (required &#8212; they need a funding source for virtual cards).</p>
+          <p>Go to <strong>Account &#8594; Developer</strong> and generate an API key. Copy it.</p>
+          <div class="info"><strong>Outside the US?</strong> Skip Privacy.com for now. Use alias-only contexts. Non-US card alternatives: Revolut virtual cards, Wise. See <a href="services.html" style="color:var(--teal);">services.html</a> for the full list.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div class="step-title">Configure .env with your API keys</div>
+          <span class="step-badge sb-req">required</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> cd ~/pane<br><span class="ck">$</span> cp .env.example .env</div>
+          <p>Open <code style="font-family:var(--mono);font-size:.85em;">.env</code> in any text editor. Fill in at minimum:</p>
+          <div class="code"><span class="cc"># Your alias provider key</span><br>ADDY_API_KEY=<span class="cp">your_key_here</span><br><br><span class="cc"># Your card provider key (skip if non-US)</span><br>PRIVACY_API_KEY=<span class="cp">your_key_here</span><br><br><span class="cc"># Your region (affects generated fake identities)</span><br>PANE_BASE_REGION=US-East<br><br><span class="cc"># Default card limit: 0 = funds only when you load them</span><br>CARD_DEFAULT_LIMIT_CENTS=0</div>
+          <p>Save the file. Verify <code style="font-family:var(--mono);font-size:.85em;">.env</code> is in <code style="font-family:var(--mono);font-size:.85em;">.gitignore</code> (it is by default). <strong>Never commit this file.</strong></p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div class="step-title">Generate your alias seeds</div>
+          <span class="step-badge sb-req">required</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>Before signing up for anything, generate random word-pair seeds. Each service you use will get its own unique seed.</p>
+          <div class="code"><span class="ck">$</span> python3 scrambler.py --count 20 --export</div>
+          <p>This writes 20 seeds to <code style="font-family:var(--mono);font-size:.85em;">alias-seeds.txt</code>. Try it here:</p>
+          <div class="scrambler">
+            <div class="scrambler-bar">
+              <span class="scrambler-title">seed generator preview</span>
+              <button class="scrambler-btn" onclick="genSeeds()">&#8635; generate</button>
+            </div>
+            <div class="scrambler-body" id="seed-output">
+              <span style="color:#4A3C28;font-size:.65rem;">Click generate to see sample seeds</span>
+            </div>
+          </div>
+          <div class="tip"><strong>Rule:</strong> One seed per service. Never reuse. The seed is not a secret &#8212; the alias email derived from it is what you protect.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">6</div>
+          <div class="step-title">Add pane to Claude Desktop</div>
+          <span class="step-badge sb-req">required</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>Find your Claude Desktop config file:</p>
+          <div class="code"><span class="cc"># macOS</span><br>~/Library/Application Support/Claude/claude_desktop_config.json<br><br><span class="cc"># Windows</span><br>%APPDATA%\Claude\claude_desktop_config.json</div>
+          <p>Open the file (create it if it doesn&#8217;t exist) and add:</p>
+          <div class="code">{<br>&nbsp;&nbsp;"mcpServers": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"pane": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"command": "node",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"args": ["<span class="cp">/Users/yourname/pane/server.js</span>"]<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;}<br>}</div>
+          <p>Replace the path with your actual path to <code style="font-family:var(--mono);font-size:.85em;">server.js</code>. Restart Claude Desktop. You should see a hammer icon in the chat interface.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">7</div>
+          <div class="step-title">Test it: sign up for something</div>
+          <span class="step-badge sb-opt">test</span>
+          <span class="step-caret">&#9654;</span>
+        </div>
+        <div class="step-body">
+          <p>In Claude Desktop, try this:</p>
+          <div class="code"><span class="cc">you:</span> "Sign me up for Morning Brew newsletter"<br><br><span class="cs">Claude calls: pane_create_alias("frost-ridge")</span><br><span class="cs">&#10003; frost-ridge-b3c@yourdomain.com created</span><br><br><span class="cc">you:</span> "What is that alias email?"<br><span class="cs">Claude: Your alias for Morning Brew is frost-ridge-b3c@yourdomain.com</span><br><br><span class="cc">you:</span> "Has anything arrived there?"<br><span class="cs">Claude calls: pane_check_inbox("frost-ridge")</span><br><span class="cs">&#10003; 1 message &#8212; welcome from morningbrew.com</span></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back to workflows</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md" target="_blank" class="wf-next">Full WORKFLOWS.md &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- WORKFLOW: FREE TRIAL -->
+<div id="wf-trial" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; Free trial backstop</div>
+      <div class="wf-title">$0 card means they can&#8217;t charge you when the trial ends</div>
+    </div>
+    <div class="wf-steps">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Pick a seed for this service</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Every service gets its own seed. Never reuse.</p>
+          <div class="scrambler"><div class="scrambler-bar"><span class="scrambler-title">pick a seed</span><button class="scrambler-btn" onclick="genSeeds()">&#8635; generate</button></div><div class="scrambler-body" id="seed-output2"><span style="color:#4A3C28;font-size:.65rem;">Click generate</span></div></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Got my seed</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Create a full envelope (alias + $0 card)</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> pane create-context <span class="cp">amber-circuit</span><br><span class="cs">&#10003; amber-circuit-4a1@yourdomain.com</span><br><span class="cs">&#10003; card &#183;&#183;&#183;&#183;4242 &#183; $0 limit</span></div>
+          <p>The card has a <strong>$0 limit</strong>. Any charge attempt fails. The merchant cannot charge you when the trial ends &#8212; or ever &#8212; unless you fund it.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">3</div><div class="step-title">Sign up with alias email and virtual card</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Go to the service&#8217;s signup page. Use:</p>
+          <ul style="font-size:.83rem;color:var(--ink-soft);line-height:2;padding-left:1.5rem;margin:.5rem 0;">
+            <li><strong>Email:</strong> your alias (e.g. amber-circuit-4a1@yourdomain.com)</li>
+            <li><strong>Card:</strong> the virtual card from pane (run <code style="font-family:var(--mono);font-size:.85em;">pane list</code> to see card details)</li>
+            <li><strong>Name:</strong> whatever pane generated &#8212; or leave as-is</li>
+          </ul>
+          <p>The service has your alias, a card it cannot charge, and a generated name. Nothing links back to you.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">4</div><div class="step-title">When the trial ends: decide</div><span class="step-badge sb-opt">decision</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p><strong>Option A: You want to keep it.</strong> Fund the card for the subscription amount:</p>
+          <div class="code"><span class="ck">$</span> pane card fund amber-circuit --amount 1200<br><span class="cs">&#10003; card funded: $12.00</span></div>
+          <p><strong>Option B: You don&#8217;t want it.</strong> The card is already at $0. No charge is possible. You&#8217;re done. Optionally burn everything:</p>
+          <div class="code"><span class="ck">$</span> pane expire amber-circuit<br><span class="cs">&#10003; alias burned &#183; card frozen</span></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md#4-your-first-alias--newsletter-or-saas-trial" target="_blank" class="wf-next">Full guide &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- WORKFLOW: NEWSLETTER -->
+<div id="wf-newsletter" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; Newsletter / canary</div>
+      <div class="wf-title">One alias per newsletter. When they sell it, you&#8217;ll know.</div>
+    </div>
+    <div class="wf-steps">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Build your newsletter alias map</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Every publication gets its own alias. This is your canary network &#8212; each alias is a named accusation waiting to be triggered.</p>
+          <table class="amap">
+            <thead><tr><th>service</th><th>seed</th><th>alias email</th><th>status</th></tr></thead>
+            <tbody>
+              <tr><td class="am-ctx">Morning Brew</td><td>frost-ridge</td><td class="am-alias">frost-ridge-b3c@yourdomain.com</td><td><span class="am-status st-active">active</span></td></tr>
+              <tr><td class="am-ctx">NYT</td><td>cedar-vault</td><td class="am-alias">cedar-vault-9f2@yourdomain.com</td><td><span class="am-status st-assign">assign</span></td></tr>
+              <tr><td class="am-ctx">Axios</td><td>willow-sluice</td><td class="am-alias">willow-sluice-8bb@yourdomain.com</td><td><span class="am-status st-assign">assign</span></td></tr>
+              <tr><td class="am-ctx">Substack author</td><td>copper-root</td><td class="am-alias">copper-root-f94@yourdomain.com</td><td><span class="am-status st-assign">assign</span></td></tr>
+            </tbody>
+          </table>
+          <div class="code"><span class="cc"># Create all at once</span><br><span class="ck">$</span> pane create-alias frost-ridge<br><span class="ck">$</span> pane create-alias cedar-vault<br><span class="ck">$</span> pane create-alias willow-sluice<br><span class="ck">$</span> pane create-alias copper-root</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Aliases created</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Sign up with each alias</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Go to each newsletter&#8217;s signup page. Enter the corresponding alias email. No card needed for free newsletters.</p>
+          <p>Keep your <code style="font-family:var(--mono);font-size:.85em;">alias-map.md</code> updated as you go. This is your audit trail.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Signed up</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">3</div><div class="step-title">Check inbox and watch for anomalies</div><span class="step-badge sb-opt">ongoing</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> pane check-inbox frost-ridge<br><span class="cs">  5 messages &#8212; all from morningbrew.com &#8212; clean</span><br><br><span class="cc"># Three weeks later...</span><br><span class="ck">$</span> pane check-inbox frost-ridge<br><span style="color:#D49050;">  &#9888; 1 unexpected message from partnerads.net</span><br><br><span class="ck">$</span> pane audit frost-ridge<br><span style="color:#C04040;">  &#9888; breach signal: partnerads.net</span><br><span style="color:#C04040;">  verdict: Morning Brew sold your alias</span></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Monitoring</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">4</div><div class="step-title">Burn when breached</div><span class="step-badge sb-opt">if needed</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> pane expire frost-ridge<br><span class="cs">  &#10003; alias frost-ridge-b3c@yourdomain.com deleted</span><br><span class="cs">  &#10003; Morning Brew can no longer reach you</span><br><span class="cs">  &#10003; incident logged: morningbrew.com &#8594; sale confirmed</span></div>
+          <p>Create a new alias if you still want the newsletter. Morning Brew gets one more chance under a new seed.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Burned</button>
+        </div>
+      </div>
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md" target="_blank" class="wf-next">Full guide &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- WORKFLOW: PLACEHOLDER -->
+<div id="wf-placeholder" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; Placeholder account</div>
+      <div class="wf-title">Book under a placeholder identity. Update your real name by phone at the last mile.</div>
+    </div>
+    <div class="wf-steps">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Create a placeholder context</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> python3 scrambler.py --count 1<br><span class="cs">  birch-portal</span><br><br><span class="ck">$</span> pane create-context birch-portal<br><span class="cs">  &#10003; birch-portal-7f3@yourdomain.com</span><br><span class="cs">  &#10003; card &#183;&#183;&#183;&#183;9182 &#183; $0 &#8212; placeholder, unfunded</span></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Book online using placeholder identity</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Go to the airline or hotel site. Complete the booking using:</p>
+          <ul style="font-size:.83rem;color:var(--ink-soft);line-height:2;padding-left:1.5rem;margin:.5rem 0;">
+            <li><strong>Name:</strong> use pane&#8217;s generated name (e.g. Jordan Ellis) &#8212; or any placeholder</li>
+            <li><strong>Email:</strong> birch-portal-7f3@yourdomain.com</li>
+            <li><strong>Card:</strong> &#183;&#183;&#183;&#183;9182 at $0 &#8212; the booking hold will fail or you&#8217;ll need to fund it slightly for the hold</li>
+          </ul>
+          <div class="tip"><strong>Some booking sites require a card charge upfront.</strong> Fund the card to exactly the hold amount before completing the booking. You&#8217;re still protected &#8212; the merchant can&#8217;t charge more than the limit.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Booked</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">3</div><div class="step-title">Retrieve your confirmation number</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> pane check-inbox birch-portal<br><span class="cs">  1 message &#8212; confirmation from aa.com</span><br><span class="cs">  ref: ABC123</span></div>
+          <p>Note your confirmation reference. You&#8217;ll need it for the phone call.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Got confirmation</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">4</div><div class="step-title">Call to update your real name (the last mile)</div><span class="step-badge sb-req">required for travel</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Call the airline or hotel directly and say:</p>
+          <div class="code" style="color:#D0C8B8;background:#14100A;">"Hi, I have a reservation under Jordan Ellis, confirmation ABC123.<br>I need to update the name to [your legal name] for travel ID purposes."</div>
+          <p>They update the record. Your legal name is in their reservation system. Your email, IP, device fingerprint, and browsing history are not &#8212; those belong to the placeholder identity.</p>
+          <div class="info"><strong>Why phone?</strong> A phone call creates no browser fingerprint, no cookie, no IP address logged to your account. The call center record is siloed. It does not get aggregated into a cross-platform advertising profile.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Name updated</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">5</div><div class="step-title">Fund the card and travel</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="ck">$</span> pane card fund birch-portal --amount 34500<br><span class="cs">  &#10003; card funded: $345.00</span></div>
+          <p>After the trip, expire the context. The booking platform keeps a profile of Jordan Ellis &#8212; not you.</p>
+          <div class="code"><span class="ck">$</span> pane expire birch-portal<br><span class="cs">  &#10003; alias burned &#183; card frozen</span></div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md#8-the-placeholder-account-workflow" target="_blank" class="wf-next">Full guide &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- WORKFLOW: CLI -->
+<div id="wf-cli" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; CLI / standalone</div>
+      <div class="wf-title">Full alias management from your terminal. No AI required.</div>
+    </div>
+    <div class="wf-steps">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Install and configure (same as Claude Desktop steps 1&#8211;4)</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Follow steps 1&#8211;4 of the <a href="#" onclick="showWF('claude',null);return false;" style="color:var(--teal);">Claude Desktop workflow</a>. The install and config are identical &#8212; the difference is you talk to the CLI instead of to Claude.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Done</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Core CLI reference</div><span class="step-badge sb-opt">reference</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code"><span class="cc"># Create alias only</span><br><span class="ck">$</span> pane create-alias frost-ridge<br><br><span class="cc"># Create card only</span><br><span class="ck">$</span> pane create-card frost-ridge --limit 0<br><br><span class="cc"># Create both (envelope)</span><br><span class="ck">$</span> pane create-context amber-circuit<br><br><span class="cc"># See everything</span><br><span class="ck">$</span> pane list<br><br><span class="cc"># Read alias mail</span><br><span class="ck">$</span> pane check-inbox amber-circuit<br><br><span class="cc"># Audit for breach signals</span><br><span class="ck">$</span> pane audit amber-circuit<br><br><span class="cc"># Burn alias + freeze card</span><br><span class="ck">$</span> pane expire amber-circuit<br><br><span class="cc"># JSON output (pipe to jq etc.)</span><br><span class="ck">$</span> pane list --json | jq '.[] | select(.status=="warn")'</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Got it</button>
+        </div>
+      </div>
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md#3-standalone-cli-no-ai" target="_blank" class="wf-next">Full guide &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- WORKFLOW: JOURNALIST -->
+<div id="wf-journalist" class="wf-section section">
+  <div class="wrap">
+    <div class="wf-header">
+      <div class="wf-label">Workflow &#8212; Journalist / high-risk</div>
+      <div class="wf-title">Your device sends a Signal message. The agent does the rest.</div>
+    </div>
+    <div class="wf-steps">
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Read AGENTS.md before starting</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="tip"><strong>Read first:</strong> <a href="https://github.com/yourhandle/pane/blob/main/AGENTS.md" target="_blank" style="color:var(--amber);">AGENTS.md</a> contains the full security model, jurisdiction table, E2E coverage map, and hosting checklist. This workflow assumes you have read it.</div>
+          <p>This workflow is for journalists, activists, and anyone whose physical safety depends on separating their device from their account management. It is not for casual use.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Read AGENTS.md</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Set up an agent server in a privacy-respecting jurisdiction</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>Provision a VPS in Iceland (1984 Hosting, Flokinet) or Switzerland (Infomaniak). Pay with Monero if possible. SSH key auth only.</p>
+          <div class="code"><span class="cc"># On the agent server</span><br><span class="ck">$</span> git clone https://github.com/yourhandle/pane /opt/pane<br><span class="ck">$</span> openssl rand -hex 32<br><span class="cs">  8f3a9c2d...  &#8592; your AGENT_SECRET, store it</span><br><br><span class="ck">$</span> echo "AGENT_SECRET=8f3a9c2d..." &gt; /opt/pane/.env<br><span class="ck">$</span> echo "ADDY_API_KEY=your_key" &gt;&gt; /opt/pane/.env<br><span class="ck">$</span> chmod 600 /opt/pane/.env<br><br><span class="ck">$</span> python3 /opt/pane/pane-agent.py monitor &amp;</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Agent running</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">3</div><div class="step-title">Set up Signal bot or .onion command channel</div><span class="step-badge sb-req">required</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <p>The command channel is how you talk to your agent without exposing your IP or device. Two options:</p>
+          <p><strong>Signal bot (simpler):</strong> Install <code style="font-family:var(--mono);font-size:.85em;">signald</code> on the agent server. Link it to a Signal account (ideally a burner number). You message that number from your personal Signal to issue commands.</p>
+          <p><strong>.onion endpoint (stronger):</strong> Run a Tor hidden service on port 8080. Add to <code style="font-family:var(--mono);font-size:.85em;">/etc/tor/torrc</code>:</p>
+          <div class="code">HiddenServiceDir /var/lib/tor/pane/<br>HiddenServicePort 80 127.0.0.1:8080</div>
+          <p>Your .onion address is in <code style="font-family:var(--mono);font-size:.85em;">/var/lib/tor/pane/hostname</code>. Access it from Tor Browser on your device.</p>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Channel ready</button>
+        </div>
+      </div>
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head"><div class="step-num">4</div><div class="step-title">Filing workflow: device &#8594; Signal &#8594; agent &#8594; platform</div><span class="step-badge sb-opt">operation</span><span class="step-caret">&#9654;</span></div>
+        <div class="step-body">
+          <div class="code" style="color:#D0C8B8;background:#0A0806;line-height:2.2;">Your phone (Signal message):
+  "publish this draft to [publication platform]"
+  
+              &#8595; E2E encrypted &#8212; Signal protocol
+
+Agent server (Iceland):
+  Receives intent
+  Looks up clean alias identity for this publication
+  Spins ephemeral browser context
+  Routes through Tor exit node
+  Logs into publication platform under alias
+  Submits draft
+  Burns browser context
+  
+              &#8595; Confirmation only
+
+Your phone:
+  "published &#8212; ref #XY23"
+
+Your device never touched the publication platform.</div>
+          <button class="check-btn" onclick="markDone(this)">&#10003; Understood</button>
+        </div>
+      </div>
+    </div>
+    <div class="wf-nav">
+      <button class="wf-back" onclick="showPicker()">&#8592; Back</button>
+      <a href="https://github.com/yourhandle/pane/blob/main/AGENTS.md" target="_blank" class="wf-next">Full AGENTS.md &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<!-- RELATED FILES -->
+<div class="section" style="background:var(--linen);border-top:1px solid var(--fog);">
+  <div class="wrap">
+    <div class="sl">Go deeper</div>
+    <h2 class="st">Related files<br><em>&amp; documentation</em></h2>
+    <div class="link-grid">
+      <a href="https://github.com/yourhandle/pane/blob/main/WORKFLOWS.md" target="_blank" class="link-card">
+        <div class="lc-label">Full guide</div>
+        <div class="lc-title">WORKFLOWS.md</div>
+        <div class="lc-sub">All 10 workflows in full detail, including the alias map, VPN setup, and HMAC command signing for the agent.</div>
+      </a>
+      <a href="https://github.com/yourhandle/pane/blob/main/AGENTS.md" target="_blank" class="link-card">
+        <div class="lc-label">Security model</div>
+        <div class="lc-title">AGENTS.md</div>
+        <div class="lc-sub">E2E coverage map, jurisdiction table, placeholder workflow, full Python agent prototype, and hosting checklist.</div>
+      </a>
+      <a href="toolkit.html" class="link-card">
+        <div class="lc-label">For builders</div>
+        <div class="lc-title">Toolkit</div>
+        <div class="lc-sub">Modular components if you want to use only the alias layer, the breach monitor, or the context store without the full suite.</div>
+      </a>
+      <a href="services.html" class="link-card">
+        <div class="lc-label">Full ecosystem</div>
+        <div class="lc-title">Services</div>
+        <div class="lc-sub">Every privacy service pane works with, tagged by tier and integration status. Includes photo cloaking and KYC defence.</div>
+      </a>
+      <a href="stack.html" class="link-card">
+        <div class="lc-label">Architecture</div>
+        <div class="lc-title">The Stack</div>
+        <div class="lc-sub">The 7-layer isometric architecture map showing how each service fits into the overall privacy envelope.</div>
+      </a>
+      <a href="index.html#consequences" class="link-card">
+        <div class="lc-label">Why it matters</div>
+        <div class="lc-title">The exposure section</div>
+        <div class="lc-sub">Browser fingerprint data, platform surveillance logs, doxxing pipelines, and the data broker dossier &#8212; what you are defending against.</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="ft-b">pane / workflows</span>
+  <div style="display:flex;gap:2rem;">
+    <a href="index.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Why it matters</a>
+    <a href="stack.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">The Stack</a>
+    <a href="services.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Services</a>
+    <a href="toolkit.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Toolkit</a>
+    <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub &#8599;</a>
+  </div>
+  <span class="ft-n">Not hiding. Just not waving.</span>
+</footer>
+
+<script>
+// ── ADJECTIVES + NOUNS from scrambler.py ──
+const ADJ = ["amber","arctic","aspen","birch","blaze","bolt","cedar","chalk","cinder","cobalt","copper","coral","crimson","dawn","delta","dusk","echo","ember","fern","flint","forge","frost","glint","grove","hazel","heather","hollow","indigo","inlet","ivory","jade","jasper","larch","laurel","linen","lunar","maple","marsh","mist","navy","nimbus","ochre","opal","orbit","otter","petal","pine","prism","quartz","raven","ridge","river","rowan","runic","sable","sage","salt","sand","scout","shale","slate","smoke","solar","sparrow","spruce","storm","summit","swift","tallow","teal","thistle","timber","trace","tundra","vale","vault","willow","wren","zephyr","zenith"];
+const NOUN = ["anvil","arch","basin","beacon","bridge","brook","cable","cairn","canal","canopy","cast","chord","circuit","cistern","cleft","crest","current","depth","dial","drift","dune","edge","ember","falls","field","flare","frame","gate","glade","gorge","grid","gully","haven","hearth","helm","hollow","kelp","knot","latch","ledge","lens","lever","light","line","link","loch","lock","loop","lore","mark","mast","meld","mesh","mill","moor","node","notch","orbit","pass","patch","peak","pier","pillar","pitch","plain","plank","pool","port","post","press","range","rapid","reach","reef","relay","ridge","rift","rivet","root","route","rune","seal","shaft","shore","sill","sluice","span","spoke","stack","stake","stave","stern","strand","strut","surge","sweep","tide","tine","torch","track","trail","vault","vein","weir","well","wharf"];
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function genSeeds() {
+  const seeds = [];
+  const seen = new Set();
+  while (seeds.length < 6) {
+    const s = pick(ADJ) + '-' + pick(NOUN);
+    if (!seen.has(s)) { seen.add(s); seeds.push(s); }
+  }
+  const rows = seeds.map(s => {
+    const h = Math.abs([...s].reduce((a,c)=>Math.imul(31,a)+c.charCodeAt(0)|0,0)) & 0xFFF;
+    const alias = \`\${s}-\${h.toString(16).padStart(3,'0')}@alias.yourdomain.com\`;
+    return \`<div class="seed-row"><span class="seed-word">\${s}</span><span class="seed-alias">\${alias}</span><span class="seed-copy" onclick="navigator.clipboard.writeText('pane create-context \${s}')">copy cmd</span></div>\`;
+  }).join('');
+  ['seed-output','seed-output2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = rows;
+  });
+}
+
+function showWF(name, btn) {
+  document.querySelectorAll('.wf-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('picker').style.display = 'none';
+  const wf = document.getElementById('wf-' + name);
+  if (wf) { wf.classList.add('active'); wf.scrollIntoView({behavior:'smooth',block:'start'}); }
+  if (btn) { document.querySelectorAll('.pick').forEach(p => p.classList.remove('sel')); btn.classList.add('sel'); }
+}
+
+function showPicker() {
+  document.querySelectorAll('.wf-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('picker').style.display = 'grid';
+  document.querySelector('.hero').scrollIntoView({behavior:'smooth'});
+}
+
+function toggleStep(step) {
+  const isOpen = step.classList.contains('open');
+  step.classList.toggle('open', !isOpen);
+}
+
+function markDone(btn) {
+  const step = btn.closest('.step');
+  step.classList.add('done');
+  step.classList.remove('open');
+  btn.innerHTML = '&#10003; Marked done';
+  btn.disabled = true;
+  btn.style.background = 'var(--sage)';
+}
+</script>
+</body>
+</html>

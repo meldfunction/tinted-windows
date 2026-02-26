@@ -40,7 +40,29 @@ It's not about hiding. It's not about doing anything wrong. It's about the same 
 
 **Site:** [index.html](./index.html) — the full visual essay  
 **Stack:** [stack.html](./stack.html) — the 7-layer architecture  
-**Services:** [services.html](./services.html) — every tool in the ecosystem
+**Services:** [services.html](./services.html) — every tool in the ecosystem  
+**Toolkit:** [toolkit.html](./toolkit.html) — modular components for privacy-minded builders  
+**Agents:** [AGENTS.md](./AGENTS.md) — standalone agent prototype, jurisdiction guide, placeholder workflow
+
+---
+
+## How to use these files
+
+New here? Start in order. Already running your own setup? Jump to what you need.
+
+| Step | File | What it does |
+|------|------|-------------|
+| 1 | [WORKFLOWS.md](./WORKFLOWS.md) | The full walkthrough — setup, seeds, alias map, VPN, placeholder accounts |
+| 2 | [scrambler.py](./scrambler.py) | Run this first. Generates random word-pair seeds for your aliases. |
+| 3 | [.env.example](./.env.example) | Copy to `.env`, add your API keys, set your region |
+| 4 | [server.js](./server.js) | The MCP server — start this, then talk to Claude Desktop |
+| 5 | [AGENTS.md](./AGENTS.md) | Agent prototype — standalone operation without Claude, jurisdiction guide |
+
+**If you are an Anthropic / Claude Desktop user:** go to [WORKFLOWS.md §2](./WORKFLOWS.md#2-claude-desktop--anthropic-users) — it covers exactly how to wire pane into your Claude project folder.
+
+**If you are a CLI user:** go to [WORKFLOWS.md §3](./WORKFLOWS.md#3-standalone-cli-no-ai) — no AI required.
+
+**If you are a journalist or high-risk user:** read [AGENTS.md](./AGENTS.md) first, then [WORKFLOWS.md §9](./WORKFLOWS.md#9-journalist--high-risk-workflow).
 
 ---
 
@@ -79,7 +101,9 @@ pane/
 ├── index.html          ← landing page / visual essay (GitHub Pages)
 ├── stack.html          ← 7-layer isometric architecture diagram
 ├── services.html       ← full ecosystem service grid with photo cloaking layer
+├── toolkit.html        ← modular components for builders; dashboard, CLI, agent prototype
 ├── README.md
+├── AGENTS.md           ← agent prototype, security model, jurisdiction guide
 ├── server.js           ← MCP wire protocol + all tool handlers
 ├── package.json
 ├── .env.example        ← copy to .env and fill in keys

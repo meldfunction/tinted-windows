@@ -268,6 +268,9 @@ code{font-family:'DM Mono',monospace;font-size:.8em;color:var(--teal);background
     <li><a href="index.html">Why it matters</a></li>
     <li><a href="stack.html" style="color:var(--ink);">The Stack</a></li>
     <li><a href="services.html">Services</a></li>
+    <li><a href="toolkit.html">Toolkit</a></li>
+    <li><a href="workflows.html">Workflows</a></li>
+    <li><a href="demo.html">Live Demo</a></li>
     <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
 </nav>
@@ -668,7 +671,7 @@ code{font-family:'DM Mono',monospace;font-size:.8em;color:var(--teal);background
     <div class="docker-code">
 <span style="color:#3A5060;">// pane.enroll() — NEXT tier, form fill via Playwright</span><br>
 <span style="color:#3A5060;">// pane.enroll(url, opts) — LATER tier, with Docker isolation</span><br><br>
-<span style="color:#1D63ED;">pane</span>.<span style="color:#1D63ED;">enroll</span>(<span style="color:#A0E8B0;">'https://dmv.virginia.gov/online/'</span>, {<br>
+<span style="color:#1D63ED;">pane</span>.<span style="color:#1D63ED;">enroll</span>(<span style="color:#A0E8B0;">'https://dmv.dc.gov/service/driver-license-renewal'</span>, {<br>
 &nbsp;&nbsp;isolation: <span style="color:#A0E8B0;">'docker'</span>,&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// spin ephemeral container</span><br>
 &nbsp;&nbsp;network:   <span style="color:#A0E8B0;">'tor'</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// route through Tor exit</span><br>
 &nbsp;&nbsp;identity:  <span style="color:#A0E8B0;">'real'</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// use your actual identity fields</span><br>

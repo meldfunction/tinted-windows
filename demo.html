@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pane / live demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#FAF8F4;--linen:#F3EEE6;--warm:#EDE8DF;
+  --ink:#1E1A14;--ink-soft:#504840;--ink-faint:#8C8070;
+  --teal:#3D9688;--teal-light:#D4ECEA;
+  --amber:#C07040;--amber-light:#F0DCC8;
+  --fog:#DDD6CA;--sage:#5A8060;--sage-light:#D4ECD8;
+  --red:#C04040;--red-light:#F8E0E0;
+  --term-bg:#0A0806;--term-mid:#16120C;--term-border:#2C261E;
+  --mono:"DM Mono",monospace;
+  --serif:"Cormorant Garamond",serif;
+  --sans:"Outfit",sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--term-bg);color:#D0C8B8;font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden;}
+
+/* ── NAV ── */
+nav{background:rgba(10,8,6,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--term-border);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;}
+.nb{font-family:var(--mono);font-size:.76rem;color:#9C9080;text-decoration:none;letter-spacing:.08em;}
+.nb span{color:#C07840;}
+.nav-links{display:flex;gap:1.5rem;list-style:none;}
+.nav-links a{font-family:var(--mono);font-size:.63rem;color:#4A3C28;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:#9C9080;}
+.live-dot{width:.5rem;height:.5rem;border-radius:50%;background:#7CB890;display:inline-block;margin-right:.4rem;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── LAYOUT ── */
+.shell{display:grid;grid-template-columns:1fr 420px;min-height:calc(100vh - 48px);gap:0;}
+.main-col{border-right:1px solid var(--term-border);}
+.side-col{background:var(--term-mid);}
+
+/* ── HERO BAR ── */
+.hero-bar{padding:2.5rem 2.5rem 2rem;border-bottom:1px solid var(--term-border);}
+.hero-eyebrow{font-family:var(--mono);font-size:.58rem;color:#4A3C28;letter-spacing:.18em;text-transform:uppercase;margin-bottom:.6rem;}
+.hero-h1{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;line-height:1.05;letter-spacing:-.02em;margin-bottom:.6rem;color:#F0E8DC;}
+.hero-h1 em{font-style:italic;color:#C07840;}
+.hero-sub{font-size:.83rem;color:#7C7060;line-height:1.8;max-width:560px;}
+
+/* ── STEP FLOW ── */
+.step-flow{padding:2rem 2.5rem;display:flex;flex-direction:column;gap:1.5rem;}
+.step-item{border:1px solid var(--term-border);border-radius:8px;overflow:hidden;background:var(--term-mid);transition:border-color .2s;}
+.step-item.active{border-color:#4A3C28;}
+.step-item.done{border-color:rgba(90,128,96,.4);}
+.step-head{padding:1rem 1.4rem;display:flex;align-items:center;gap:1rem;cursor:pointer;}
+.snum{width:1.6rem;height:1.6rem;border-radius:50%;background:var(--term-border);color:#4A3C28;font-family:var(--mono);font-size:.62rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.step-item.done .snum{background:var(--sage);color:white;}
+.step-item.active .snum{background:#3C3020;color:#C07840;border:1px solid #4A3C28;}
+.stitle{font-family:var(--mono);font-size:.78rem;color:#9C9080;flex:1;letter-spacing:.04em;}
+.step-item.active .stitle{color:#D0C8B8;}
+.step-item.done .stitle{color:#7CB890;}
+.sbadge{font-family:var(--mono);font-size:.55rem;padding:.12rem .45rem;border-radius:2px;border:1px solid;}
+.sb-wait{background:rgba(74,60,40,.3);color:#4A3C28;border-color:#3C3020;}
+.sb-run{background:rgba(192,112,64,.15);color:#C07840;border-color:rgba(192,112,64,.4);animation:blink .8s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.sb-done{background:rgba(90,128,96,.15);color:#7CB890;border-color:rgba(90,128,96,.4);}
+.sb-err{background:rgba(192,64,64,.12);color:#C04040;border-color:rgba(192,64,64,.3);}
+.step-body{display:none;padding:0 1.4rem 1.4rem 3.8rem;}
+.step-item.active .step-body,.step-item.done .step-body{display:block;}
+
+/* ── PROTECT FORM ── */
+.protect-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:.8rem 0;}
+.protect-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;border-radius:5px;border:1px solid var(--term-border);cursor:pointer;transition:all .15s;background:var(--term-bg);}
+.protect-item.sel{border-color:#4A3C28;background:rgba(74,60,40,.2);}
+.protect-item input{accent-color:#C07840;}
+.protect-label{font-family:var(--mono);font-size:.68rem;color:#7C7060;}
+.protect-item.sel .protect-label{color:#C07840;}
+
+/* ── SEED PICKER ── */
+.seed-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0;}
+.seed-pill{font-family:var(--mono);font-size:.7rem;padding:.3rem .75rem;border-radius:4px;border:1px solid var(--term-border);background:var(--term-bg);color:#6C6050;cursor:pointer;transition:all .15s;}
+.seed-pill:hover{border-color:#4A3C28;color:#9C9080;}
+.seed-pill.sel{border-color:#C07840;background:rgba(192,112,64,.1);color:#C07840;}
+.seed-regen{font-family:var(--mono);font-size:.6rem;color:#4A3C28;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .75rem;border:1px solid var(--term-border);border-radius:4px;background:transparent;transition:all .15s;}
+.seed-regen:hover{border-color:#4A3C28;color:#9C9080;}
+
+/* ── SERVICE PICKER ── */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:.8rem 0;}
+.svc-card{padding:.8rem;border-radius:6px;border:1px solid var(--term-border);cursor:pointer;transition:all .15s;background:var(--term-bg);text-align:center;}
+.svc-card:hover,.svc-card.sel{border-color:#4A3C28;}
+.svc-card.sel{background:rgba(74,60,40,.2);}
+.svc-icon{font-size:1.4rem;margin-bottom:.3rem;}
+.svc-name{font-family:var(--mono);font-size:.65rem;color:#6C6050;}
+.svc-card.sel .svc-name{color:#C07840;}
+.svc-url-row{display:flex;gap:.5rem;margin-top:.8rem;}
+.svc-url{flex:1;background:var(--term-bg);border:1px solid var(--term-border);border-radius:4px;padding:.5rem .8rem;font-family:var(--mono);font-size:.7rem;color:#9C9080;outline:none;}
+.svc-url:focus{border-color:#4A3C28;}
+.svc-url::placeholder{color:#3C3020;}
+
+/* ── MODE PICKER ── */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.8rem 0;}
+.mode-card{padding:1rem;border-radius:6px;border:1px solid var(--term-border);cursor:pointer;transition:all .15s;background:var(--term-bg);}
+.mode-card:hover,.mode-card.sel{border-color:#4A3C28;}
+.mode-card.sel{background:rgba(74,60,40,.15);}
+.mode-title{font-family:var(--mono);font-size:.72rem;color:#9C9080;margin-bottom:.3rem;}
+.mode-card.sel .mode-title{color:#C07840;}
+.mode-desc{font-size:.73rem;color:#4A3C28;line-height:1.6;}
+
+/* ── CTA BUTTON ── */
+.cta{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;background:#C07840;color:#0A0806;border:none;padding:.65rem 1.4rem;border-radius:4px;cursor:pointer;transition:background .15s;margin-top:.8rem;}
+.cta:hover{background:#D08850;}
+.cta:disabled{background:#3C3020;color:#4A3C28;cursor:not-allowed;}
+.cta-ghost{background:transparent;color:#9C9080;border:1px solid var(--term-border);margin-left:.5rem;}
+.cta-ghost:hover{border-color:#4A3C28;color:#D0C8B8;}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{margin:.8rem 0;}
+.prog-label{font-family:var(--mono);font-size:.6rem;color:#4A3C28;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem;display:flex;justify-content:space-between;}
+.prog-track{background:#16120C;border:1px solid var(--term-border);border-radius:3px;height:4px;overflow:hidden;}
+.prog-fill{background:#C07840;height:100%;border-radius:3px;transition:width .5s ease;width:0;}
+.prog-fill.complete{background:#7CB890;}
+
+/* ── STATUS LOG ── */
+.log{background:var(--term-bg);border-radius:6px;border:1px solid var(--term-border);margin:.8rem 0;max-height:180px;overflow-y:auto;font-family:var(--mono);font-size:.68rem;color:#6C6050;}
+.log-row{padding:.35rem .8rem;border-bottom:1px solid #14100A;display:flex;gap:.8rem;align-items:baseline;}
+.log-row:last-child{border-bottom:none;}
+.log-ts{color:#3C3020;flex-shrink:0;font-size:.58rem;}
+.log-step{color:#4A3C28;flex-shrink:0;width:6rem;}
+.log-msg{color:#9C9080;flex:1;}
+.log-msg.ok{color:#7CB890;}
+.log-msg.warn{color:#D49050;}
+.log-msg.err{color:#C04040;}
+
+/* ── SCREENSHOT STRIP ── */
+.screens{display:flex;gap:.8rem;overflow-x:auto;padding:.5rem 0;margin:.8rem 0;}
+.screen-frame{flex-shrink:0;width:220px;border-radius:6px;overflow:hidden;border:1px solid var(--term-border);background:#16120C;}
+.screen-bar{background:#1E1912;padding:.3rem .6rem;display:flex;align-items:center;gap:.3rem;}
+.screen-dot{width:.35rem;height:.35rem;border-radius:50%;}
+.screen-label{font-family:var(--mono);font-size:.55rem;color:#4A3C28;margin-left:auto;}
+.screen-img{width:100%;display:block;aspect-ratio:16/10;object-fit:cover;background:#0A0806;}
+.screen-placeholder{width:100%;aspect-ratio:16/10;background:#0A0806;display:flex;align-items:center;justify-content:center;}
+
+/* ── IDENTITY CARD ── */
+.id-card{background:var(--term-bg);border:1px solid var(--term-border);border-radius:6px;padding:.9rem 1.1rem;font-family:var(--mono);font-size:.68rem;color:#6C6050;margin:.8rem 0;}
+.id-row{display:flex;padding:.2rem 0;border-bottom:1px solid #14100A;}
+.id-row:last-child{border-bottom:none;}
+.id-key{color:#4A3C28;width:8rem;flex-shrink:0;}
+.id-val{color:#9C9080;}
+.id-val.hi{color:#C07840;}
+
+/* ── SIDEBAR DASHBOARD ── */
+.dash{padding:1.2rem;}
+.dash-title{font-family:var(--mono);font-size:.62rem;color:#4A3C28;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;}
+.dash-refresh{font-size:.58rem;color:#3C3020;cursor:pointer;letter-spacing:.1em;text-transform:uppercase;}
+.dash-refresh:hover{color:#6C6050;}
+.empty-state{text-align:center;padding:3rem 1rem;}
+.empty-icon{font-size:2rem;margin-bottom:.8rem;opacity:.3;}
+.empty-msg{font-family:var(--mono);font-size:.65rem;color:#3C3020;line-height:1.6;}
+.alias-list{display:flex;flex-direction:column;gap:.5rem;}
+.alias-row{padding:.65rem .9rem;border-radius:5px;border:1px solid var(--term-border);background:var(--term-bg);}
+.alias-name{font-family:var(--mono);font-size:.72rem;color:#D0C8B8;font-weight:500;margin-bottom:.15rem;}
+.alias-email{font-family:var(--mono);font-size:.62rem;color:#6090B0;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alias-meta{display:flex;align-items:center;gap:.6rem;}
+.status-dot{width:.4rem;height:.4rem;border-radius:50%;}
+.s-clean{background:#7CB890;}.s-warn{background:#D49050;}.s-breach{background:#C04040;}.s-new{background:#C07840;}
+.status-label{font-family:var(--mono);font-size:.58rem;}
+.sl-clean{color:#7CB890;}.sl-warn{color:#D49050;}.sl-breach{color:#C04040;}.sl-new{color:#C07840;}
+.alias-age{font-family:var(--mono);font-size:.58rem;color:#3C3020;margin-left:auto;}
+.alias-actions{display:flex;gap:.4rem;margin-top:.4rem;}
+.aa-btn{font-family:var(--mono);font-size:.57rem;padding:.15rem .4rem;border-radius:3px;border:1px solid var(--term-border);color:#4A3C28;cursor:pointer;background:transparent;letter-spacing:.05em;transition:all .15s;}
+.aa-btn:hover{border-color:#6C6050;color:#9C9080;}
+.aa-burn{color:#C04040 !important;border-color:rgba(192,64,64,.3) !important;}
+.aa-burn:hover{background:rgba(192,64,64,.1) !important;}
+
+/* ── COMPLETE STATE ── */
+.complete-panel{background:rgba(90,128,96,.08);border:1px solid rgba(90,128,96,.3);border-radius:8px;padding:1.2rem 1.4rem;margin:.8rem 0;}
+.complete-title{font-family:var(--mono);font-size:.72rem;color:#7CB890;margin-bottom:.6rem;letter-spacing:.05em;}
+.complete-row{display:flex;gap:.8rem;margin:.3rem 0;font-family:var(--mono);font-size:.7rem;}
+.ck{color:#4A3C28;width:6rem;flex-shrink:0;}
+.cv{color:#9C9080;}
+.cv-hi{color:#C07840;}
+
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;}
+  .side-col{display:none;}
+  .protect-grid,.svc-grid,.mode-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nb">pane <span>/ demo</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Why it matters</a></li>
+    <li><a href="stack.html">The Stack</a></li>
+    <li><a href="toolkit.html">Toolkit</a></li>
+    <li><a href="workflows.html">Workflows</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub &#8599;</a></li>
+  </ul>
+</nav>
+
+<div class="shell">
+
+<!-- ── MAIN COLUMN ── -->
+<div class="main-col">
+  <div class="hero-bar">
+    <div class="hero-eyebrow"><span class="live-dot"></span>Live demo</div>
+    <h1 class="hero-h1">Build your<br><em>privacy envelope</em></h1>
+    <p class="hero-sub">Walk through the full setup: decide what to protect, generate an alias identity, pick a service, and watch the agent enroll you — alias email, virtual card, fingerprint spoofing, all in one run.</p>
+  </div>
+
+  <div class="step-flow" id="step-flow">
+
+    <!-- STEP 1: WHAT TO PROTECT -->
+    <div class="step-item active" id="s1">
+      <div class="step-head" onclick="toggleStep(1)">
+        <div class="snum">1</div>
+        <div class="stitle">What do you want to protect?</div>
+        <span class="sbadge sb-run" id="b1">active</span>
+      </div>
+      <div class="step-body">
+        <p style="font-family:var(--mono);font-size:.7rem;color:#4A3C28;margin-bottom:.6rem;line-height:1.7;">Select everything you want to keep off the service's systems. Your alias identity will omit or fake each selected field.</p>
+        <div class="protect-grid" id="protect-grid">
+          <label class="protect-item sel" onclick="toggleProtect(this)"><input type="checkbox" checked> <span class="protect-label">&#128231; Real email address</span></label>
+          <label class="protect-item sel" onclick="toggleProtect(this)"><input type="checkbox" checked> <span class="protect-label">&#128179; Real card / payment</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#128100; Full legal name</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#128205; Home address</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#128222; Phone number</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#128441; Browser fingerprint</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#127760; IP address</span></label>
+          <label class="protect-item" onclick="toggleProtect(this)"><input type="checkbox"> <span class="protect-label">&#128337; Behavioral patterns</span></label>
+        </div>
+        <button class="cta" onclick="step1Next()">Generate identity profile &#8594;</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: ALIAS PROFILE -->
+    <div class="step-item" id="s2">
+      <div class="step-head" onclick="toggleStep(2)">
+        <div class="snum">2</div>
+        <div class="stitle">Create alias identity</div>
+        <span class="sbadge sb-wait" id="b2">waiting</span>
+      </div>
+      <div class="step-body">
+        <p style="font-family:var(--mono);font-size:.7rem;color:#4A3C28;margin-bottom:.6rem;line-height:1.7;">Pick a seed — this random word-pair becomes your identity label. Every service you sign up for gets its own unique seed. The alias email and generated persona are derived from it.</p>
+
+        <div class="seed-grid" id="seed-grid">
+          <span style="font-family:var(--mono);font-size:.65rem;color:#3C3020;">generating seeds…</span>
+        </div>
+        <button class="seed-regen" onclick="regenSeeds()">&#8635; regenerate seeds</button>
+
+        <div style="margin-top:1rem;font-family:var(--mono);font-size:.65rem;color:#4A3C28;margin-bottom:.4rem;">Generated identity for selected seed:</div>
+        <div class="id-card" id="id-preview">
+          <div style="color:#3C3020;font-size:.65rem;">Select a seed above to preview identity</div>
+        </div>
+
+        <button class="cta" id="s2-cta" onclick="step2Next()" disabled>Use this identity &#8594;</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: CHOOSE SERVICE -->
+    <div class="step-item" id="s3">
+      <div class="step-head" onclick="toggleStep(3)">
+        <div class="snum">3</div>
+        <div class="stitle">Choose a service to sign up for</div>
+        <span class="sbadge sb-wait" id="b3">waiting</span>
+      </div>
+      <div class="step-body">
+        <div class="svc-grid" id="svc-grid">
+          <div class="svc-card" onclick="pickSvc(this,'https://addy.io/register')"><div class="svc-icon">&#9993;&#65039;</div><div class="svc-name">addy.io</div></div>
+          <div class="svc-card" onclick="pickSvc(this,'https://app.simplelogin.io/auth/register')"><div class="svc-icon">&#128274;</div><div class="svc-name">SimpleLogin</div></div>
+          <div class="svc-card" onclick="pickSvc(this,'https://proton.me/mail')"><div class="svc-icon">&#128139;</div><div class="svc-name">ProtonMail</div></div>
+          <div class="svc-card" onclick="pickSvc(this,'https://account.protonvpn.com/signup')"><div class="svc-icon">&#128274;</div><div class="svc-name">ProtonVPN</div></div>
+          <div class="svc-card" onclick="pickSvc(this,'https://account.mullvad.net/signup')"><div class="svc-icon">&#128272;</div><div class="svc-name">Mullvad VPN</div></div>
+          <div class="svc-card" onclick="pickSvc(this,'custom')"><div class="svc-icon">&#43;</div><div class="svc-name">custom URL</div></div>
+        </div>
+        <div class="svc-url-row">
+          <input class="svc-url" id="svc-url-input" type="url" placeholder="or paste any signup URL…" oninput="onUrlInput(this.value)">
+        </div>
+        <div style="margin-top:.6rem;font-family:var(--mono);font-size:.62rem;color:#3C3020;line-height:1.6;" id="svc-selected-label">No service selected yet</div>
+        <button class="cta" id="s3-cta" onclick="step3Next()" disabled>Set enrollment mode &#8594;</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: MANUAL VS AGENT -->
+    <div class="step-item" id="s4">
+      <div class="step-head" onclick="toggleStep(4)">
+        <div class="snum">4</div>
+        <div class="stitle">Enrollment mode</div>
+        <span class="sbadge sb-wait" id="b4">waiting</span>
+      </div>
+      <div class="step-body">
+        <div class="mode-grid">
+          <div class="mode-card sel" id="mode-agent" onclick="pickMode('agent')">
+            <div class="mode-title">&#129302; Agent</div>
+            <div class="mode-desc">Playwright browser fills the signup form automatically. Fingerprint spoofed, trackers blocked, screenshots at each step. Requires: Node.js + npm install playwright.</div>
+          </div>
+          <div class="mode-card" id="mode-manual" onclick="pickMode('manual')">
+            <div class="mode-title">&#9997;&#65039; Manual</div>
+            <div class="mode-desc">pane creates your alias and card. You receive the credentials and complete the signup yourself. No browser automation required. Works everywhere.</div>
+          </div>
+        </div>
+        <div style="margin-top:.5rem;font-family:var(--mono);font-size:.62rem;color:#3C3020;line-height:1.6;" id="mode-note">
+          Agent mode requires <code style="color:#6090B0;">playwright</code> installed. Run: <code style="color:#C07840;">npm install playwright</code>
+        </div>
+        <button class="cta" id="s4-cta" onclick="step4Next()">Run enrollment &#8594;</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: RUNNING -->
+    <div class="step-item" id="s5">
+      <div class="step-head" onclick="toggleStep(5)">
+        <div class="snum">5</div>
+        <div class="stitle">Enrollment in progress</div>
+        <span class="sbadge sb-wait" id="b5">waiting</span>
+      </div>
+      <div class="step-body">
+        <div class="prog-wrap">
+          <div class="prog-label"><span id="prog-label-txt">Ready</span><span id="prog-pct">0%</span></div>
+          <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+        </div>
+        <div class="log" id="log-output">
+          <div class="log-row"><span class="log-ts">--:--</span><span class="log-step">ready</span><span class="log-msg">Waiting to start…</span></div>
+        </div>
+        <div class="screens" id="screen-strip" style="display:none;"></div>
+        <div id="complete-area"></div>
+        <div id="manual-area"></div>
+      </div>
+    </div>
+
+  </div><!-- end step-flow -->
+</div>
+
+<!-- ── SIDE COLUMN: DASHBOARD ── -->
+<div class="side-col">
+  <div class="dash">
+    <div class="dash-title">
+      monitoring dashboard
+      <span class="dash-refresh" onclick="refreshDash()">&#8635; refresh</span>
+    </div>
+    <div id="dash-body">
+      <div class="empty-state">
+        <div class="empty-icon">&#128274;</div>
+        <div class="empty-msg">No aliases monitored yet.<br><br>Complete the workflow on the left to create your first alias. It will appear here with live health status.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection status -->
+  <div style="padding:1rem 1.2rem;border-top:1px solid var(--term-border);font-family:var(--mono);font-size:.58rem;color:#3C3020;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">
+      <span>demo server</span>
+      <span id="server-status" style="color:#C04040;">&#9679; not connected</span>
+    </div>
+    <div>Run <code style="color:#C07840;">node demo-server.js</code> to enable live API.<br>Demo mode active — seeds and UI are fully functional.</div>
+  </div>
+</div>
+
+</div><!-- end shell -->
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+const S = {
+  protections: ['email','card'],
+  seed: null,
+  identity: null,
+  serviceUrl: null,
+  serviceName: null,
+  mode: 'agent',
+  jobId: null,
+  aliases: [],
+  serverOnline: false,
+  API: 'http://localhost:3141',
+};
+
+// ── WORD LISTS (mirrors scrambler.py) ─────────────────────────────────────────
+const ADJ  = ["amber","arctic","aspen","birch","blaze","bolt","cedar","chalk","cinder","cobalt","copper","coral","crimson","dawn","delta","dusk","echo","ember","fern","flint","forge","frost","glint","grove","hazel","heather","hollow","indigo","inlet","ivory","jade","jasper","larch","laurel","linen","lunar","maple","marsh","mist","navy","nimbus","ochre","opal","orbit","otter","petal","pine","prism","quartz","raven","ridge","river","rowan","runic","sable","sage","salt","sand","slate","smoke","solar","sparrow","spruce","storm","summit","swift","tallow","teal","thistle","timber","trace","tundra","vale","vault","willow","wren","zephyr","zenith"];
+const NOUN = ["anvil","arch","basin","beacon","bridge","brook","cable","cairn","canal","canopy","cast","chord","circuit","cistern","cleft","crest","current","depth","dial","drift","dune","edge","ember","falls","field","flare","frame","gate","glade","gorge","grid","gully","haven","hearth","helm","hollow","kelp","knot","latch","ledge","lens","lever","light","line","link","loch","lock","loop","lore","mark","mast","meld","mesh","mill","moor","node","notch","orbit","pass","patch","peak","pier","pillar","pitch","plain","plank","pool","port","post","press","range","rapid","reach","reef","relay","ridge","rift","rivet","root","route","rune","seal","shaft","shore","sill","sluice","span","spoke","stack","stake","stave","stern","strand","strut","surge","sweep","tide","tine","torch","track","trail","vault","vein","weir","well","wharf"];
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+function genSeed() { return `${pick(ADJ)}-${pick(NOUN)}`; }
+function genSeeds(n=8) {
+  const s = new Set();
+  while (s.size < n) s.add(genSeed());
+  return [...s];
+}
+
+// ── FAKE IDENTITY (mirrors identity.js logic) ─────────────────────────────────
+const FIRST = ["Emma","Sophie","James","Oliver","Grace","Lily","Ethan","Lucas","Mia","Noah","Chloe","Henry","Ava","Logan","Ella"];
+const LAST  = ["Smith","Johnson","Williams","Brown","Jones","Taylor","Davis","Miller","Wilson","Moore","Anderson","Harris","Clark","Lewis","Walker"];
+const STREETS = ["Oak","Maple","Cedar","Pine","Elm","Washington","Lincoln","Park","Lake","River"];
+const STYPES  = ["St","Ave","Blvd","Dr","Ln","Way"];
+const CITIES  = ["Springfield","Riverside","Fairview","Madison","Georgetown","Franklin","Clinton","Salem","Greenville","Bristol"];
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return (h >>> 0);
+}
+
+function seededPick(arr, seed, offset) {
+  return arr[Math.abs(hashStr(seed + String(offset))) % arr.length];
+}
+
+function generateIdentity(seed) {
+  const first = seededPick(FIRST, seed, 1);
+  const last  = seededPick(LAST,  seed, 2);
+  const yr    = 1970 + (hashStr(seed + "yr") % 30);
+  const mo    = String(1 + (hashStr(seed + "mo") % 12)).padStart(2,"0");
+  const dy    = String(1 + (hashStr(seed + "dy") % 28)).padStart(2,"0");
+  const h     = (hashStr(seed) & 0xFFF).toString(16).padStart(3,"0");
+  return {
+    full_name: `${first} ${last}`,
+    first_name: first,
+    last_name: last,
+    email: `${seed}-${h}@alias.yourdomain.com`,
+    dob: `${yr}-${mo}-${dy}`,
+    address: `${1000 + (hashStr(seed+"addr") % 8999)} ${seededPick(STREETS,seed,5)} ${seededPick(STYPES,seed,6)}, ${seededPick(CITIES,seed,7)}`,
+    phone: `202-${String(200 + (hashStr(seed+"ph") % 700)).padStart(3,"0")}-${String(1000 + (hashStr(seed+"p2") % 9000)).padStart(4,"0")}`,
+  };
+}
+
+// ── STEP 1 ─────────────────────────────────────────────────────────────────────
+function toggleProtect(el) {
+  el.classList.toggle("sel");
+  el.querySelector("input").checked = el.classList.contains("sel");
+}
+
+function step1Next() {
+  const items = [...document.querySelectorAll("#protect-grid .protect-item.sel")];
+  S.protections = items.map(i => i.querySelector(".protect-label").textContent.trim());
+
+  setDone(1);
+  setActive(2);
+  renderSeeds();
+}
+
+// ── STEP 2 ─────────────────────────────────────────────────────────────────────
+let currentSeeds = [];
+function renderSeeds() {
+  currentSeeds = genSeeds(8);
+  const grid = document.getElementById("seed-grid");
+  grid.innerHTML = currentSeeds.map(s =>
+    `<div class="seed-pill" onclick="selectSeed(this,'${s}')">${s}</div>`
+  ).join("") + ` <button class="seed-regen" onclick="regenSeeds()">&#8635; new seeds</button>`;
+}
+
+function regenSeeds() { renderSeeds(); S.seed = null; S.identity = null; document.getElementById("id-preview").innerHTML = `<div style="color:#3C3020;font-size:.65rem;">Select a seed above</div>`; document.getElementById("s2-cta").disabled = true; }
+
+function selectSeed(el, seed) {
+  document.querySelectorAll(".seed-pill").forEach(p => p.classList.remove("sel"));
+  el.classList.add("sel");
+  S.seed = seed;
+  S.identity = generateIdentity(seed);
+  renderIdPreview();
+  document.getElementById("s2-cta").disabled = false;
+}
+
+function renderIdPreview() {
+  const id = S.identity;
+  const prot = S.protections;
+  const masked = (val, label) => {
+    const isProtected = prot.some(p => p.toLowerCase().includes(label));
+    return isProtected
+      ? `<span class="id-val hi">[alias identity]</span>`
+      : `<span class="id-val">${val}</span>`;
+  };
+  document.getElementById("id-preview").innerHTML = `
+    <div class="id-row"><span class="id-key">seed</span><span class="id-val hi">${S.seed}</span></div>
+    <div class="id-row"><span class="id-key">name</span>${masked(id.full_name, "name")}</div>
+    <div class="id-row"><span class="id-key">email</span><span class="id-val hi">${id.email}</span></div>
+    <div class="id-row"><span class="id-key">dob</span>${masked(id.dob, "dob")}</div>
+    <div class="id-row"><span class="id-key">phone</span>${masked(id.phone, "phone")}</div>
+    <div class="id-row"><span class="id-key">address</span>${masked(id.address, "address")}</div>
+    <div class="id-row"><span class="id-key">card</span><span class="id-val hi">$0 virtual — unfunded</span></div>
+  `;
+}
+
+function step2Next() {
+  if (!S.seed) return;
+  setDone(2);
+  setActive(3);
+}
+
+// ── STEP 3 ─────────────────────────────────────────────────────────────────────
+function pickSvc(el, url) {
+  document.querySelectorAll(".svc-card").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  if (url === "custom") {
+    document.getElementById("svc-url-input").focus();
+    S.serviceUrl = null;
+    S.serviceName = "custom";
+  } else {
+    S.serviceUrl = url;
+    S.serviceName = el.querySelector(".svc-name").textContent;
+    document.getElementById("svc-url-input").value = url;
+    document.getElementById("svc-selected-label").textContent = `Selected: ${S.serviceName} — ${url}`;
+    document.getElementById("s3-cta").disabled = false;
+  }
+}
+
+function onUrlInput(val) {
+  S.serviceUrl = val;
+  if (val) {
+    try { S.serviceName = new URL(val).hostname.replace("www.",""); } catch { S.serviceName = val; }
+    document.getElementById("svc-selected-label").textContent = `Custom: ${S.serviceName}`;
+    document.getElementById("s3-cta").disabled = false;
+  } else {
+    document.getElementById("s3-cta").disabled = true;
+  }
+}
+
+function step3Next() {
+  if (!S.serviceUrl) return;
+  setDone(3);
+  setActive(4);
+}
+
+// ── STEP 4 ─────────────────────────────────────────────────────────────────────
+function pickMode(mode) {
+  S.mode = mode;
+  document.getElementById("mode-agent").classList.toggle("sel", mode === "agent");
+  document.getElementById("mode-manual").classList.toggle("sel", mode === "manual");
+  document.getElementById("mode-note").innerHTML = mode === "agent"
+    ? `Agent mode: Playwright browser handles the signup. Run <code style="color:#C07840;">npm install playwright</code> if not installed.`
+    : `Manual mode: You receive alias + card details. Complete the signup yourself at <code style="color:#6090B0;">${S.serviceUrl || "the service URL"}</code>`;
+}
+
+function step4Next() {
+  setDone(4);
+  setActive(5);
+  runEnrollment();
+}
+
+// ── STEP 5: ENROLLMENT ────────────────────────────────────────────────────────
+function ts() {
+  const d = new Date();
+  return d.toTimeString().slice(0,8);
+}
+
+function addLog(step, msg, cls = "") {
+  const log = document.getElementById("log-output");
+  const row = document.createElement("div");
+  row.className = "log-row";
+  row.innerHTML = `<span class="log-ts">${ts()}</span><span class="log-step">${step.slice(0,10)}</span><span class="log-msg ${cls}">${msg}</span>`;
+  log.appendChild(row);
+  log.scrollTop = log.scrollHeight;
+}
+
+function setProgress(pct, label) {
+  document.getElementById("prog-fill").style.width = pct + "%";
+  document.getElementById("prog-pct").textContent = pct + "%";
+  document.getElementById("prog-label-txt").textContent = label;
+  if (pct >= 100) document.getElementById("prog-fill").classList.add("complete");
+}
+
+function addScreenshot(url, label) {
+  const strip = document.getElementById("screen-strip");
+  strip.style.display = "flex";
+  const frame = document.createElement("div");
+  frame.className = "screen-frame";
+  frame.innerHTML = `
+    <div class="screen-bar">
+      <div class="screen-dot" style="background:#F4B8A0;"></div>
+      <div class="screen-dot" style="background:#F4E0A0;"></div>
+      <div class="screen-dot" style="background:#A8D4A8;"></div>
+      <span class="screen-label">${label}</span>
+    </div>
+    ${url
+      ? `<img class="screen-img" src="${url}" alt="${label}" onerror="this.parentNode.innerHTML+='<div class=screen-placeholder><span style=font-family:var(--mono);font-size:.6rem;color:#3C3020>${label}</span></div>'; this.remove();">`
+      : `<div class="screen-placeholder"><span style="font-family:var(--mono);font-size:.6rem;color:#3C3020;">${label}</span></div>`
+    }
+  `;
+  strip.appendChild(frame);
+  strip.scrollLeft = strip.scrollWidth;
+}
+
+async function runEnrollment() {
+  setBadge(5, "run", "running");
+  setProgress(0, "Starting…");
+  addLog("start", `Enrolling at ${S.serviceName || S.serviceUrl} using seed: ${S.seed}`);
+  addLog("mode", S.mode === "agent" ? "Agent mode — Playwright browser will handle signup" : "Manual mode — provisioning alias and card");
+
+  // Try live API first
+  if (S.serverOnline) {
+    await runLiveEnrollment();
+  } else {
+    await runSimulatedEnrollment();
+  }
+}
+
+// Live enrollment via demo-server.js SSE
+async function runLiveEnrollment() {
+  try {
+    const resp = await fetch(`${S.API}/api/enroll`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: S.serviceUrl, seed: S.seed, mode: S.mode }),
+    });
+    const { jobId } = await resp.json();
+    S.jobId = jobId;
+
+    const evts = new EventSource(`${S.API}/api/stream/${jobId}`);
+    evts.addEventListener("status", e => {
+      const d = JSON.parse(e.data);
+      setProgress(d.pct || 0, d.message);
+      addLog(d.step || "step", d.message, d.message.startsWith("✓") ? "ok" : "");
+      if (d.screenshotUrl) addScreenshot(S.API + d.screenshotUrl, d.step);
+    });
+    evts.addEventListener("complete", e => {
+      const d = JSON.parse(e.data);
+      setProgress(100, "Complete");
+      addLog("done", d.message, "ok");
+      evts.close();
+      showComplete(d);
+      setDone(5);
+      refreshDash();
+    });
+    evts.addEventListener("error", e => {
+      const d = JSON.parse(e.data);
+      addLog("error", d.message, "err");
+      setBadge(5, "err", "error");
+      evts.close();
+    });
+  } catch (e) {
+    addLog("error", "Could not connect to demo server — running simulation", "warn");
+    await runSimulatedEnrollment();
+  }
+}
+
+// Simulated enrollment (no server needed)
+async function runSimulatedEnrollment() {
+  const id = S.identity;
+  const svc = S.serviceName || "service";
+  const steps = [
+    [5,  "prepare",  `Preparing identity for seed: ${S.seed}`, ""],
+    [15, "alias",    "Creating alias email via Addy.io…", ""],
+    [25, "alias",    `✓ Alias created: ${id.email}`, "ok"],
+    [35, "card",     "Creating $0 virtual card via Privacy.com…", ""],
+    [45, "card",     `✓ Card created: ····${String(Math.floor(Math.random()*9000)+1000)} · $0 limit`, "ok"],
+    ...(S.mode === "agent" ? [
+    [55, "launch",   "Launching stealth browser…", ""],
+    [60, "launch",   "Stealth plugin loaded — AutomationControlled disabled", ""],
+    [63, "track",    `Blocked tracker: googletagmanager.com`, ""],
+    [65, "track",    `Blocked tracker: analytics.google.com`, ""],
+    [67, "navigate", `Navigating to ${svc}…`, ""],
+    [70, "navigate", `Landed on ${svc}`, "ok"],
+    [75, "form",     "Scanning for signup form fields…", ""],
+    [78, "form",     "✓ Email field detected", "ok"],
+    [80, "form",     "✓ Name fields detected", "ok"],
+    [82, "fill",     `Filling email: ${id.email}`, ""],
+    [84, "fill",     `Filling name: ${id.first_name} ${id.last_name}`, ""],
+    [86, "fill",     "Generating strong password…", ""],
+    [88, "fill",     "✓ All fields filled with alias identity", "ok"],
+    [90, "submit",   "Submitting form…", ""],
+    [93, "submit",   "✓ Form submitted — awaiting response", "ok"],
+    [96, "verify",   `✓ Enrollment confirmed — check ${id.email} for verification`, "ok"],
+    [100,"done",     `✓ ${svc} enrolled under alias identity. Monitor at ${id.email}`, "ok"],
+    ] : [
+    [80, "manual",   `✓ Alias ready: ${id.email}`, "ok"],
+    [90, "manual",   "✓ Card provisioned: $0 limit", "ok"],
+    [100,"manual",   `Go to ${S.serviceUrl} and sign up using the credentials below`, "ok"],
+    ]),
+  ];
+
+  const screenshotLabels = S.mode === "agent"
+    ? ["01-landed","02-filled","03-submitted"]
+    : [];
+
+  for (let i = 0; i < steps.length; i++) {
+    const [pct, step, msg, cls] = steps[i];
+    await delay(300 + Math.random() * 400);
+    setProgress(pct, msg);
+    addLog(step, msg, cls);
+    // Simulate screenshots at key steps (agent mode only)
+    if (S.mode === "agent" && screenshotLabels.length && [67, 88, 93].includes(pct)) {
+      const lbl = screenshotLabels.shift() || "screenshot";
+      addScreenshot(null, lbl); // null URL shows placeholder
+    }
+  }
+
+  const last = steps[steps.length-1];
+  if (last[0] >= 100) {
+    const card4 = String(Math.floor(Math.random()*9000)+1000);
+    const completeData = S.mode === "agent" ? {
+      seed: S.seed,
+      email: id.email,
+      last4: card4,
+      identity: `${id.first_name} ${id.last_name}`,
+      message: `✓ Enrolled at ${svc} as ${id.email}`,
+    } : {
+      seed: S.seed,
+      email: id.email,
+      last4: card4,
+      identity: `${id.first_name} ${id.last_name}`,
+      identityDetail: id,
+      manual: true,
+      message: `Alias and card ready for ${svc}`,
+    };
+    showComplete(completeData);
+    setDone(5);
+    addToLocalDash({ name: S.seed, email: id.email, status: "new", age: "just now", service: svc });
+  }
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function showComplete(d) {
+  const area = document.getElementById("complete-area");
+  if (d.manual) {
+    area.innerHTML = `
+      <div class="complete-panel">
+        <div class="complete-title">&#10003; Alias provisioned — sign up manually</div>
+        <div class="complete-row"><span class="ck">seed</span><span class="cv-hi cv">${d.seed}</span></div>
+        <div class="complete-row"><span class="ck">alias email</span><span class="cv-hi cv">${d.email}</span></div>
+        <div class="complete-row"><span class="ck">card</span><span class="cv">····${d.last4} · $0 limit</span></div>
+        <div class="complete-row"><span class="ck">identity</span><span class="cv">${d.identity}</span></div>
+        <div style="margin-top:.8rem;font-family:var(--mono);font-size:.65rem;color:#4A3C28;line-height:1.7;">
+          Go to <a href="${S.serviceUrl}" target="_blank" style="color:#6090B0;">${S.serviceUrl}</a> and sign up with the alias email and virtual card above. Use the generated name where a real name is required.
+        </div>
+      </div>`;
+  } else {
+    area.innerHTML = `
+      <div class="complete-panel">
+        <div class="complete-title">&#10003; ${d.message}</div>
+        <div class="complete-row"><span class="ck">seed</span><span class="cv-hi cv">${d.seed}</span></div>
+        <div class="complete-row"><span class="ck">alias email</span><span class="cv-hi cv">${d.email}</span></div>
+        <div class="complete-row"><span class="ck">card</span><span class="cv">····${d.last4} · $0 limit</span></div>
+        <div class="complete-row"><span class="ck">identity</span><span class="cv">${d.identity}</span></div>
+        <div style="margin-top:.8rem;font-family:var(--mono);font-size:.65rem;color:#4A3C28;line-height:1.7;">
+          Alias is active and monitored. Run <code style="color:#C07840;">pane check-inbox ${d.seed}</code> to read mail. Run <code style="color:#C07840;">pane expire ${d.seed}</code> to burn it.
+        </div>
+      </div>`;
+  }
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────────
+let localAliases = [];
+
+function addToLocalDash(alias) {
+  localAliases.push(alias);
+  renderDash(localAliases);
+}
+
+function renderDash(aliases) {
+  const body = document.getElementById("dash-body");
+  if (!aliases || !aliases.length) {
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">&#128274;</div><div class="empty-msg">No aliases monitored yet.<br><br>Complete the workflow on the left to create your first alias.</div></div>`;
+    return;
+  }
+  body.innerHTML = `<div class="alias-list">${aliases.map(a => `
+    <div class="alias-row">
+      <div class="alias-name">${a.name || a.context_name || "-"}</div>
+      <div class="alias-email">${a.email || a.alias_email || "-"}</div>
+      <div class="alias-meta">
+        <span class="status-dot s-${a.status || "new"}"></span>
+        <span class="status-label sl-${a.status || "new"}">${a.status || "new"}</span>
+        <span class="alias-age">${a.age || "just now"}</span>
+      </div>
+      <div class="alias-actions">
+        <button class="aa-btn" onclick="aliasAudit('${a.name}')">audit</button>
+        <button class="aa-btn" onclick="aliasInbox('${a.name}')">inbox</button>
+        <button class="aa-btn aa-burn" onclick="aliasBurn('${a.name}')">expire</button>
+      </div>
+    </div>`).join("")}</div>`;
+}
+
+function aliasAudit(name) { addLog("audit", `pane audit ${name}`, ""); delay(600).then(() => addLog("audit", `✓ ${name} — no breach signals detected`, "ok")); }
+function aliasInbox(name) { addLog("inbox", `pane check-inbox ${name}`, ""); delay(600).then(() => addLog("inbox", `${name} — 1 message from ${S.serviceName || "service"} — clean`, "ok")); }
+function aliasBurn(name) {
+  if (confirm(`Expire ${name}? This will delete the alias and freeze the card.`)) {
+    addLog("expire", `Burning ${name}…`, "");
+    delay(800).then(() => {
+      addLog("expire", `✓ ${name} alias burned · card frozen`, "ok");
+      localAliases = localAliases.filter(a => a.name !== name);
+      renderDash(localAliases);
+    });
+  }
+}
+
+async function refreshDash() {
+  if (!S.serverOnline) { renderDash(localAliases); return; }
+  try {
+    const resp = await fetch(`${S.API}/api/status`);
+    const { contexts } = await resp.json();
+    renderDash(contexts);
+  } catch { renderDash(localAliases); }
+}
+
+// ── UI HELPERS ─────────────────────────────────────────────────────────────────
+function setActive(n) {
+  const el = document.getElementById(`s${n}`);
+  el.classList.add("active");
+  el.classList.remove("done");
+  setBadge(n, "run", "active");
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function setDone(n) {
+  const el = document.getElementById(`s${n}`);
+  el.classList.add("done");
+  el.classList.remove("active");
+  setBadge(n, "done", "done");
+}
+
+function setBadge(n, cls, text) {
+  const b = document.getElementById(`b${n}`);
+  b.className = `sbadge sb-${cls}`;
+  b.textContent = text;
+}
+
+function toggleStep(n) {
+  const el = document.getElementById(`s${n}`);
+  if (el.classList.contains("active") || el.classList.contains("done")) {
+    el.querySelector(".step-body").style.display =
+      el.querySelector(".step-body").style.display === "none" ? "block" : "none";
+  }
+}
+
+// ── SERVER DETECTION ───────────────────────────────────────────────────────────
+async function checkServer() {
+  try {
+    const resp = await fetch(`${S.API}/api/status`, { signal: AbortSignal.timeout(1500) });
+    if (resp.ok) {
+      S.serverOnline = true;
+      document.getElementById("server-status").innerHTML = `<span style="color:#7CB890;">&#9679; connected</span>`;
+      const { contexts } = await resp.json();
+      if (contexts && contexts.length) renderDash(contexts);
+    }
+  } catch {
+    S.serverOnline = false;
+  }
+}
+
+// Init
+checkServer();
+setInterval(checkServer, 10000);
+renderSeeds();
+</script>
+</body>
+</html>
