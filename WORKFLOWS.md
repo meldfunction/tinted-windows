@@ -42,7 +42,7 @@ Step-by-step guides for setting up and running pane. Start at the beginning if y
 ### Step 1 — Get the repo
 
 ```bash
-git clone https://github.com/yourhandle/pane
+git clone https://github.com/meldfunction/pane
 cd pane
 npm install
 ```
@@ -613,7 +613,7 @@ You need:
 
 ```bash
 # On your agent server (e.g. a VPS in Iceland)
-git clone https://github.com/yourhandle/pane
+git clone https://github.com/meldfunction/pane
 cd pane
 pip3 install  # no dependencies for pane-agent.py — it uses stdlib only
 
@@ -730,7 +730,7 @@ print(payload)
 
 ```bash
 # Setup
-git clone https://github.com/yourhandle/pane && cd pane
+git clone https://github.com/meldfunction/pane && cd pane
 npm install && cp .env.example .env
 # (edit .env with your API keys)
 

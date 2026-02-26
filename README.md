@@ -119,7 +119,7 @@ pane/
 **Install:**
 
 ```bash
-git clone https://github.com/yourhandle/pane
+git clone https://github.com/meldfunction/pane
 cd pane
 npm install
 cp .env.example .env

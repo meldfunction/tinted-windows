@@ -149,7 +149,7 @@ footer{padding:2.5rem 3rem;border-top:1px solid var(--fog);display:flex;justify-
     <li><a href="toolkit.html" class="active" style="color:var(--ink);">Toolkit</a></li>
     <li><a href="workflows.html">Workflows</a></li>
     <li><a href="demo.html">Live Demo</a></li>
-    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub &#8599;</a></li>
+    <li><a href="https://github.com/meldfunction/pane" target="_blank" rel="noopener">GitHub &#8599;</a></li>
   </ul>
 </nav>
 
@@ -207,8 +207,8 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
           <div class="tc-code">npx pane alias create notion</div>
           <div class="tc-code">pane alias list --json | jq '.[] | select(.status=="warn")'</div>
           <div class="tc-links">
-            <a href="https://github.com/yourhandle/pane/blob/main/src/alias.js" target="_blank" class="tc-a">source &rarr;</a>
-            <a href="https://github.com/yourhandle/pane" target="_blank" class="tc-a tc-a-dim">docs</a>
+            <a href="https://github.com/meldfunction/pane/blob/main/src/alias.js" target="_blank" class="tc-a">source &rarr;</a>
+            <a href="https://github.com/meldfunction/pane" target="_blank" class="tc-a tc-a-dim">docs</a>
           </div>
           <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; v0.1</div>
         </div>
@@ -242,7 +242,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
           <div class="tc-code">import { BreachMonitor } from 'pane'</div>
           <div class="tc-code">m.on('breach', ctx => webhook(ctx))</div>
           <div class="tc-links">
-            <a href="https://github.com/yourhandle/pane/blob/main/src/services.js" target="_blank" class="tc-a">source &rarr;</a>
+            <a href="https://github.com/meldfunction/pane/blob/main/src/services.js" target="_blank" class="tc-a">source &rarr;</a>
           </div>
           <div class="tc-status s-beta"><span class="sdot"></span>beta &middot; API may change</div>
         </div>
@@ -259,7 +259,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
           <div class="tc-code">npx pane card create figma --limit 0</div>
           <div class="tc-code">npx pane card freeze shopsite-app</div>
           <div class="tc-links">
-            <a href="https://github.com/yourhandle/pane/blob/main/src/card.js" target="_blank" class="tc-a">source &rarr;</a>
+            <a href="https://github.com/meldfunction/pane/blob/main/src/card.js" target="_blank" class="tc-a">source &rarr;</a>
           </div>
           <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; US only</div>
         </div>
@@ -276,7 +276,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
           <div class="tc-code">import { ContextStore } from 'pane'</div>
           <div class="tc-code">const ctx = await store.get('notion')</div>
           <div class="tc-links">
-            <a href="https://github.com/yourhandle/pane/blob/main/src/context.js" target="_blank" class="tc-a">source &rarr;</a>
+            <a href="https://github.com/meldfunction/pane/blob/main/src/context.js" target="_blank" class="tc-a">source &rarr;</a>
           </div>
           <div class="tc-status s-stable"><span class="sdot"></span>stable &middot; local only</div>
         </div>
@@ -293,8 +293,8 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
           <div class="tc-code">python3 pane-agent.py monitor</div>
           <div class="tc-code">python3 pane-agent.py check-incidents</div>
           <div class="tc-links">
-            <a href="https://github.com/yourhandle/pane/blob/main/AGENTS.md" target="_blank" class="tc-a">AGENTS.md &rarr;</a>
-            <a href="https://github.com/yourhandle/pane" target="_blank" class="tc-a tc-a-dim">disclaimer</a>
+            <a href="https://github.com/meldfunction/pane/blob/main/AGENTS.md" target="_blank" class="tc-a">AGENTS.md &rarr;</a>
+            <a href="https://github.com/meldfunction/pane" target="_blank" class="tc-a tc-a-dim">disclaimer</a>
           </div>
           <div class="tc-status s-proto"><span class="sdot"></span>prototype &middot; read AGENTS.md first</div>
         </div>
@@ -426,13 +426,13 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
         <div class="cg-n">01</div>
         <div class="cg-t">Data broker sweep automation</div>
         <div class="cg-b">The <a href="https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List" target="_blank" style="color:var(--teal);">Big-Ass Data Broker Opt-Out List</a> documents 200+ broker opt-out procedures. Many are automatable. A pane module that submits removal requests, tracks re-acquisition, and logs non-compliance for escalation would be high-value for the community. The legal escalation pipeline from AGENTS.md is the natural next step.</div>
-        <a href="https://github.com/yourhandle/pane/issues" target="_blank" class="cg-a">open an issue &rarr;</a>
+        <a href="https://github.com/meldfunction/pane/issues" target="_blank" class="cg-a">open an issue &rarr;</a>
       </div>
       <div class="cg-card">
         <div class="cg-n">02</div>
         <div class="cg-t">Non-US virtual card integrations</div>
         <div class="cg-b">Privacy.com is US-only. Revolut and Wise cover non-US users but with weaker API surface. If you've built a working card module for Revolut, Wise, or a regional equivalent, a PR adding it to src/card.js as an alternative provider would extend pane to the rest of the world.</div>
-        <a href="https://github.com/yourhandle/pane" target="_blank" class="cg-a">pull request &rarr;</a>
+        <a href="https://github.com/meldfunction/pane" target="_blank" class="cg-a">pull request &rarr;</a>
       </div>
       <div class="cg-card">
         <div class="cg-n">03</div>
@@ -444,7 +444,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
         <div class="cg-n">04</div>
         <div class="cg-t">Playwright enrollment &mdash; src/browser.js</div>
         <div class="cg-b">The most-needed contribution. src/browser.js is currently a stub. The NEXT-tier feature &mdash; <code style="font-family:var(--mono);font-size:.85em;color:var(--teal);">pane enroll &lt;url&gt;</code> doing real stealth form fills with playwright-extra &mdash; is blocked on this file being written. The architecture is in server.js. The browser automation layer just needs to be built.</div>
-        <a href="https://github.com/yourhandle/pane/blob/main/src/services.js" target="_blank" class="cg-a">browser.js stub &rarr;</a>
+        <a href="https://github.com/meldfunction/pane/blob/main/src/services.js" target="_blank" class="cg-a">browser.js stub &rarr;</a>
       </div>
     </div>
 
@@ -453,7 +453,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
         <div style="font-weight:500;font-size:.95rem;color:var(--ink);margin-bottom:.3rem;">Already running your own privacy stack?</div>
         <div style="font-size:.82rem;color:var(--ink-soft);">If you've built something that works well with pane's components, open a PR or issue. The goal is an ecosystem of interoperable privacy tools, not a single product that does everything.</div>
       </div>
-      <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);border:1px solid var(--fog);padding:.8rem 1.6rem;border-radius:4px;text-decoration:none;white-space:nowrap;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--fog)';this.style.color='var(--ink)'">GitHub &rarr;</a>
+      <a href="https://github.com/meldfunction/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);border:1px solid var(--fog);padding:.8rem 1.6rem;border-radius:4px;text-decoration:none;white-space:nowrap;transition:border-color .2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--fog)';this.style.color='var(--ink)'">GitHub &rarr;</a>
     </div>
   </div>
 </div>
@@ -464,7 +464,7 @@ m.on(<span class="tw">'breach'</span>, ctx =&gt; m.notify(ctx))
     <a href="index.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Why it matters</a>
     <a href="stack.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">The Stack</a>
     <a href="services.html" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Services</a>
-    <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub &#8599;</a>
+    <a href="https://github.com/meldfunction/pane" target="_blank" style="font-family:var(--mono);font-size:.68rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub &#8599;</a>
   </div>
   <span class="ft-n">Not hiding. Just not waving.</span>
 </footer>
