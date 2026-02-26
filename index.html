@@ -149,7 +149,7 @@ h2.st span{color:var(--teal);}
 .form-note{font-size:.67rem;color:var(--teal);font-family:'DM Mono',monospace;margin-top:.4rem;text-align:center;}
 
 /* ── USE CASES ── */
-.usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:4rem;}
+.usecase-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:4rem;}
 .uc{border-radius:8px;overflow:hidden;border:1px solid var(--fog);}
 .uc-header{padding:2rem 2rem 1.5rem;}
 .uc-1 .uc-header{background:linear-gradient(135deg,#E8F4F2,#D0EAE6);}
@@ -166,6 +166,8 @@ h2.st span{color:var(--teal);}
 .uc-1 .uo-check{background:var(--teal-light);color:var(--teal);}
 .uc-2 .uo-check{background:var(--amber-light);color:var(--amber);}
 .uc-3 .uo-check{background:var(--lilac-light);color:var(--lilac);}
+.uc-4 .uc-header{background:linear-gradient(135deg,#EAF4EE,#D4ECD8);}
+.uc-4 .uo-check{background:var(--sage-light);color:var(--sage);}
 .uc-services{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--warm);}
 
 /* ── INBOX MOCKUP ── */
@@ -313,11 +315,141 @@ footer{padding:2.5rem 3rem;border-top:1px solid var(--fog);display:flex;justify-
 .flex{display:flex}.gap2{gap:2rem}.gap3{gap:3rem}.items-start{align-items:flex-start}
 code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);background:var(--teal-light);padding:.1rem .3rem;border-radius:3px;}
 
+/* ── SPECULATIVE SECTION ── */
+.speculative-section{background:#0E0C08;border-top:1px solid #2C261E;padding:8rem 0;}
+.spec-eyebrow{display:flex;align-items:center;gap:1rem;font-family:'DM Mono',monospace;font-size:.65rem;color:#4A3C28;letter-spacing:.1em;margin-bottom:2.5rem;}
+.spec-tag{background:#1E1608;border:1px solid #3C2C14;color:#C07840;padding:.2rem .7rem;border-radius:3px;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;flex-shrink:0;}
+.spec-badge{display:inline-block;font-family:"DM Mono",monospace;font-size:.55rem;padding:.12rem .5rem;background:#1E1608;border:1px solid #3C2C14;color:#C07840;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;vertical-align:middle;margin-left:.4rem;}
+.spec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;color:#F5F0E8;line-height:1.05;letter-spacing:-.02em;margin-bottom:1.2rem;}
+.spec-title em{font-style:italic;color:#C07840;}
+.spec-sub{font-size:.95rem;color:#7C7060;max-width:660px;line-height:1.9;margin-bottom:4rem;}
+.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #2C261E;border-radius:10px;overflow:hidden;margin-bottom:4rem;}
+.spec-col{padding:2.5rem;border-right:1px solid #2C261E;}
+.spec-col:last-child{border-right:none;}
+.spec-col-num{font-family:'Cormorant Garamond',serif;font-size:4rem;font-weight:300;color:#2C261E;line-height:.9;margin-bottom:1rem;}
+.spec-col-title{font-weight:500;font-size:.95rem;color:#D0C8B8;margin-bottom:1.2rem;line-height:1.3;}
+.spec-col-body{font-size:.82rem;color:#7C7060;line-height:1.8;display:flex;flex-direction:column;gap:1rem;}
+.spec-col-body strong{color:#A8A098;font-weight:500;}
+.spec-scenario{background:#16120C;border-left:2px solid #3C3020;border-radius:0 6px 6px 0;padding:1rem 1.2rem;margin-top:.5rem;}
+.spec-scenario-future{border-left-color:#C07840;}
+.spec-scenario-title{font-family:'DM Mono',monospace;font-size:.6rem;color:#5C5040;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;}
+.spec-scenario-future .spec-scenario-title{color:#C07840;}
+.spec-scenario-body{font-size:.8rem;color:#7C7060;line-height:1.7;}
+.spec-scenario-future .spec-scenario-body{color:#9C9080;}
+.spec-arch{display:flex;flex-direction:column;gap:.2rem;}
+.spec-arch-layer{padding:.9rem 1rem;border-radius:6px;}
+.spec-al-6{background:#1A3820;border:1px solid #2A5030;}
+.spec-al-5{background:#2A2060;border:1px solid #3A3080;}
+.spec-al-3{background:#1A3040;border:1px solid #2A5060;}
+.spec-al-0{background:#1A1208;border:1px solid #3C2C14;}
+.sal-label{font-family:'DM Mono',monospace;font-size:.6rem;color:#80A890;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;}
+.spec-al-5 .sal-label{color:#9080D0;}
+.spec-al-3 .sal-label{color:#6090B0;}
+.spec-al-0 .sal-label{color:#C07840;}
+.sal-body{font-size:.77rem;color:#7C7060;line-height:1.6;}
+.spec-arch-arrow{text-align:center;font-family:'DM Mono',monospace;font-size:.65rem;color:#3C3020;padding:.1rem;}
+.spec-gossip{display:grid;grid-template-columns:1fr 1fr;gap:3rem;padding:3rem;background:#16120C;border:1px solid #2C261E;border-radius:10px;margin-bottom:2.5rem;}
+.spec-gossip-label{font-family:'DM Mono',monospace;font-size:.6rem;color:#C07840;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem;}
+.spec-gossip-label::before{content:'';width:1.5rem;height:1px;background:#C07840;}
+.spec-gossip-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#E8D8B8;margin-bottom:1rem;line-height:1.2;}
+.spec-gossip-body{font-size:.82rem;color:#7C7060;line-height:1.85;margin-bottom:.9rem;}
+.spec-gossip-body code{font-family:'DM Mono',monospace;font-size:.85em;color:#C07840;background:#1E1608;padding:.1rem .3rem;border-radius:3px;}
+.spec-code-label{font-family:'DM Mono',monospace;font-size:.6rem;color:#5C5040;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem;}
+.spec-code{background:#080604;border:1px solid #2C261E;border-radius:6px;padding:1.4rem 1.6rem;font-family:'DM Mono',monospace;font-size:.75rem;line-height:2;color:#6C6050;overflow-x:auto;}
+.scc{color:#3C3020;}.scf{color:#C07840;}.scv{color:#A0D0A0;}
+.spec-footer-note{padding:1.2rem 1.8rem;background:#16120C;border:1px solid #2C261E;border-radius:6px;font-family:'DM Mono',monospace;font-size:.65rem;color:#4A3C28;display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;line-height:1.7;}
+.spec-disclaimer{color:#7C5030;font-weight:500;letter-spacing:.1em;}
+.spec-link{color:#C07840;text-decoration:none;letter-spacing:.08em;text-transform:uppercase;}
+.spec-link:hover{text-decoration:underline;}
+@media(max-width:960px){.spec-grid{grid-template-columns:1fr;}.spec-gossip{grid-template-columns:1fr;}}
+
+/* ── CONSEQUENCES SECTION ── */
+.consequences{background:#18140F;border-top:1px solid #2C261E;padding:8rem 0;}
+.consequences .sl{color:#C07840;}
+.consequences .sl::before{background:#C07840;}
+.consequences h2.st{color:#F5F0E8;}
+.consequences h2.st em{color:#C07840;}
+.consequences .sb-dark{font-size:1rem;color:#9C9080;max-width:560px;line-height:1.9;}
+
+/* expose cards */
+.expose-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5px;margin-top:4rem;border:1.5px solid #2C261E;border-radius:10px;overflow:hidden;}
+.expose-card{background:#1E1912;position:relative;cursor:pointer;transition:background .2s;}
+.expose-card:hover{background:#241F17;}
+.expose-card.open{background:#201C14;}
+.ec-head{padding:2.5rem 2.5rem 2rem;display:flex;align-items:flex-start;gap:1.4rem;}
+.ec-icon{font-size:2rem;flex-shrink:0;line-height:1;}
+.ec-intro{}
+.ec-stat{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#C07840;margin-bottom:.35rem;}
+.ec-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:#F5F0E8;line-height:1.15;margin-bottom:.5rem;}
+.ec-hook{font-size:.88rem;color:#7C7060;line-height:1.6;}
+.ec-toggle{position:absolute;top:2rem;right:2rem;font-family:'DM Mono',monospace;font-size:.65rem;color:#5C5040;letter-spacing:.08em;transition:color .2s;}
+.expose-card:hover .ec-toggle{color:#C07840;}
+.expose-card.open .ec-toggle::after{content:' ↑';}
+.expose-card:not(.open) .ec-toggle::after{content:' ↓';}
+.ec-body{display:none;padding:0 2.5rem 2.5rem;}
+.expose-card.open .ec-body{display:block;}
+
+/* browser fingerprint visual */
+.fp-table{width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;font-size:.73rem;}
+.fp-table tr{border-bottom:1px solid #2C261E;}
+.fp-table tr:last-child{border-bottom:none;}
+.fp-table td{padding:.55rem .4rem;}
+.fp-key{color:#5C5040;width:40%;}
+.fp-val{color:#A8D0A0;}
+.fp-val.leaked{color:#E8906A;}
+.fp-val.warn{color:#E8C070;}
+.fp-note{font-size:.7rem;color:#5C5040;margin-top:1rem;line-height:1.7;}
+.fp-note a{color:#C07840;text-decoration:none;}
+.fp-note a:hover{text-decoration:underline;}
+
+/* platform log */
+.plat-row{display:flex;align-items:flex-start;gap:1.2rem;padding:1.2rem 0;border-bottom:1px solid #2C261E;}
+.plat-row:last-child{border-bottom:none;}
+.plat-name{font-family:'DM Mono',monospace;font-size:.7rem;color:#C07840;letter-spacing:.08em;width:90px;flex-shrink:0;padding-top:.15rem;}
+.plat-detail{font-size:.83rem;color:#9C9080;line-height:1.65;}
+.plat-detail strong{color:#D0C8B8;font-weight:500;}
+.plat-cite{font-family:'DM Mono',monospace;font-size:.6rem;color:#4A4030;margin-top:.3rem;}
+
+/* incident files */
+.incident-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.incident{background:#16120C;border:1px solid #2C261E;border-top:2px solid #C07840;border-radius:0 0 6px 6px;padding:1.2rem;}
+.incident-tag{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:#C07840;margin-bottom:.6rem;}
+.incident-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:#E8E0D0;margin-bottom:.6rem;line-height:1.3;}
+.incident-body{font-size:.78rem;color:#7C7060;line-height:1.7;}
+.incident-body strong{color:#C8C0B0;font-weight:500;}
+.incident-chain{display:flex;align-items:center;gap:.3rem;flex-wrap:wrap;margin-top:.8rem;}
+.ic-step{font-family:'DM Mono',monospace;font-size:.6rem;padding:.2rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#9C9080;border-radius:3px;}
+.ic-arrow{color:#5C5040;font-size:.7rem;}
+
+/* data broker dossier */
+.dossier-card{background:#16120C;border:1px solid #2C261E;border-radius:6px;overflow:hidden;}
+.dossier-header{background:#1E1912;padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2C261E;}
+.dossier-site{font-family:'DM Mono',monospace;font-size:.7rem;color:#C07840;letter-spacing:.05em;}
+.dossier-price{font-family:'DM Mono',monospace;font-size:.65rem;color:#6C6050;padding:.2rem .6rem;border:1px solid #3C3020;border-radius:3px;}
+.dossier-subject{padding:1.2rem 1.4rem;border-bottom:1px solid #2C261E;}
+.dossier-name{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:#E8E0D0;margin-bottom:.2rem;}
+.dossier-meta{font-family:'DM Mono',monospace;font-size:.65rem;color:#7C7060;}
+.dossier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid #2C261E;}
+.dossier-cell{padding:1rem 1.2rem;border-right:1px solid #2C261E;border-bottom:1px solid #2C261E;}
+.dossier-cell:nth-child(3n){border-right:none;}
+.dossier-cell:nth-last-child(-n+3){border-bottom:none;}
+.dc-label{font-family:'DM Mono',monospace;font-size:.56rem;color:#5C5040;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem;}
+.dc-value{font-size:.8rem;color:#B8B0A0;line-height:1.5;}
+.dc-count{font-family:'DM Mono',monospace;font-size:.65rem;color:#C07840;}
+.dossier-footer{padding:.9rem 1.4rem;background:#16120C;border-top:1px solid #2C261E;font-family:'DM Mono',monospace;font-size:.65rem;color:#5C5040;display:flex;justify-content:space-between;align-items:center;}
+
+@media(max-width:768px){
+  .expose-grid{grid-template-columns:1fr;}
+  .incident-grid{grid-template-columns:1fr;}
+  .dossier-grid{grid-template-columns:1fr 1fr;}
+}
+
 @media(max-width:768px){
   .nav-links{display:none}
   .hero{padding:7rem 1.5rem 4rem}
   .wrap{padding:0 1.5rem}
-  .compare,.usecase-grid,.mm-grid,.chev-panel-inner,.principles,.benefit-strip,.product-hero{grid-template-columns:1fr}
+  .compare,.usecase-grid,.mm-grid,.chev-panel-inner,.principles,.benefit-strip,.product-hero{grid-template-columns:1fr;}
+  .usecase-grid{grid-template-columns:1fr 1fr !important;}
   .chev-item{border-right:none;border-bottom:1px solid var(--fog);}
   .chev-item:last-child{border-bottom:none;}
   .onboard-steps{grid-template-columns:repeat(2,1fr);}
@@ -330,13 +462,13 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-brand">pane /</a>
+  <a href="index.html" class="nav-brand">pane</a>
   <ul class="nav-links">
-    <li><a href="#why">Why</a></li>
-    <li><a href="#how">How</a></li>
-    <li><a href="#usecases">Use cases</a></li>
-    <li><a href="#partners">Partners</a></li>
+    <li><a href="index.html" style="color:var(--ink);">Why it matters</a></li>
+    <li><a href="stack.html">The Stack</a></li>
+    <li><a href="services.html">Services</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
 </nav>
 
@@ -408,6 +540,290 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
         <div class="benefit-title">Know exactly who sold you</div>
         <div class="benefit-body">Every alias is a canary. Unexpected mail isn't just spam — it's a named, timestamped accusation. Your setup becomes a live breach detector.</div>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- CONSEQUENCES SECTION -->
+<div id="consequences" class="consequences">
+  <div class="wrap">
+    <div class="sl">The exposure</div>
+    <h2 class="st">Your digital self<br>is <em>streaking.</em></h2>
+    <p class="sb-dark">Not for thrills. Just the default. Every tab, every signup, every transaction leaves a trail that anyone with $1.99 and five minutes can follow back to your front door.</p>
+
+    <div class="expose-grid reveal mt3">
+
+      <!-- CARD 1: Browser Fingerprint -->
+      <div class="expose-card" onclick="toggleExpose(this)">
+        <span class="ec-toggle">details</span>
+        <div class="ec-head">
+          <div class="ec-icon">🔬</div>
+          <div class="ec-intro">
+            <div class="ec-stat">83.6% of browsers are uniquely identifiable — without cookies</div>
+            <div class="ec-title">Your browser is already talking.</div>
+            <div class="ec-hook">Before you click anything, your browser describes your machine precisely enough to identify you among millions. No cookies. No login. Just HTTP.</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          <table class="fp-table">
+            <tr><td class="fp-key">canvas hash</td><td class="fp-val leaked">d4f8a2c1… unique to your GPU + driver</td></tr>
+            <tr><td class="fp-key">WebGL renderer</td><td class="fp-val leaked">ANGLE (Intel, Mesa Intel HD 620)</td></tr>
+            <tr><td class="fp-key">screen resolution</td><td class="fp-val warn">1440×900 @2x — narrows to ~12% of devices</td></tr>
+            <tr><td class="fp-key">timezone offset</td><td class="fp-val warn">UTC-5 (EST) — eliminates 80% of world</td></tr>
+            <tr><td class="fp-key">installed fonts</td><td class="fp-val leaked">247 enumerated — nearly unique</td></tr>
+            <tr><td class="fp-key">user agent</td><td class="fp-val warn">Chrome/124 macOS 14.4 — locks OS + browser</td></tr>
+            <tr><td class="fp-key">WebRTC local IP</td><td class="fp-val leaked">192.168.1.42 — leaks through most VPNs</td></tr>
+            <tr><td class="fp-key">audio context hash</td><td class="fp-val leaked">hardware signature — survives incognito</td></tr>
+            <tr><td class="fp-key">battery level</td><td class="fp-val warn">0.87, charging: false — correlatable across sites</td></tr>
+            <tr><td class="fp-key">language order</td><td class="fp-val warn">en-US, en, fr — narrows region + background</td></tr>
+          </table>
+          <div class="fp-note">
+            EFF's Cover Your Tracks study: 83.6% of browsers carry a unique fingerprint. Canvas fingerprinting detected on 5.5% of the top 100,000 websites (Princeton Web Transparency &amp; Accountability Project). This fingerprint survives clearing cookies, incognito mode, and most VPN configurations — because it describes your hardware and software stack, not your session.<br><br>
+            Test your own: <a href="https://coveryourtracks.eff.org" target="_blank" rel="noopener">coveryourtracks.eff.org</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: What Platforms Log -->
+      <div class="expose-card" onclick="toggleExpose(this)">
+        <span class="ec-toggle">details</span>
+        <div class="ec-head">
+          <div class="ec-icon">👁</div>
+          <div class="ec-intro">
+            <div class="ec-stat">Documented — not speculated</div>
+            <div class="ec-title">They log things you turned off.</div>
+            <div class="ec-hook">The settings that are supposed to stop tracking often don't. What follows has been confirmed by independent researchers, regulatory proceedings, or the platforms' own documentation.</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          <div class="plat-row">
+            <div class="plat-name">META</div>
+            <div class="plat-detail">
+              <strong>The pixel is on 30%+ of the top 10,000 websites.</strong> Every page view, item viewed, and checkout is sent to Meta with a profile ID — while you're logged out, even if you've never created an account. Turning off "Off-Facebook Activity" stops the data from being used for ad targeting. It does not stop the data from being collected and retained.
+              <div class="plat-cite">Source: Meta Off-Facebook Activity documentation · GDPR enforcement record (2022)</div>
+            </div>
+          </div>
+          <div class="plat-row">
+            <div class="plat-name">GOOGLE</div>
+            <div class="plat-detail">
+              <strong>Location History "paused" still records you.</strong> AP investigation (2018): even with Location History explicitly disabled, Google records location via Web &amp; App Activity — a separate, buried toggle. Restaurants, commutes, and patterns of movement are logged. Google settled with 40 US states for $391M in 2022 over this practice.
+              <div class="plat-cite">Source: Associated Press (Aug 2018) · Google state AG settlement ($391M, Nov 2022)</div>
+            </div>
+          </div>
+          <div class="plat-row">
+            <div class="plat-name">TIKTOK</div>
+            <div class="plat-detail">
+              <strong>The in-app browser injects JavaScript into pages you visit inside TikTok.</strong> Researcher Felix Krause (2022) documented that TikTok's in-app browser adds code capable of monitoring keystrokes, form inputs, and taps on third-party sites — without user awareness. Separately: iOS clipboard access logs showed TikTok reading clipboard contents on every app launch.
+              <div class="plat-cite">Source: Felix Krause, krausefx.com (Aug 2022) · Apple iOS 14 clipboard indicators</div>
+            </div>
+          </div>
+          <div class="plat-row">
+            <div class="plat-name">LINKEDIN</div>
+            <div class="plat-detail">
+              <strong>Email upload reverse lookup.</strong> When any LinkedIn user uploads a contacts file, the platform creates associations between uploaded email addresses and existing profiles — even without direct interaction. If your real email is in anyone's phone, LinkedIn knows you and can surface you to anyone searching that address.
+              <div class="plat-cite">Source: LinkedIn Help Center · Privacy International (2019)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: Doxxing Pipeline -->
+      <div class="expose-card" onclick="toggleExpose(this)">
+        <span class="ec-toggle">details</span>
+        <div class="ec-head">
+          <div class="ec-icon">🎯</div>
+          <div class="ec-intro">
+            <div class="ec-stat">No hacking required</div>
+            <div class="ec-title">15 minutes. $1.99. Your front door.</div>
+            <div class="ec-hook">Doxxing is assembly, not intrusion. Your email, username, profile photo, and voter registration are all legally accessible. Aggregated, they become a precise location fix.</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          <div class="incident-grid">
+            <div class="incident">
+              <div class="incident-tag">Gaming / Streaming</div>
+              <div class="incident-title">The SWATting pipeline</div>
+              <div class="incident-body">
+                A username on a gaming platform is linked to an email via a public breach database. The email is run through Spokeo — a home address returns. The address is verified via county property records (legally public). A fake emergency call is placed to local police. This sequence has been documented in dozens of SWATting incidents since 2014. <strong>Zero hacking. $1.99.</strong>
+              </div>
+              <div class="incident-chain">
+                <span class="ic-step">username</span><span class="ic-arrow">→</span>
+                <span class="ic-step">breach DB</span><span class="ic-arrow">→</span>
+                <span class="ic-step">email</span><span class="ic-arrow">→</span>
+                <span class="ic-step">data broker</span><span class="ic-arrow">→</span>
+                <span class="ic-step">address</span>
+              </div>
+            </div>
+            <div class="incident">
+              <div class="incident-tag">Journalists / Activists</div>
+              <div class="incident-title">The photo + public records match</div>
+              <div class="incident-body">
+                A photo posted to social media retains GPS coordinates in EXIF data. Cross-referenced with a voter registration database (publicly accessible in most US states) by approximate location and name, a precise address is confirmed. Activists and journalists have been targeted this way repeatedly. <strong>Removing metadata before posting is almost never done by default.</strong>
+              </div>
+              <div class="incident-chain">
+                <span class="ic-step">photo EXIF</span><span class="ic-arrow">→</span>
+                <span class="ic-step">GPS coords</span><span class="ic-arrow">→</span>
+                <span class="ic-step">voter roll</span><span class="ic-arrow">→</span>
+                <span class="ic-step">confirmed address</span>
+              </div>
+            </div>
+            <div class="incident">
+              <div class="incident-tag">Anyone / Everyone</div>
+              <div class="incident-title">The public record aggregate</div>
+              <div class="incident-body">
+                Voter registration, property ownership, business filings, court records, and professional licenses are all legally public in the US. None dangerous alone. All together — assembled by a data broker in seconds — they produce a complete dossier: current and past addresses, estimated income, relatives, registered vehicles, political affiliation.
+              </div>
+              <div class="incident-chain">
+                <span class="ic-step">voter roll</span><span class="ic-arrow">+</span>
+                <span class="ic-step">property records</span><span class="ic-arrow">+</span>
+                <span class="ic-step">court filings</span><span class="ic-arrow">→</span>
+                <span class="ic-step">full dossier</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: Data Broker Dossier -->
+      <div class="expose-card" onclick="toggleExpose(this)">
+        <span class="ec-toggle">details</span>
+        <div class="ec-head">
+          <div class="ec-icon">🗂</div>
+          <div class="ec-intro">
+            <div class="ec-stat">Acxiom: 10,000+ data points per American consumer</div>
+            <div class="ec-title">Your file is already for sale.</div>
+            <div class="ec-hook">You don't need to have signed up for anything. Spokeo, BeenVerified, and Intelius will return a detailed result for almost any US resident for under $2. Here's what that looks like.</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          <div class="dossier-card">
+            <div class="dossier-header">
+              <span class="dossier-site">spokeo.com · search result</span>
+              <span class="dossier-price">$0.99/month unlocks full view</span>
+            </div>
+            <div class="dossier-subject">
+              <div class="dossier-name">J██████ E████</div>
+              <div class="dossier-meta">Age 34 · Washington, DC · 3 past addresses · 6 relatives found</div>
+            </div>
+            <div class="dossier-grid">
+              <div class="dossier-cell">
+                <div class="dc-label">Current address</div>
+                <div class="dc-value">████ ██████ St<br>Washington, DC 20009</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Phone numbers</div>
+                <div class="dc-value dc-count">3 found</div>
+                <div class="dc-value" style="font-size:.72rem;color:#5C5040;">mobile · landline · work</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Email addresses</div>
+                <div class="dc-value dc-count">4 found</div>
+                <div class="dc-value" style="font-size:.72rem;color:#5C5040;">gmail · work · icloud · old ISP</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Relatives listed</div>
+                <div class="dc-value">M████ E████, 62<br>K███ E████, 30 · +4 more</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Social profiles</div>
+                <div class="dc-value dc-count">7 found</div>
+                <div class="dc-value" style="font-size:.72rem;color:#5C5040;">LinkedIn · Instagram · Twitter · +4</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Est. home value</div>
+                <div class="dc-value">$███,000<br><span style="font-size:.72rem;color:#5C5040;">purchased ████</span></div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Employer history</div>
+                <div class="dc-value dc-count">5 positions</div>
+                <div class="dc-value" style="font-size:.72rem;color:#5C5040;">most recent: ██████ LLC</div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Political affiliation</div>
+                <div class="dc-value">Registered ████████<br><span style="font-size:.72rem;color:#5C5040;">last voted: ████ general</span></div>
+              </div>
+              <div class="dossier-cell">
+                <div class="dc-label">Vehicles registered</div>
+                <div class="dc-value dc-count">2 found</div>
+                <div class="dc-value" style="font-size:.72rem;color:#5C5040;">████ █████ · ████ ████████</div>
+              </div>
+            </div>
+            <div class="dossier-footer">
+              <span>Sources: public records · credit headers · purchase history · court records · social platforms</span>
+              <span style="color:#C07840;">opt-out requires 127+ individual requests</span>
+            </div>
+          </div>
+          <div class="fp-note" style="margin-top:1rem;">
+            The opt-out process for US data brokers requires submitting removal requests to 127+ individual companies. Most demand you provide the personal information you want removed — to verify your identity. Many re-acquire the data within 90 days from fresh public records sweeps. There is no central opt-out registry.
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 5: Photo & Biometrics -->
+      <div class="expose-card" onclick="toggleExpose(this)" style="grid-column:1/-1;">
+        <span class="ec-toggle">details</span>
+        <div class="ec-head">
+          <div class="ec-icon">🪪</div>
+          <div class="ec-intro">
+            <div class="ec-stat">Clearview AI: 30+ billion photos scraped from the public web</div>
+            <div class="ec-title">Your face is the only identifier that doesn't change when you burn an alias.</div>
+            <div class="ec-hook">Every cloaking technique on this site dissolves if your face links your identities. Facial recognition is real, it's cheap, and it operates on photos you posted years ago. PimEyes lets any person search by face for $29/month.</div>
+          </div>
+        </div>
+        <div class="ec-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:#C07840;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem;">What gets scraped from your photos</div>
+              <table class="fp-table">
+                <tr><td class="fp-key">EXIF GPS</td><td class="fp-val leaked">Precise location, ±3 meters — in every photo from your phone by default</td></tr>
+                <tr><td class="fp-key">device model</td><td class="fp-val leaked">iPhone 14 Pro, serial hash — correlates across uploads to different platforms</td></tr>
+                <tr><td class="fp-key">timestamp</td><td class="fp-val warn">Creation time + timezone — narrows location and routine</td></tr>
+                <tr><td class="fp-key">face geometry</td><td class="fp-val leaked">68-point facial landmark map — persistent across years, lighting, aging</td></tr>
+                <tr><td class="fp-key">background context</td><td class="fp-val warn">Architecture, street signs, reflections in glasses — geolocalizable by AI</td></tr>
+                <tr><td class="fp-key">clothing / accessories</td><td class="fp-val warn">Correlatable across different platform accounts in the same time period</td></tr>
+                <tr><td class="fp-key">social graph cross-link</td><td class="fp-val leaked">Tagged by others — your face appears in their album even if you never posted it</td></tr>
+              </table>
+            </div>
+
+            <div>
+              <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:#C07840;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.8rem;">The threat landscape</div>
+              <div class="plat-row">
+                <div class="plat-name">CLEARVIEW</div>
+                <div class="plat-detail">
+                  <strong>30+ billion photos scraped from Facebook, LinkedIn, Twitter, news sites, court records.</strong> Sold to 3,100+ law enforcement agencies, and via a commercial product, to private companies including landlords and casinos. A 2021 audit found Clearview had been accessed by individual officers without department authorization. You have CCPA opt-out rights — they must delete your faceprint on request.
+                  <div class="plat-cite">Source: BuzzFeed News (Feb 2021) · Vermont AG settlement (2022) · CCPA enforcement</div>
+                </div>
+              </div>
+              <div class="plat-row">
+                <div class="plat-name">PIMEYES</div>
+                <div class="plat-detail">
+                  <strong>Public reverse face search for $29/month.</strong> Upload anyone's photo, get every other photo of them on the public internet. Used by stalkers, private investigators, employers, and anyone willing to pay. They claim it's for self-monitoring. Opt-out available but must be submitted per-face-image.
+                  <div class="plat-cite">Source: NYT Wirecutter analysis (2021) · EFF documentation</div>
+                </div>
+              </div>
+              <div style="margin-top:1rem;padding:.9rem 1rem;background:#1E1608;border-radius:6px;">
+                <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:#C07840;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.6rem;">What you can actually do</div>
+                <div style="font-size:.78rem;color:#9C9080;line-height:1.75;">
+                  <strong style="color:#D0C8B8;">Fawkes</strong> (sandlab.cs.uchicago.edu/fawkes) — adversarial pixel-level noise that causes FR systems to misidentify you. Free, runs locally, invisible to human eyes.<br><br>
+                  <strong style="color:#D0C8B8;">MAT2 / ExifTool</strong> — strip GPS, device model, timestamps before posting. Non-optional.<br><br>
+                  <strong style="color:#D0C8B8;">Background blur</strong> — rembg, any background blur app. Background analysis is real.<br><br>
+                  <strong style="color:#D0C8B8;">Compartmentalise your face</strong> — alias-identity accounts: no face photo, or a consistently different one. Your face is the one identifier that survives burning everything else.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div><!-- /expose-grid -->
+
+    <div style="margin-top:2.5rem;padding:1.4rem 2rem;background:#1E1912;border-radius:6px;border:1px solid #2C261E;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;">
+      <p style="font-size:.87rem;color:#7C7060;max-width:520px;line-height:1.75;">pane doesn't erase your public records. It keeps new data — your real email, real card, real browsing patterns — from entering the system in the first place. Limiting what can be found going forward.</p>
+      <a href="stack.html" style="font-family:'DM Mono',monospace;font-size:.72rem;color:#C07840;text-decoration:none;letter-spacing:.1em;text-transform:uppercase;padding:.7rem 1.4rem;border:1px solid #3C2818;border-radius:3px;white-space:nowrap;flex-shrink:0;background:rgba(192,120,64,.07);transition:background .2s;" onmouseover="this.style.background='rgba(192,120,64,.18)'" onmouseout="this.style.background='rgba(192,120,64,.07)'">See the full stack →</a>
     </div>
   </div>
 </div>
@@ -535,8 +951,8 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 <div id="usecases" class="section">
   <div class="wrap">
     <div class="sl">Use cases</div>
-    <h2 class="st">Three situations,<br>one <em>solution</em></h2>
-    <p class="sb">You don't need to be a security expert. These are the three most common ways people get their data harvested — and how pane stops each one.</p>
+    <h2 class="st">Four situations,<br>one <em>solution</em></h2>
+    <p class="sb">You don't need to be a security expert. These are the four most common ways people lose data control — and how pane stops each one.</p>
 
     <div class="usecase-grid">
       <div class="uc uc-1 reveal">
@@ -603,6 +1019,28 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
           </div>
         </div>
       </div>
+
+      <div class="uc uc-4 reveal d3">
+        <div class="uc-header">
+          <span class="uc-emoji">🧾</span>
+          <div class="uc-title">Trying before buying</div>
+          <div class="uc-subtitle">Software demos, freemium tools, paywalled content</div>
+        </div>
+        <div class="uc-body">
+          <div class="uc-scenario">A new AI tool looks interesting. The free plan requires signing up. You give them your real email and a real card "just in case you upgrade." You don't upgrade. They charge you anyway at month 2, you never noticed, and your email is now on three marketing lists you didn't ask for.</div>
+          <div class="uc-outcomes">
+            <div class="uo"><span class="uo-check">✓</span><span>$0 virtual card — they cannot charge you when the trial ends</span></div>
+            <div class="uo"><span class="uo-check">✓</span><span>Alias email means their marketing doesn't follow you anywhere</span></div>
+            <div class="uo"><span class="uo-check">✓</span><span>Decide to pay? Fund the card. Don't? It sits at $0 forever.</span></div>
+            <div class="uo"><span class="uo-check">✓</span><span>No card dispute, no "how did I end up on this list," no cleanup</span></div>
+          </div>
+          <div class="uc-services">
+            <span class="svc-badge svc-privacy"><span class="svc-dot"></span>Privacy.com</span>
+            <span class="svc-badge svc-addy"><span class="svc-dot"></span>Addy.io</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Inbox mockup -->
@@ -836,13 +1274,64 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
   </div>
 </div>
 
+<!-- ADOPTION ANGLES / WHY IT SPREADS -->
+<div class="band section" id="why-it-spreads" style="background:var(--warm);border-top:1px solid var(--fog);border-bottom:1px solid var(--fog);">
+  <div class="wrap">
+    <div class="sl">The real argument</div>
+    <h2 class="st">Why people<br>actually <em>switch</em></h2>
+    <p class="sb">Privacy arguments convince privacy people. These are the arguments that convince everyone else.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem;">
+
+      <!-- DeleteMe contrast -->
+      <div class="reveal" style="background:white;border-radius:10px;border:1px solid var(--fog);overflow:hidden;">
+        <div style="padding:1.4rem 1.8rem 1rem;border-bottom:1px solid var(--warm);">
+          <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;">vs. the cleanup industry</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--ink);line-height:1.2;">They mop. We close the tap.</div>
+        </div>
+        <div style="padding:1.4rem 1.8rem;font-size:.83rem;color:var(--ink-soft);line-height:1.8;">
+          <p>DeleteMe and Optery charge $129–$199/year to submit opt-out requests to data brokers on your behalf. They don't prevent collection — they chase data after it's already been sold, resold, and re-sold. Broker re-acquisition typically takes 60–90 days. It's a subscription to a treadmill.</p>
+          <p style="margin-top:.8rem;">pane is structural prevention: the real email, the real card, and the real browsing fingerprint never enter the system in the first place. There's nothing to remove because it was never there.</p>
+          <div style="margin-top:1rem;padding:.8rem 1rem;background:var(--amber-light);border-radius:6px;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--amber);">DeleteMe: $129/yr · removes old data · re-acquired in 90 days<br>pane: prevents new data · tap closed · no treadmill</div>
+        </div>
+      </div>
+
+      <!-- Canary as research tool -->
+      <div class="reveal d1" style="background:white;border-radius:10px;border:1px solid var(--fog);overflow:hidden;">
+        <div style="padding:1.4rem 1.8rem 1rem;border-bottom:1px solid var(--warm);">
+          <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;">For researchers & journalists</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--ink);line-height:1.2;">Your alias is a named, timestamped accusation.</div>
+        </div>
+        <div style="padding:1.4rem 1.8rem;font-size:.83rem;color:var(--ink-soft);line-height:1.8;">
+          <p>Security researchers and investigative journalists already do this manually: plant a unique email at a company suspected of selling data, then track where it surfaces. It's painstaking, manual, and doesn't scale.</p>
+          <p style="margin-top:.8rem;">pane makes it trivially automatable. Enroll with a unique alias at any company you want to audit. Every unexpected message that arrives is timestamped evidence. The alias name is the source. If it appears somewhere you didn't authorize, you have a documented, dated provenance chain — suitable for a story, a complaint, or a lawsuit.</p>
+          <div style="margin-top:1rem;padding:.8rem 1rem;background:var(--teal-light);border-radius:6px;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--teal);">alias: audit-acme-2024@pane.alias<br>received: pharmaadvertiser.com · 6:14am<br>→ acme sold this alias · evidence logged</div>
+        </div>
+      </div>
+
+      <!-- Normalization flywheel -->
+      <div class="reveal d2" style="background:white;border-radius:10px;border:1px solid var(--fog);overflow:hidden;">
+        <div style="padding:1.4rem 1.8rem 1rem;border-bottom:1px solid var(--warm);">
+          <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--sage);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;">Network effect</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--ink);line-height:1.2;">The more people use aliases, the harder they are to block.</div>
+        </div>
+        <div style="padding:1.4rem 1.8rem;font-size:.83rem;color:var(--ink-soft);line-height:1.8;">
+          <p>Alias emails look suspicious today because they're rare. Some platforms have started rejecting common alias domains. This is the current state — and it's also the counter-argument to itself.</p>
+          <p style="margin-top:.8rem;">As population-scale adoption grows, blocking alias emails becomes economically irrational. You can't block 30% of signups. The ratio inverts: platforms that reject alias emails exclude more users than they flag. Most privacy tools fight a rearguard action. Alias email adoption is the offensive play — the more common it becomes, the less distinguishable it is, and the less reason anyone has to flag it.</p>
+          <div style="margin-top:1rem;padding:.8rem 1rem;background:var(--sage-light);border-radius:6px;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--sage);">0.1% usage → detectable, blockable<br>10% usage → blockable, but costly<br>30% usage → blocking = user exclusion<br>majority usage → it's just email</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- CHEVRON ROADMAP -->
 <div id="roadmap" class="section">
   <div class="wrap">
     <div class="sl">Roadmap</div>
-    <h2 class="st">Now · Next · <em>Later</em></h2>
-    <p class="sb">Click any phase to see the technical detail — what we're solving, how we solve it, and which services make it possible.</p>
-
+    <h2 class="st">Now · Next · Later · Horizon · <em>Infrastructure</em></h2>
+    <p class="sb">Five phases. Click to expand. <span class="spec-tag" style="vertical-align:middle;margin-left:.4rem;">speculation</span> tags mark ideas ahead of current build.</p>
     <div class="chevron-roadmap">
 
       <!-- NOW -->
@@ -986,6 +1475,129 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 
     </div>
 
+
+      <!-- HORIZON -->
+      <div class="chevron-row" style="margin-top:.6rem;">
+        <button class="chevron-btn" style="--chev-color:#C07840;" onclick="toggleChev(this,'panel-horizon')">
+          <div class="chevron-shape" style="background:linear-gradient(135deg,#1E160C,#281E10);">
+            <div class="chevron-num" style="color:#C07840;opacity:.5;">04</div>
+            <div class="chevron-text">
+              <div class="chevron-label" style="color:#C07840;">Horizon · Agent era <span class="spec-badge">speculation</span></div>
+              <div class="chevron-title" style="color:#F5E8D0;">The agent runs the envelope</div>
+              <div class="chevron-subtitle" style="color:#7C6840;">Background agents monitor, rotate, shield — you set the policy once, they execute indefinitely</div>
+            </div>
+            <span class="chevron-caret" style="color:#7C6840;">▶</span>
+          </div>
+        </button>
+      </div>
+      <div class="chev-panel" id="panel-horizon" style="background:#16120C;border-color:#2C261E;">
+        <div class="chev-panel-inner" style="grid-template-columns:repeat(3,1fr);">
+          <div class="chev-item" style="border-color:#2C261E;">
+            <div class="chev-need" style="color:#7C6840;">Agent capability</div>
+            <div class="chev-problem" style="color:#E8D8B8;">Breach monitoring shouldn't need you</div>
+            <div class="chev-solution" style="color:#9C9080;">A persistent background agent watches all active aliases for anomalous mail patterns — unexpected sender domains, sudden volume spikes, third-party promotional lists. When it detects a probable sale, it files the incident, queues a burn recommendation, and notifies you. No manual checking. Runs on any platform that executes code on a schedule.</div>
+            <div class="chev-services" style="margin-top:.8rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">Addy.io API · scheduled</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">pane.watch()</span>
+            </div>
+          </div>
+          <div class="chev-item" style="border-color:#2C261E;">
+            <div class="chev-need" style="color:#7C6840;">Agent capability</div>
+            <div class="chev-problem" style="color:#E8D8B8;">Agents on hosted platforms still need clean identities</div>
+            <div class="chev-solution" style="color:#9C9080;">When deploying an agent to Modal, Fly.io, Railway, or any managed compute platform: the agent provisions its own alias email and Monero-funded account before first run. It never knows your real identity. Rotating exit IPs and fresh browser contexts on each invocation mean each agent run looks like a different user from a different location. The agent's operational identity is pane-managed, not yours.</div>
+            <div class="chev-services" style="margin-top:.8rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">Mullvad API · rotating</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">Monero · agent accounts</span>
+            </div>
+          </div>
+          <div class="chev-item" style="border-color:#2C261E;">
+            <div class="chev-need" style="color:#7C6840;">Agent capability</div>
+            <div class="chev-problem" style="color:#E8D8B8;">The journalist in an adversarial jurisdiction</div>
+            <div class="chev-solution" style="color:#9C9080;">A reporter filing from a country that blocks Western services needs more than a VPN. A pane agent — running on clean compute outside their jurisdiction — acts as a proxy intelligence layer: drafting, submitting, and managing accounts entirely separate from the journalist's personal machine, IP, and identity. The journalist interacts only via Signal or a .onion endpoint. Their personal device never touches the workflow.</div>
+            <div class="chev-services" style="margin-top:.8rem;">
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">Signal · command channel</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;background:#1E1912;border:1px solid #3C3020;color:#C07840;border-radius:3px;">.onion · agent endpoint</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- STAGE 05: INFRASTRUCTURE -->
+      <div class="chevron-row" style="margin-top:.6rem;">
+        <button class="chevron-btn" onclick="toggleChev(this,'panel-infra')">
+          <div class="chevron-shape" style="background:linear-gradient(135deg,#0A0808,#120E0A);">
+            <div class="chevron-num" style="color:#8B3A3A;opacity:.6;">05</div>
+            <div class="chevron-text">
+              <div class="chevron-label" style="color:#C04040;">Infrastructure <span class="spec-badge">speculation</span></div>
+              <div class="chevron-title" style="color:#F0E0D8;">If we had everything — what do we build?</div>
+              <div class="chevron-subtitle" style="color:#7C5848;">Browser extension · Legal arsenal · Data broker sweep · Physical layer · Open protocol · Reputation mesh</div>
+            </div>
+            <span class="chevron-caret" style="color:#7C5848;">▶</span>
+          </div>
+        </button>
+      </div>
+      <div class="chev-panel" id="panel-infra" style="background:#100C0A;border-color:#281A18;">
+        <div style="padding:1rem 2rem;background:#140E0C;border-bottom:1px solid #281A18;display:flex;align-items:center;gap:.8rem;">
+          <span class="spec-badge" style="flex-shrink:0;">speculation</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.65rem;color:#6C4840;line-height:1.5;">This is the big swing. None of this exists. Some of it probably should. Treat it as a design brief.</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+
+          <!-- Row 1 -->
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Browser</div>
+            <div class="chev-problem" style="color:#F0D8D0;">A browser extension that intercepts every signup, everywhere</div>
+            <div class="chev-solution" style="color:#9C8880;">You browse normally. When your cursor hovers over a signup form, pane activates silently: it provisions alias + card, injects the credentials, submits — all before you've typed a character. Works on any site. No CLI. No thought required. The privacy layer becomes invisible infrastructure, like HTTPS. Privacy.com's browser extension does half this — pane's would do all of it, for all fields, across all contexts.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Legal</div>
+            <div class="chev-problem" style="color:#F0D8D0;">Automated legal arsenal — CCPA, GDPR, and state AGs on a schedule</div>
+            <div class="chev-solution" style="color:#9C8880;">Every US state with a consumer privacy law has a complaint mechanism. GDPR has 72-hour mandatory breach notification. pane generates a legally-formatted deletion request the moment a breach is detected, fires it to the company, and starts a 30-day clock. At day 31: automated state AG complaint, pre-formatted. At day 60: escalation to consumer protection counsel network. This is the difference between opt-out theater and opt-out enforcement. Reference: <a href="https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List" target="_blank" rel="noopener" style="color:#C07840;">yaelwrites / Big-Ass-Data-Broker-Opt-Out-List</a> — 200+ brokers with individual opt-out procedures, automatable.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Data brokers</div>
+            <div class="chev-problem" style="color:#F0D8D0;">Continuous sweep — your dossier shrinks instead of grows</div>
+            <div class="chev-solution" style="color:#9C8880;">A background agent runs monthly sweeps of 127+ data broker databases using your known identifiers. When it finds you, it auto-submits removal. When the company re-acquires you within 90 days (they will), it re-files. Every non-compliance is logged with timestamp and escalated. DeleteMe charges $129/year to do this manually, sporadically, with no legal escalation. pane does it continuously, automatically, with an enforcement pipeline. The goal isn't privacy perfection — it's making you economically uninteresting to maintain.</div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Identity gatekeepers</div>
+            <div class="chev-problem" style="color:#F0D8D0;">Persona, Jumio, Onfido — the identity verification trap</div>
+            <div class="chev-solution" style="color:#9C8880;">Platforms like Airbnb, Coinbase, and gig economy apps have outsourced identity verification to companies that collect government IDs, selfies, and biometric data as a condition of service. Persona alone has processed hundreds of millions of verifications. You can't opt out of the platform without opting into the data collector. pane's playbook here: (1) Know CCPA §1798.105 — you have deletion rights even from Persona, Jumio, Onfido, submit after every platform use. (2) Use a P.O. box for address fields wherever legally accepted. (3) Document every KYC interaction — date, platform, which vendor — the paper trail matters if a breach occurs. (4) For the agent-era: a pane agent that automatically fires CCPA deletion to every KYC vendor associated with platforms you've used, on a schedule, with non-compliance escalation to the CPPA and relevant state AG.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Physical</div>
+            <div class="chev-problem" style="color:#F0D8D0;">The physical layer — mail, address, carrier-grade phone</div>
+            <div class="chev-solution" style="color:#9C8880;">The digital envelope breaks down the moment a company demands a physical address or a carrier-verified phone number. pane Infrastructure tier: partnership with USPS-compliant mail forwarding services (Earth Class Mail, iPostal1) to provision physical PO box equivalents on demand. Carrier-grade US phone numbers via eSIM provisioning, accepted by platforms that reject VOIP. Physical intercept: incoming mail is scanned, digitized, forwarded to your real address, original shredded. The physical world gets an alias too.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;border-bottom:1px solid #281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Collective intelligence</div>
+            <div class="chev-problem" style="color:#F0D8D0;">The burn leaderboard — surveillance capitalism inverted</div>
+            <div class="chev-solution" style="color:#9C8880;">Every alias a pane user burns is a signal. In aggregate, burn events are a real-time data sale detection system. Proposed: an opt-in public burn ledger — anonymized, aggregated, showing which services generated the most burn events in the last 30 days with confidence scores. No individual data. Just: "1,247 pane users burned their alias from Newsletter X this month. Confidence: 91% — probable data sale event." This turns every user's burn into collective accountability infrastructure. The companies being burned start showing up on a leaderboard. That leaderboard gets written about.</div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="chev-item" style="border-color:#281A18;border-right:none;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Protocol</div>
+            <div class="chev-problem" style="color:#F0D8D0;">pane becomes a standard, not a product</div>
+            <div class="chev-solution" style="color:#9C8880;">Open specification: any AI assistant, browser, app, or agent that implements the pane protocol can provision aliases, cards, and contexts with the same commands. Like OAuth — you don't run your own OAuth server, but you speak the protocol. A pane-compatible signup means: alias provisioned, card provisioned, context saved, enrolled. Any pane-compatible agent handles it. The normalization flywheel: as adoption grows, alias emails become less detectable and less rejectable. Flagging alias emails becomes whack-a-mole against a population-scale deployment. The threat to the surveillance model is structural, not individual.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;border-right:none;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: Institutional</div>
+            <div class="chev-problem" style="color:#F0D8D0;">Managed pane for newsrooms, law firms, human rights orgs</div>
+            <div class="chev-solution" style="color:#9C8880;">Individual privacy is tractable. Institutional privacy is an entirely different problem — reporters at the same newsroom whose shared infrastructure creates correlated fingerprints, lawyers managing whistleblower communications who need provably clean channels, activists whose org membership is itself the target. pane Infrastructure: managed multi-user instances with organizational context isolation, auditable compartments per case, legal hold capabilities, and dedicated operational security consultation. Priced per org, not per user. The organizations who understand this problem best — CPJ, EFF, Freedom of the Press Foundation — are also the credibility infrastructure that drives adoption elsewhere.</div>
+          </div>
+          <div class="chev-item" style="border-color:#281A18;">
+            <div class="chev-need" style="color:#8B3A3A;">Layer: The biggest swing</div>
+            <div class="chev-problem" style="color:#F0D8D0;">A privacy rights litigation fund, seeded by burn data</div>
+            <div class="chev-solution" style="color:#9C8880;">The burn leaderboard generates the evidence. The legal arsenal generates the filings. Infrastructure tier closes the loop: a portion of pane subscription revenue seeds a privacy litigation fund that pursues class action against the worst-offending data sellers. Users who burned an alias from a company that subsequently faces a class action are automatically included as potential plaintiffs — their documented, timestamped alias burn is the evidence chain. pane becomes not just a privacy tool but the data collection infrastructure for the legal enforcement of privacy rights. The companies pane users burn most frequently become the targets. The litigation fund closes the loop.</div>
+          </div>
+
+        </div>
+      </div>
+
     <!-- CLI demo -->
     <div class="mt4 reveal">
       <div class="cli-mock">
@@ -999,7 +1611,7 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 <span class="cp">$</span> <span class="cc">pane enroll notion.so</span>
 <span class="co">  → stripping tracking params from URL</span>
 <span class="co">  → spinning alias [Addy.io]...</span>
-<span class="cs">  ✓ notion-x7k@pane.alias created</span>
+<span class="cs">  ✓ <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90feffe4f9fffebde8a7fbd0e0f1fef5bef1fcf9f1e3">[email&#160;protected]</a> created</span>
 <span class="co">  → creating virtual card [Privacy.com] ($0 limit)...</span>
 <span class="cs">  ✓ card #4242 · Notion context saved</span>
 <span class="co">  → launching stealth browser [Playwright]...</span>
@@ -1019,6 +1631,118 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- SPECULATIVE FUTURE SECTION -->
+<div class="speculative-section">
+  <div class="wrap">
+    <div class="spec-eyebrow">
+      <span class="spec-tag">Speculative fiction</span>
+      This is not a product announcement. It is a thought experiment about where this goes.
+    </div>
+    <h2 class="spec-title">What if there is no<br><em>MCP</em>?</h2>
+    <p class="spec-sub">pane today is an MCP server suite — it runs because your AI assistant calls it. But the privacy problem doesn't go away when the assistant isn't available. What does pane look like when it runs without a host, without a central server, without any persistent infrastructure that can be subpoenaed or shut down?</p>
+
+    <div class="spec-grid">
+
+      <!-- Column 1: The Protocol -->
+      <div class="spec-col">
+        <div class="spec-col-num">I</div>
+        <div class="spec-col-title">pane becomes a protocol, not a product</div>
+        <div class="spec-col-body">
+          <p>In the current architecture, pane is software you run that calls APIs. In the agent-centric future, pane is a <strong>set of signed instructions</strong> that any compliant agent can execute — regardless of platform, regardless of who made the agent.</p>
+          <p>Think of it like HTTP: no single company owns HTTP, but every browser speaks it. A pane-compatible agent knows how to create an alias, provision a card, rotate an exit node, and report breach signals — because those operations are specified in an open protocol that any agent implementation can follow.</p>
+          <p>The result: a pane-compatible agent running on Modal, on your Raspberry Pi, in a Cloudflare Worker, or inside a Tails session — they all interoperate. No central server. No vendor lock-in. No single point that can be compelled to hand over your data.</p>
+        </div>
+      </div>
+
+      <!-- Column 2: The Journalist -->
+      <div class="spec-col">
+        <div class="spec-col-num">II</div>
+        <div class="spec-col-title">The journalist workflow, agent-native</div>
+        <div class="spec-col-body">
+          <p>A reporter in an adversarial jurisdiction wants to file a story using a US-based publication platform. Their country blocks the platform. Their government monitors internet traffic at the ISP level. Their personal device has been inspected at the border.</p>
+          <div class="spec-scenario">
+            <div class="spec-scenario-title">Current world — fragile</div>
+            <div class="spec-scenario-body">They install a VPN. The VPN provider has a legal presence accessible by local law. They create an account with their real email for the VPN. They file the story from their personal machine. Every step creates a record: VPN connection log, publication account, IP metadata at time of filing.</div>
+          </div>
+          <div class="spec-scenario spec-scenario-future">
+            <div class="spec-scenario-title">Agent-native world — structurally different</div>
+            <div class="spec-scenario-body">They send a message to a pane agent endpoint via Signal — a channel that's already on their phone and trusted. The agent (running on compute outside their jurisdiction) holds a clean alias identity for the journalist, provisioned with Monero, with its own VPN context and rotating exit nodes. The journalist dictates the story. The agent publishes it. No personal IP, no real email, no local device ever touches the filing workflow. The journalist's phone just sent a Signal message.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 3: The Architecture -->
+      <div class="spec-col">
+        <div class="spec-col-num">III</div>
+        <div class="spec-col-title">What the architecture looks like</div>
+        <div class="spec-col-body">
+          <div class="spec-arch">
+            <div class="spec-arch-layer spec-al-6">
+              <div class="sal-label">You</div>
+              <div class="sal-body">Signal message or .onion form. You issue an intent: "publish this draft." Nothing more. Your device never touches the destination platform.</div>
+            </div>
+            <div class="spec-arch-arrow">↓ encrypted intent</div>
+            <div class="spec-arch-layer spec-al-5">
+              <div class="sal-label">Command agent</div>
+              <div class="sal-body">Receives intent via Signal or .onion. Parses the task. Looks up the correct pane context for this publication. Sends execution instructions to the execution agent. No logs retained.</div>
+            </div>
+            <div class="spec-arch-arrow">↓ signed task envelope</div>
+            <div class="spec-arch-layer spec-al-3">
+              <div class="sal-label">Execution agent</div>
+              <div class="sal-body">Spins an ephemeral container. Loads the pane context (alias, card, identity seed). Routes through Tor exit. Executes the task: publish, verify, confirm. Burns the container. Reports back via the command agent.</div>
+            </div>
+            <div class="spec-arch-arrow">↓ result only, no metadata</div>
+            <div class="spec-arch-layer spec-al-0">
+              <div class="sal-label">You receive</div>
+              <div class="sal-body">A confirmation. No URL to your account, no login tokens, no persistent session on any device you own. The agent managed the account. You hold the intent log, signed.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /spec-grid -->
+
+    <!-- The gossip layer -->
+    <div class="spec-gossip">
+      <div class="spec-gossip-left">
+        <div class="spec-gossip-label">Speculative / 2027–2030</div>
+        <div class="spec-gossip-title">Breach intelligence without a central authority</div>
+        <p class="spec-gossip-body">In the current model, breach detection is centralised: HaveIBeenPwned, Firefox Monitor, your alias service's anomaly flags. These work because someone is watching all the traffic. But a centralised watcher is itself a surveillance surface.</p>
+        <p class="spec-gossip-body">The speculative alternative: a gossip protocol between pane agents. When your agent detects that alias <code>notion-x7k@</code> has received mail from an unexpected domain, it publishes an anonymised breach signal to a shared reputation mesh — not the alias itself, but a cryptographic commitment to a pattern. Other agents can verify the pattern without learning the alias. The mesh builds collective breach intelligence without any central party ever seeing your aliases.</p>
+        <p class="spec-gossip-body">This is conceptually similar to how Certificate Transparency logs work — public, append-only, verifiable, but revealing only aggregate patterns, not individual identities. Nobody knows what you signed up for. Everybody knows which services sell data.</p>
+      </div>
+      <div class="spec-gossip-right">
+        <div class="spec-code-label">pseudocode / speculative</div>
+        <div class="spec-code">
+<span class="scc"># agent detects breach signal</span>
+<span class="scf">on</span> alias_receives_unexpected_mail(<span class="scv">alias</span>, <span class="scv">sender</span>):
+  signal = <span class="scf">anonymize</span>({
+    pattern: <span class="scf">hash</span>(<span class="scv">sender</span>.domain),
+    context: <span class="scf">hash</span>(<span class="scv">alias</span>.service),
+    confidence: <span class="scv">0.87</span>,
+  })
+  <span class="scf">broadcast</span>(signal, peers=<span class="scv">reputation_mesh</span>)
+  <span class="scc"># other agents receive anonymised signal</span>
+  <span class="scc"># no alias visible, no identity revealed</span>
+  <span class="scc"># but: notion-x7k pattern matches known</span>
+  <span class="scc"># sale event → confidence: 0.91</span>
+<br>
+<span class="scc"># your agent receives confirmation</span>
+<span class="scf">pane.notify</span>(<span class="scv">context</span>=<span class="scv">"notion"</span>,
+  message=<span class="scv">"sale confirmed by mesh"</span>,
+  action=<span class="scv">"burn?"</span>)
+        </div>
+      </div>
+    </div>
+
+    <div class="spec-footer-note">
+      <span class="spec-disclaimer">FICTION ·</span> None of this exists yet. The gossip protocol, the command/execution agent split, the journalist Signal workflow — these are design directions, not commitments. What exists today is in the roadmap above. What you're reading now is what we're aiming toward.
+      <span style="margin-left:1.5rem;"><a href="stack.html" class="spec-link">See the current stack →</a></span>
+    </div>
+
   </div>
 </div>
 
@@ -1049,7 +1773,7 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 <span class="co">you:  "sign me up for that new AI writing tool"</span>
 <br>
 <span class="cp">pane.enroll("typefully.com")</span>
-<span class="cs">  ✓ alias: typefully-k8m@pane.alias</span>
+<span class="cs">  ✓ alias: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4a3e333a2f2c3f262633672172270a3a2b242f642b26232b39">[email&#160;protected]</a></span>
 <span class="cs">  ✓ card: #9182 · $0 limit · context saved</span>
 <span class="cs">  ✓ enrolled as Jordan Ellis</span>
 <br>
@@ -1057,7 +1781,7 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
 <br>
 <span class="cp">pane.check_inbox("typefully")</span>
 <span class="cs">  ✓ 1 message — welcome email</span>
-<span class="co">    from: team@typefully.com · images: proxied</span>
+<span class="co">    from: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="631706020e23171a130605160f0f1a4d000c0e">[email&#160;protected]</a> · images: proxied</span>
 <br>
 <span class="co">you:  "I don't like it, cancel everything"</span>
 <br>
@@ -1097,34 +1821,80 @@ code{font-family:'DM Mono',monospace;font-size:.82em;color:var(--teal);backgroun
   </div>
 </div>
 
+<!-- CLOSING VISION -->
+<div style="background:#0A0806;padding:10rem 0 9rem;text-align:center;border-top:1px solid #1A1410;position:relative;overflow:hidden;">
+  <!-- Background watermark -->
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;user-select:none;opacity:.025;">
+    <span style="font-family:'Cormorant Garamond',serif;font-size:clamp(8rem,20vw,22rem);font-weight:300;color:#F5F0E8;white-space:nowrap;letter-spacing:-.03em;">present</span>
+  </div>
+
+  <div style="position:relative;max-width:780px;margin:0 auto;padding:0 2rem;">
+    <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:#4A3C28;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3rem;">What we're building toward</div>
+
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,5.5vw,5rem);font-weight:300;color:#F5F0E8;line-height:1.07;letter-spacing:-.025em;margin-bottom:2.5rem;">
+      You walk into a restaurant.<br>
+      <em style="font-style:italic;color:#C07840;">You just have dinner.</em>
+    </h2>
+
+    <p style="font-size:1rem;color:#7C7060;line-height:2;max-width:600px;margin:0 auto 2rem;">
+      No loyalty card scanning your purchase history. No app demanding location access to show you the menu. No payment processor building a profile from the fact that you eat here on Tuesdays. No face matched to a database while you wait for your table.
+    </p>
+    <p style="font-size:1rem;color:#7C7060;line-height:2;max-width:600px;margin:0 auto 3rem;">
+      You go to the grocery store. You buy things. You go home. The experience is the experience — not a data collection event with a transaction attached. You're present with the people you're with, not shadowed by a profile being assembled in real time about where you go, what you buy, how often, with whom.
+    </p>
+
+    <div style="width:3rem;height:1px;background:#3C3020;margin:0 auto 3rem;"></div>
+
+    <p style="font-size:.95rem;color:#9C9080;line-height:1.9;max-width:580px;margin:0 auto 3.5rem;">
+      This is not a surveillance-free fantasy. It's the baseline that existed twenty years ago, that we surrendered incrementally, trade by trade, signup by signup, each one reasonable in isolation. pane doesn't promise to restore it completely. It promises to stop the bleeding — one alias, one card, one context at a time — until the infrastructure catches up with the intention.
+    </p>
+
+    <a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener"
+       style="display:inline-block;font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:#F5F0E8;background:transparent;border:1px solid #4A3C28;padding:1rem 2.2rem;border-radius:4px;text-decoration:none;transition:border-color .2s,color .2s;"
+       onmouseover="this.style.borderColor='#C07840';this.style.color='#C07840';"
+       onmouseout="this.style.borderColor='#4A3C28';this.style.color='#F5F0E8';">
+      Start here → GitHub
+    </a>
+  </div>
+</div>
+
 <footer>
   <span class="ft-brand">pane / tinted windows</span>
+  <div style="display:flex;gap:2rem;align-items:center;">
+    <a href="stack.html" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">The Stack</a>
+    <a href="services.html" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Services</a>
+    <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub ↗</a>
+  </div>
   <span class="ft-note">Not hiding. Just not waving.</span>
 </footer>
 
 <script>
 // Scroll reveal
 const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
-},{threshold:0.08,rootMargin:'0px 0px -20px 0px'});
-document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
+},{threshold:0.08, rootMargin:'0px 0px -20px 0px'});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-// Chevron toggle
+// Expose card toggle (accordion)
+function toggleExpose(card) {
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.expose-card').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+// Chevron toggle (accordion)
 function toggleChev(btn, panelId) {
   const panel = document.getElementById(panelId);
   const isOpen = panel.classList.contains('open');
-  // Close all
-  document.querySelectorAll('.chev-panel').forEach(p=>p.classList.remove('open'));
-  document.querySelectorAll('.chevron-btn').forEach(b=>b.classList.remove('active'));
-  // Open this one if it was closed
-  if(!isOpen){
+  // Close all panels and deactivate all buttons
+  document.querySelectorAll('.chev-panel').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.chevron-btn').forEach(b => b.classList.remove('active'));
+  // Open clicked one if it was closed
+  if (!isOpen) {
     panel.classList.add('open');
     btn.classList.add('active');
   }
 }
-
-// Open NOW by default
-document.querySelector('.chev-now').classList.add('active');
 </script>
 </body>
 </html>

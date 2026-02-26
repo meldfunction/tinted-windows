@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pane / full-stack map — Pick your tint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:  #FAF8F3;
+  --linen:  #F2EDE3;
+  --warm:   #E8E1D4;
+  --fog:    #D6CEBC;
+  --stone:  #B0A898;
+  --ink:    #26211C;
+  --ink-soft:#504840;
+  --ink-faint:#988880;
+  --teal:   #2E8B7A;
+  --teal-light: #D8EFEB;
+  --amber:  #C07040;
+  --amber-light: #FAF0E4;
+  --sage:   #5A8A58;
+  --sage-light: #E4F0E4;
+  --lilac:  #6050B0;
+  --lilac-light: #EAE6F4;
+  --blue:   #3060C0;
+  --blue-light: #E0EAFC;
+  --rose:   #A84060;
+  --rose-light: #F4E4EC;
+  --docker: #1D63ED;
+  --docker-light: #E0ECFF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(250,248,243,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--fog);padding:.9rem 2.5rem;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--teal);text-decoration:none;letter-spacing:.05em;}
+.nav-brand span{color:var(--ink-faint);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:.74rem;font-weight:400;color:var(--ink-faint);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);}
+
+/* HERO */
+.hero{padding:4rem 3rem 2rem;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.hero-left{}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--teal);letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
+.hero-eyebrow::before{content:'';width:1.5rem;height:1px;background:var(--teal);}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.8vw,3.2rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:1rem;}
+h1 em{font-style:italic;color:var(--teal);}
+.hero-sub{font-size:.9rem;color:var(--ink-soft);max-width:440px;line-height:1.8;}
+.hero-right{display:flex;align-items:center;justify-content:center;}
+
+/* STACK SVG */
+#stack-svg{width:100%;max-width:560px;cursor:default;}
+.stack-layer-group{cursor:pointer;}
+.stack-layer-group polygon{transition:filter .15s,opacity .15s;}
+.stack-layer-group:hover polygon{filter:brightness(1.25);}
+.stack-layer-group:hover .layer-line{stroke-opacity:.9;}
+.stack-layer-group:hover .layer-label{font-weight:500;fill-opacity:1;}
+.layer-line{transition:stroke-opacity .15s;}
+.layer-label{font-family:'Outfit',sans-serif;font-size:12px;fill-opacity:.8;transition:fill-opacity .15s;}
+.layer-num{font-family:'DM Mono',monospace;font-size:10px;fill-opacity:.6;}
+
+/* TOOLTIP */
+#svg-tooltip{position:fixed;z-index:500;pointer-events:none;opacity:0;transition:opacity .15s;max-width:260px;}
+.tooltip-inner{background:var(--ink);color:var(--cream);padding:.6rem .85rem;border-radius:6px;font-family:'Outfit',sans-serif;font-size:.75rem;line-height:1.6;}
+.tooltip-inner strong{font-weight:600;display:block;margin-bottom:.2rem;color:white;}
+
+/* SCOPE DISCLAIMER */
+.scope-section{max-width:1200px;margin:0 auto 2rem;padding:0 3rem;}
+.scope-card{border-radius:8px;background:var(--linen);border:1.5px solid var(--fog);padding:1.8rem 2rem;display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:start;}
+.scope-icon{font-size:1.5rem;padding-top:.1rem;}
+.scope-body{}
+.scope-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;margin-bottom:.5rem;}
+.scope-text{font-size:.82rem;color:var(--ink-soft);line-height:1.8;}
+.scope-text strong{color:var(--ink);font-weight:600;}
+.scope-upgrade{margin-top:1rem;padding:.9rem 1.1rem;background:rgba(46,139,122,.07);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:.8rem;color:var(--ink-soft);line-height:1.7;}
+.scope-upgrade strong{color:var(--teal);font-weight:600;}
+
+/* LEGAL DISCLAIMER */
+.legal-banner{max-width:1200px;margin:0 auto 3rem;padding:0 3rem;}
+.legal-inner{background:white;border:2px solid var(--ink);border-radius:6px;padding:1.2rem 1.6rem;display:flex;align-items:flex-start;gap:1.2rem;}
+.legal-icon{font-family:'DM Mono',monospace;font-size:.75rem;background:var(--ink);color:white;padding:.3rem .5rem;border-radius:3px;flex-shrink:0;margin-top:.1rem;letter-spacing:.05em;}
+.legal-text{font-size:.8rem;color:var(--ink);line-height:1.8;}
+.legal-text strong{font-weight:700;}
+
+/* TINT SELECTOR */
+.tint-section{max-width:1200px;margin:0 auto;padding:0 3rem 4rem;}
+.tint-label{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--ink-faint);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1rem;}
+.tint-strip{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--fog);cursor:pointer;}
+.tint-band{flex:1;padding:1.6rem 1.2rem;transition:all .25s;position:relative;border-right:1px solid rgba(255,255,255,.1);}
+.tint-band:last-child{border-right:none;}
+.tint-band.active::after{content:'▼';position:absolute;bottom:.4rem;left:50%;transform:translateX(-50%);font-size:.55rem;}
+.tb-0{background:var(--linen);color:var(--stone);}
+.tb-0.active{background:var(--warm);color:var(--ink-soft);}
+.tb-1{background:#c8e8e2;color:#1a5048;}
+.tb-1.active{background:#8ECEC5;color:#0d2e28;}
+.tb-2{background:#7060A8;color:#ede8ff;}
+.tb-2.active{background:#5040A0;color:#fff;}
+.tb-3{background:#1A2030;color:#80A0D8;}
+.tb-3.active{background:#0D1220;color:#A0C0F0;}
+.tb-4{background:#080A0E;color:#40D0A0;}
+.tb-4.active{background:#000;color:#60FFB0;}
+.tb-vlt{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;line-height:1;margin-bottom:.3rem;}
+.tb-name{font-family:'Cormorant Garamond',serif;font-size:.9rem;font-weight:400;margin-bottom:.2rem;}
+.tb-desc{font-size:.65rem;opacity:.75;line-height:1.5;}
+
+/* TINT DETAIL PANEL */
+.tint-panel{max-width:1200px;margin:0 auto;padding:0 3rem;display:none;}
+.tint-panel.active{display:block;}
+.tp-inner{border-radius:8px;padding:2rem;margin-bottom:2rem;}
+.tp-0 .tp-inner{background:var(--linen);border:1px solid var(--fog);}
+.tp-1 .tp-inner{background:var(--teal-light);border:1px solid #A0D8D0;}
+.tp-2 .tp-inner{background:var(--lilac-light);border:1px solid #C0B0E8;}
+.tp-3 .tp-inner{background:#1A2030;border:1px solid #304060;color:#C0D0F0;}
+.tp-4 .tp-inner{background:#08080C;border:1px solid #202840;color:#80FFD0;}
+.tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+.tp-col-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.8rem;opacity:.6;}
+.tp-use-case{margin-bottom:.4rem;font-size:.82rem;}
+.tp-layer-row{display:flex;align-items:center;gap:.6rem;padding:.28rem 0;border-bottom:1px solid rgba(128,128,128,.1);}
+.tp-layer-row:last-child{border-bottom:none;}
+.tp-layer-num{font-family:'DM Mono',monospace;font-size:.6rem;width:1.4rem;text-align:center;opacity:.5;}
+.tp-layer-name{font-size:.78rem;flex:1;}
+.tp-layer-status{font-family:'DM Mono',monospace;font-size:.58rem;padding:.1rem .4rem;border-radius:2rem;}
+.ls-active{background:rgba(80,220,150,.15);color:#50D060;}
+.ls-inactive{background:rgba(128,128,128,.1);color:rgba(128,128,128,.4);}
+.tp-docker-callout{margin-top:1.2rem;padding:.9rem 1.1rem;border-radius:6px;background:rgba(29,99,237,.12);border:1px solid rgba(29,99,237,.3);font-size:.78rem;color:#6090F0;font-family:'DM Mono',monospace;}
+.tp-docker-callout strong{color:#90B8FF;}
+
+/* STACK SECTION */
+.stack-section{max-width:1200px;margin:0 auto;padding:0 3rem 5rem;}
+.section-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--teal);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.5rem;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;margin-bottom:.5rem;}
+.section-sub{font-size:.85rem;color:var(--ink-soft);max-width:520px;margin-bottom:2rem;line-height:1.7;}
+.stack-diagram{position:relative;display:grid;gap:3px;}
+.stack-layer{display:grid;grid-template-columns:120px 1fr;align-items:stretch;border-radius:6px;overflow:hidden;border:1px solid var(--fog);transition:box-shadow .2s;}
+.stack-layer:hover{box-shadow:0 4px 20px rgba(40,30,20,.1);}
+.sl-num{display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;padding:1.2rem;min-height:80px;}
+.sl-body{padding:1.1rem 1.4rem;background:white;}
+.sl-title{font-weight:600;font-size:.9rem;margin-bottom:.2rem;}
+.sl-desc{font-size:.74rem;color:var(--ink-faint);line-height:1.6;margin-bottom:.5rem;}
+.sl-services{display:flex;flex-wrap:wrap;gap:.3rem;}
+.sl-service{font-family:'DM Mono',monospace;font-size:.56rem;padding:.15rem .45rem;border-radius:3px;border:1px solid var(--fog);color:var(--ink-faint);background:var(--cream);}
+.sl-service.pane-integrated{border-color:var(--teal);color:var(--teal);background:var(--teal-light);}
+.sl-service.docker-integrated{border-color:var(--docker);color:var(--docker);background:var(--docker-light);}
+.sl-0 .sl-num{background:#0A0C10;color:#40D0A0;}
+.sl-1 .sl-num{background:#1A2030;color:#80A0D8;}
+.sl-2 .sl-num{background:#2B4060;color:#60A8E0;}
+.sl-2b .sl-num{background:#1A3020;color:#60D0A0;font-size:.7rem;letter-spacing:-.02em;}
+.sl-3 .sl-num{background:#2B6B60;color:#A0EDE0;}
+.sl-4 .sl-num{background:#5A4830;color:#F0D880;}
+.sl-5 .sl-num{background:#3A2060;color:#C0A0F8;}
+.sl-6 .sl-num{background:#1A3820;color:#80E890;}
+
+/* DOCKER SECTION */
+.docker-section{max-width:1200px;margin:0 auto;padding:0 3rem 5rem;}
+.docker-card{background:#0D1220;border-radius:12px;padding:3rem;color:#C0D8FF;border:1px solid #203050;position:relative;overflow:hidden;}
+.docker-card::before{content:'';position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(29,99,237,.15) 0%,transparent 70%);pointer-events:none;}
+.docker-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--docker);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;}
+.docker-eyebrow::before{content:'';width:1.5rem;height:1px;background:var(--docker);}
+.docker-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:#E0EFFF;line-height:1.15;margin-bottom:1rem;}
+.docker-title em{font-style:italic;color:#1D63ED;}
+.docker-sub{font-size:.9rem;color:#8090B0;max-width:600px;line-height:1.8;margin-bottom:2rem;}
+.docker-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-bottom:2.5rem;}
+.docker-feature{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:1.2rem;}
+.df-icon{font-size:1.4rem;margin-bottom:.6rem;}
+.df-title{font-weight:600;font-size:.85rem;color:#C0D8FF;margin-bottom:.3rem;}
+.df-desc{font-size:.75rem;color:#6880A0;line-height:1.6;}
+.docker-code{background:#060810;border:1px solid #1A2840;border-radius:6px;padding:1.5rem 2rem;font-family:'DM Mono',monospace;font-size:.8rem;color:#A0C0E8;line-height:1.9;overflow-x:auto;}
+.dc-comment{color:#3A5060;}
+.dc-fn{color:#1D63ED;}
+.dc-str{color:#A0E8B0;}
+.docker-tiers{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;}
+.docker-tier{font-family:'DM Mono',monospace;font-size:.7rem;padding:.4rem 1rem;border-radius:2rem;border:1px solid;}
+.dt-now{border-color:#2E8B7A;color:#40D0A0;background:rgba(46,139,122,.1);}
+.dt-next{border-color:#C07040;color:#F09050;background:rgba(192,112,64,.1);}
+.dt-later{border-color:#6050B0;color:#A090E0;background:rgba(96,80,176,.1);}
+
+/* SERVICES */
+.services-section{max-width:1200px;margin:0 auto;padding:0 3rem 6rem;}
+.filter-row{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;}
+.filter-label{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--ink-faint);letter-spacing:.12em;text-transform:uppercase;margin-right:.3rem;}
+.fb{font-family:'DM Mono',monospace;font-size:.67rem;padding:.3rem .8rem;border-radius:2rem;border:1px solid var(--fog);background:white;color:var(--ink-soft);cursor:pointer;transition:all .2s;}
+.fb:hover{border-color:var(--teal);color:var(--teal);}
+.fb.active{background:var(--teal);color:white;border-color:var(--teal);}
+.cat-section{margin-bottom:3rem;}
+.cat-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.2rem;padding-bottom:.7rem;border-bottom:1.5px solid var(--fog);}
+.cat-icon{font-size:1.1rem;}
+.cat-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;}
+.cat-count{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink-faint);}
+.cat-layer{font-family:'DM Mono',monospace;font-size:.58rem;padding:.12rem .45rem;border-radius:2rem;color:white;}
+.cl-6{background:#1A3820;} .cl-5{background:#3A2060;} .cl-4{background:#5A4830;}
+.cl-3{background:#2B6B60;} .cl-2{background:#2B4060;} .cl-1{background:#1A2030;} .cl-0{background:#0A0C10;}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.8rem;}
+.sc{background:white;border:1px solid var(--fog);border-radius:8px;padding:1.2rem;position:relative;transition:box-shadow .2s,border-color .2s;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc.tier-mvp::before{background:var(--teal);}
+.sc.tier-next::before{background:var(--amber);}
+.sc.tier-later::before{background:var(--lilac);}
+.sc.tier-docker::before{background:var(--docker);}
+.sc.tier-standalone::before{background:var(--fog);}
+.sc:hover{box-shadow:0 6px 24px rgba(40,30,20,.09);border-color:var(--stone);}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.4rem;margin-bottom:.6rem;}
+.sc-name{font-weight:600;font-size:.88rem;}
+.sc-tier{font-family:'DM Mono',monospace;font-size:.54rem;padding:.15rem .45rem;border-radius:2rem;flex-shrink:0;}
+.st-mvp{background:var(--teal-light);color:var(--teal);}
+.st-next{background:var(--amber-light);color:var(--amber);}
+.st-later{background:var(--lilac-light);color:var(--lilac);}
+.st-standalone{background:var(--warm);color:var(--ink-faint);}
+.st-always{background:var(--sage-light);color:var(--sage);}
+.st-docker{background:var(--docker-light);color:var(--docker);}
+.st-avoid{background:#FEE8E8;color:#C04040;}
+.sc-desc{font-size:.75rem;color:var(--ink-soft);line-height:1.6;margin-bottom:.7rem;}
+.sc-tags{display:flex;flex-wrap:wrap;gap:.22rem;margin-bottom:.6rem;}
+.sc-tag{font-family:'DM Mono',monospace;font-size:.54rem;padding:.1rem .38rem;border-radius:3px;border:1px solid var(--fog);color:var(--ink-faint);background:var(--cream);}
+.sc-tag.free{border-color:#B8D8B0;color:var(--sage);background:var(--sage-light);}
+.sc-tag.oss{border-color:#B0C8E8;color:var(--blue);background:var(--blue-light);}
+.sc-tag.e2e{border-color:#D8B8D8;color:var(--lilac);background:var(--lilac-light);}
+.sc-meta{display:flex;align-items:center;justify-content:space-between;padding-top:.5rem;border-top:1px solid var(--warm);font-size:.6rem;}
+.sc-jurisdiction{font-family:'DM Mono',monospace;color:var(--ink-faint);}
+.sc-pane{font-family:'DM Mono',monospace;color:var(--teal);}
+.sc-pane::before{content:'🪟 ';}
+.sc-docker{font-family:'DM Mono',monospace;color:var(--docker);}
+.sc-docker::before{content:'🐳 ';}
+.sc-caveat{font-size:.7rem;color:var(--amber);margin-top:.4rem;font-style:italic;line-height:1.5;}
+.hidden{display:none!important;}
+
+/* FOOTNOTE */
+.footnote{background:var(--linen);border-top:1px solid var(--fog);padding:3rem;}
+.fn-inner{max-width:1200px;margin:0 auto;}
+.fn-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem;}
+.fn-title{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:400;margin-bottom:.7rem;}
+.fn-body{font-size:.8rem;color:var(--ink-soft);line-height:1.8;}
+.fn-legal{border-top:2px solid var(--ink);padding-top:2rem;margin-top:1rem;}
+.fn-legal-title{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:.8rem;}
+.fn-legal-text{font-size:.8rem;color:var(--ink);line-height:1.9;}
+.fn-legal-text strong{font-weight:700;}
+code{font-family:'DM Mono',monospace;font-size:.8em;color:var(--teal);background:var(--teal-light);padding:.1rem .3rem;border-radius:3px;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sc{animation:fadeIn .3s ease both;}
+
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;gap:2rem;}
+  .nav-links{display:none;}
+  .hero-right{order:-1;}
+  .docker-grid{grid-template-columns:1fr;}
+  .fn-grid{grid-template-columns:1fr;}
+  .tp-grid{grid-template-columns:1fr;}
+  .tint-band{padding:1.2rem .7rem;}
+  .tb-desc{display:none;}
+  .hero,.scope-section,.legal-banner,.tint-section,.stack-section,.docker-section,.services-section{padding-left:1.5rem;padding-right:1.5rem;}
+  nav{padding:.9rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">pane</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Why it matters</a></li>
+    <li><a href="stack.html" style="color:var(--ink);">The Stack</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- TOOLTIP (global) -->
+<div id="svg-tooltip"><div class="tooltip-inner" id="tooltip-content"></div></div>
+
+<!-- HERO with isometric SVG stack -->
+<div class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Privacy stack — full spectrum</div>
+    <h1>What <em>tint</em><br>do you need?</h1>
+    <p class="hero-sub" style="margin-bottom:1.5rem;">Not everyone needs the same protection. A newsletter signup is different from your DMV appointment. This map layers every service by where in the stack it operates — click any layer to jump to its section.</p>
+    <p class="hero-sub" style="font-size:.78rem;color:var(--stone);">Hover a layer in the diagram → to see what it protects. Click → to see the services.</p>
+  </div>
+  <div class="hero-right">
+    <!-- ISOMETRIC STACK SVG -->
+    <svg id="stack-svg" viewBox="0 0 560 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 
+        Isometric rhomboid stack.
+        Each layer: parallelogram with 38px skew, 200px base, 26px height.
+        Step between layers: 38px.
+        Layer N bottom: y = 390 - N * 38
+      -->
+
+      <!-- Layer 0 — Hardware -->
+      <g class="stack-layer-group" id="svg-layer-0"
+         data-target="#section-hardware"
+         data-name="Layer 0 — Hardware & Keys"
+         data-tip="YubiKey / Nitrokey / Passkeys. Protects pane's own accounts from phishing and SIM swap. The physical root of trust everything else rests on.">
+        <polygon points="55,390 255,390 293,364 93,364" fill="#0A0C10" stroke="#40D0A0" stroke-width="0.6" opacity="0.9"/>
+        <text x="130" y="381" fill="#40D0A0" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 0</text>
+        <!-- connector line -->
+        <line class="layer-line" x1="293" y1="377" x2="330" y2="377" stroke="#40D0A0" stroke-width="0.8" stroke-opacity="0.5"/>
+        <line class="layer-line" x1="330" y1="377" x2="330" y2="377" stroke="#40D0A0" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="381" fill="#26211C">Hardware &amp; keys</text>
+        <text class="layer-num" x="337" y="392" fill="#988880">YubiKey · Nitrokey · Passkeys</text>
+      </g>
+
+      <!-- Layer 1 — OS -->
+      <g class="stack-layer-group" id="svg-layer-1"
+         data-target="#section-os"
+         data-name="Layer 1 — OS & Host Isolation"
+         data-tip="Tails / Whonix / Qubes / GrapheneOS. Protects against a compromised host machine. pane currently assumes a trustworthy host — this layer is upstream of pane's scope.">
+        <polygon points="55,352 255,352 293,326 93,326" fill="#1A2030" stroke="#80A0D8" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="343" fill="#80A0D8" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 1</text>
+        <line class="layer-line" x1="293" y1="339" x2="330" y2="339" stroke="#80A0D8" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="343" fill="#26211C">OS &amp; host isolation</text>
+        <text class="layer-num" x="337" y="354" fill="#988880">Tails · Whonix · Qubes · GrapheneOS</text>
+      </g>
+
+      <!-- Layer 2 — Network/DNS -->
+      <g class="stack-layer-group" id="svg-layer-2"
+         data-target="#section-network"
+         data-name="Layer 2 — Network & DNS"
+         data-tip="VPN, Tor, DNS-over-HTTPS. Masks your IP address and prevents DNS leaks. Mullvad / ProtonVPN for daily use; Tor for high-sensitivity transactions.">
+        <polygon points="55,314 255,314 293,288 93,288" fill="#2B4060" stroke="#60A8E0" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="305" fill="#60A8E0" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 2</text>
+        <line class="layer-line" x1="293" y1="301" x2="330" y2="301" stroke="#60A8E0" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="305" fill="#26211C">Network &amp; DNS</text>
+        <text class="layer-num" x="337" y="316" fill="#988880">Mullvad · ProtonVPN · Tor · NextDNS</text>
+      </g>
+
+      <!-- Layer 2b — Onion Services -->
+      <g class="stack-layer-group" id="svg-layer-2b"
+         data-target="#section-network"
+         data-name="Layer 2b — Onion Services (.onion)"
+         data-tip="Traffic that never leaves the Tor network. Unlike regular Tor, .onion services have no exit node — metadata is eliminated on both ends. Future: pane itself accessible via .onion.">
+        <polygon points="55,280 255,280 293,254 93,254" fill="#1A3020" stroke="#60D0A0" stroke-width="0.6" stroke-dasharray="3,2" opacity="0.85"/>
+        <text x="100" y="271" fill="#60D0A0" font-family="'DM Mono',monospace" font-size="8.5" letter-spacing="0.03em">LAYER 2b</text>
+        <line class="layer-line" x1="293" y1="267" x2="330" y2="267" stroke="#60D0A0" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="3,2"/>
+        <text class="layer-label" x="337" y="271" fill="#26211C">Onion Services (.onion)</text>
+        <text class="layer-num" x="337" y="282" fill="#988880">No exit node · metadata eliminated</text>
+      </g>
+
+      <!-- Layer 3 — Browser/Fingerprint -->
+      <g class="stack-layer-group" id="svg-layer-3"
+         data-target="#section-browser"
+         data-name="Layer 3 — Browser & Fingerprint"
+         data-tip="Canvas/WebGL/font randomisation, container isolation, document metadata stripping. pane's Docker context lives here. Your browser fingerprint is as identifying as your IP.">
+        <polygon points="55,246 255,246 293,220 93,220" fill="#2B6B60" stroke="#A0EDE0" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="237" fill="#A0EDE0" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 3</text>
+        <line class="layer-line" x1="293" y1="233" x2="330" y2="233" stroke="#A0EDE0" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="237" fill="#26211C">Browser &amp; fingerprint</text>
+        <text class="layer-num" x="337" y="248" fill="#988880">Brave · Docker ctx · Playwright · MAT2</text>
+      </g>
+
+      <!-- Layer 4 — Payment -->
+      <g class="stack-layer-group" id="svg-layer-4"
+         data-target="#section-payment"
+         data-name="Layer 4 — Payment Isolation"
+         data-tip="Virtual cards and anonymous crypto. Privacy.com for US card isolation. Monero closes the bootstrapping hole — pay for services without a real bank account.">
+        <polygon points="55,208 255,208 293,182 93,182" fill="#5A4830" stroke="#F0D880" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="199" fill="#F0D880" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 4</text>
+        <line class="layer-line" x1="293" y1="195" x2="330" y2="195" stroke="#F0D880" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="199" fill="#26211C">Payment isolation</text>
+        <text class="layer-num" x="337" y="210" fill="#988880">Privacy.com · Monero · Revolut</text>
+      </g>
+
+      <!-- Layer 5 — Identity Aliasing -->
+      <g class="stack-layer-group" id="svg-layer-5"
+         data-target="#section-identity"
+         data-name="Layer 5 — Identity Aliasing"
+         data-tip="Email aliases and VOIP phone numbers. One alias per relationship — burn when done. Addy.io for email, JMP.chat for phone. The layer pane is primarily built around.">
+        <polygon points="55,170 255,170 293,144 93,144" fill="#3A2060" stroke="#C0A0F8" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="161" fill="#C0A0F8" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 5</text>
+        <line class="layer-line" x1="293" y1="157" x2="330" y2="157" stroke="#C0A0F8" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="161" fill="#26211C">Identity aliasing</text>
+        <text class="layer-num" x="337" y="172" fill="#988880">Addy.io · SimpleLogin · JMP.chat</text>
+      </g>
+
+      <!-- Layer 6 — Application / Comms -->
+      <g class="stack-layer-group" id="svg-layer-6"
+         data-target="#section-comms"
+         data-name="Layer 6 — Application & Communications"
+         data-tip="Signal, Matrix, Session, private search. The interface layer. Secure comms at this layer should be in use regardless of tint level — Signal is always on.">
+        <polygon points="55,132 255,132 293,106 93,106" fill="#1A3820" stroke="#80E890" stroke-width="0.6" opacity="0.92"/>
+        <text x="130" y="123" fill="#80E890" font-family="'DM Mono',monospace" font-size="9.5" letter-spacing="0.05em">LAYER 6</text>
+        <line class="layer-line" x1="293" y1="119" x2="330" y2="119" stroke="#80E890" stroke-width="0.8" stroke-opacity="0.5"/>
+        <text class="layer-label" x="337" y="123" fill="#26211C">Application &amp; comms</text>
+        <text class="layer-num" x="337" y="134" fill="#988880">Signal · Matrix · Session · DuckDuckGo</text>
+      </g>
+
+      <!-- Vertical bracket / spine -->
+      <line x1="52" y1="106" x2="52" y2="394" stroke="#D6CEBC" stroke-width="1" stroke-dasharray="2,4"/>
+      <text x="44" y="250" fill="#B0A898" font-family="'DM Mono',monospace" font-size="8" transform="rotate(-90,44,250)" text-anchor="middle" letter-spacing="0.12em">STACK LAYERS</text>
+
+      <!-- pane scope bracket -->
+      <path d="M 48 144 Q 34 144 34 157 L 34 373 Q 34 386 48 386" stroke="#2E8B7A" stroke-width="1" fill="none" opacity="0.5"/>
+      <text x="28" y="268" fill="#2E8B7A" font-family="'DM Mono',monospace" font-size="7.5" transform="rotate(-90,28,268)" text-anchor="middle" letter-spacing="0.08em" opacity="0.7">pane scope</text>
+
+    </svg>
+  </div>
+</div>
+
+<!-- SCOPE DISCLAIMER -->
+<div class="scope-section">
+  <div class="scope-card">
+    <div class="scope-icon">🎯</div>
+    <div class="scope-body">
+      <div class="scope-title">What pane actually protects you from</div>
+      <p class="scope-text">pane is built to defend against <strong>data brokers, behavioral profiling, advertising networks, and traffic-analysis-affiliated tracking</strong> — the commercial surveillance infrastructure that follows you across the web, links your identities, and sells your behavioral graph. This covers the vast majority of privacy threats that most people face in everyday digital life.</p>
+      <p class="scope-text" style="margin-top:.7rem;">pane <strong>does not</strong> protect against nation-state adversaries, law enforcement with court orders, end-to-end traffic confirmation attacks, physical-world surveillance, or a compromised host machine. The Tor paper is explicit: low-latency systems cannot fully resist a global passive adversary who can observe both ends of a connection.</p>
+      <div class="scope-upgrade">
+        <strong>If your threat model is higher than this:</strong> Use <strong>Tails</strong> booted from a USB drive with no persistence — or <strong>Whonix</strong> inside a virtual machine. For sensitive journalism, activism in a hostile jurisdiction, or whistleblowing: use a live OS image, don't touch your hard drive, wipe if necessary. pane can run inside these environments, but those environments are upstream of pane's scope. Know which tool you need.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LEGAL DISCLAIMER -->
+<div class="legal-banner">
+  <div class="legal-inner">
+    <div class="legal-icon">§</div>
+    <p class="legal-text"><strong>pane is a tool for lawful privacy — not for evading legitimate legal process.</strong> Privacy and legality are not in conflict. You have a right to privacy from commercial surveillance, data brokers, and tracking networks. You do not have a right to use privacy tools to break the law. By using pane, you agree to comply with all applicable laws in your jurisdiction. pane does not facilitate illegal activity, does not help users evade court-ordered processes, and is not designed or intended for use in furtherance of any crime. Like Mullvad, the Tor Project, and ProtonVPN, we believe privacy is a fundamental human right — and like them, we ask our users to exercise it responsibly. <strong>If you are in a jurisdiction where privacy tools are restricted, consult a legal professional before use.</strong></p>
+  </div>
+</div>
+
+<!-- TINT SELECTOR -->
+<div class="tint-section">
+  <div class="tint-label">Select your tint level</div>
+  <div class="tint-strip" id="tintStrip">
+    <div class="tint-band tb-0 active" onclick="selectTint(0,this)">
+      <div class="tb-vlt">100%</div>
+      <div class="tb-name">Clear glass</div>
+      <div class="tb-desc">No protection. You are the product.</div>
+    </div>
+    <div class="tint-band tb-1" onclick="selectTint(1,this)">
+      <div class="tb-vlt">50%</div>
+      <div class="tb-name">Light tint</div>
+      <div class="tb-desc">Alias + virtual card. Good for most signups.</div>
+    </div>
+    <div class="tint-band tb-2" onclick="selectTint(2,this)">
+      <div class="tb-vlt">30%</div>
+      <div class="tb-name">Medium tint</div>
+      <div class="tb-desc">+ VPN, privacy browser, private search.</div>
+    </div>
+    <div class="tint-band tb-3" onclick="selectTint(3,this)">
+      <div class="tb-vlt">10%</div>
+      <div class="tb-name">Limo tint</div>
+      <div class="tb-desc">+ Docker isolation, Tor, alias phone.</div>
+    </div>
+    <div class="tint-band tb-4" onclick="selectTint(4,this)">
+      <div class="tb-vlt">0%</div>
+      <div class="tb-name">Blackout</div>
+      <div class="tb-desc">+ Tails/Whonix OS, hardware key, Monero.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TINT PANELS -->
+<div class="tint-panel tp-0 active" id="panel-0">
+  <div class="tp-inner">
+    <div class="tp-grid">
+      <div>
+        <div class="tp-col-title">Typical use</div>
+        <div class="tp-use-case">📰 Reading public content, logged-out browsing.</div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:var(--amber);">Everything is logged, sold, and linked to your real identity via IP, email, and browser fingerprint.</div>
+      </div>
+      <div>
+        <div class="tp-col-title">Active layers</div>
+        <div class="tp-layer-row"><span class="tp-layer-num">6</span><span class="tp-layer-name">Application</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">5</span><span class="tp-layer-name">Identity aliasing</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">4</span><span class="tp-layer-name">Payment</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">3</span><span class="tp-layer-name">Browser</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">2</span><span class="tp-layer-name">Network</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">1</span><span class="tp-layer-name">OS isolation</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">0</span><span class="tp-layer-name">Hardware</span><span class="tp-layer-status ls-inactive">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tint-panel tp-1" id="panel-1">
+  <div class="tp-inner">
+    <div class="tp-grid">
+      <div>
+        <div class="tp-col-title">Use cases</div>
+        <div class="tp-use-case">📧 Newsletter signup · 🛒 Online shopping · 📱 App accounts · 🎮 Gaming / forums</div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:var(--teal);">pane MVP covers this entirely. Run <code>pane.create_context()</code> before any signup.</div>
+      </div>
+      <div>
+        <div class="tp-col-title">Active layers</div>
+        <div class="tp-layer-row"><span class="tp-layer-num">6</span><span class="tp-layer-name">Application</span><span class="tp-layer-status ls-active">Signal ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">5</span><span class="tp-layer-name">Identity aliasing</span><span class="tp-layer-status ls-active">Addy.io ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">4</span><span class="tp-layer-name">Payment</span><span class="tp-layer-status ls-active">Privacy.com ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">3</span><span class="tp-layer-name">Browser</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">2</span><span class="tp-layer-name">Network</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">1</span><span class="tp-layer-name">OS isolation</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">0</span><span class="tp-layer-name">Hardware</span><span class="tp-layer-status ls-inactive">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tint-panel tp-2" id="panel-2">
+  <div class="tp-inner" style="color:var(--ink)">
+    <div class="tp-grid">
+      <div>
+        <div class="tp-col-title">Use cases</div>
+        <div class="tp-use-case">📲 Social media accounts · 🏦 Secondary banking · 🔒 Work / contractor accounts</div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:var(--lilac);">Set <code>MULLVAD_ACCOUNT</code> and use Brave or Firefox containers for browsing.</div>
+      </div>
+      <div>
+        <div class="tp-col-title">Active layers</div>
+        <div class="tp-layer-row"><span class="tp-layer-num">6</span><span class="tp-layer-name">Application</span><span class="tp-layer-status ls-active">Signal + Matrix ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">5</span><span class="tp-layer-name">Identity aliasing</span><span class="tp-layer-status ls-active">Addy.io ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">4</span><span class="tp-layer-name">Payment</span><span class="tp-layer-status ls-active">Privacy.com ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">3</span><span class="tp-layer-name">Browser</span><span class="tp-layer-status ls-active">Brave ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">2</span><span class="tp-layer-name">Network</span><span class="tp-layer-status ls-active">Mullvad ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">1</span><span class="tp-layer-name">OS isolation</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">0</span><span class="tp-layer-name">Hardware</span><span class="tp-layer-status ls-inactive">—</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tint-panel tp-3" id="panel-3">
+  <div class="tp-inner">
+    <div class="tp-grid">
+      <div>
+        <div class="tp-col-title" style="color:#6080A0;">Use cases</div>
+        <div class="tp-use-case" style="color:#C0D8FF;">🏛️ DMV / government portals · 🪪 SSA.gov · 🏥 Healthcare · 🔐 Sensitive comms</div>
+        <div class="tp-docker-callout"><strong>pane Docker context:</strong> Ephemeral container — Chromium + Tor + fresh fingerprint + no host disk. Burns on close. <code>pane.enroll(url, {isolation:'docker'})</code></div>
+      </div>
+      <div>
+        <div class="tp-col-title" style="color:#6080A0;">Active layers</div>
+        <div class="tp-layer-row"><span class="tp-layer-num">6</span><span class="tp-layer-name" style="color:#C0D8FF;">Application</span><span class="tp-layer-status ls-active">Signal, Session ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">5</span><span class="tp-layer-name" style="color:#C0D8FF;">Identity aliasing</span><span class="tp-layer-status ls-active">Addy.io + JMP ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">4</span><span class="tp-layer-name" style="color:#C0D8FF;">Payment</span><span class="tp-layer-status ls-active">Privacy.com ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">3</span><span class="tp-layer-name" style="color:#C0D8FF;">Browser / Docker</span><span class="tp-layer-status ls-active">Docker + Playwright ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">2</span><span class="tp-layer-name" style="color:#C0D8FF;">Network / Tor</span><span class="tp-layer-status ls-active">Tor circuit ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">1</span><span class="tp-layer-name" style="color:#C0D8FF;">OS isolation</span><span class="tp-layer-status ls-inactive">—</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">0</span><span class="tp-layer-name" style="color:#C0D8FF;">Hardware</span><span class="tp-layer-status ls-inactive">recommended</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tint-panel tp-4" id="panel-4">
+  <div class="tp-inner">
+    <div class="tp-grid">
+      <div>
+        <div class="tp-col-title" style="color:#306040;">Use cases</div>
+        <div class="tp-use-case" style="color:#60FFB0;">🕵️ Investigative research · 📢 Activism in hostile jurisdiction · ⚖️ Whistleblowing</div>
+        <div style="margin-top:.8rem;font-size:.78rem;color:#408060;">Boot Tails from USB. Don't touch the hard drive. pane runs inside the Tails environment. Pay via Monero. YubiKey for all pane account access. Nothing persists.</div>
+      </div>
+      <div>
+        <div class="tp-col-title" style="color:#306040;">All layers active</div>
+        <div class="tp-layer-row"><span class="tp-layer-num">6</span><span class="tp-layer-name" style="color:#60FFB0;">Application</span><span class="tp-layer-status ls-active">Signal, Session ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">5</span><span class="tp-layer-name" style="color:#60FFB0;">Identity aliasing</span><span class="tp-layer-status ls-active">Addy.io + JMP ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">4</span><span class="tp-layer-name" style="color:#60FFB0;">Payment</span><span class="tp-layer-status ls-active">Monero + Privacy.com ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">3</span><span class="tp-layer-name" style="color:#60FFB0;">Browser / container</span><span class="tp-layer-status ls-active">Docker + Tor ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">2</span><span class="tp-layer-name" style="color:#60FFB0;">Network / .onion</span><span class="tp-layer-status ls-active">Tor onion ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">1</span><span class="tp-layer-name" style="color:#60FFB0;">OS isolation</span><span class="tp-layer-status ls-active">Tails / Whonix ✓</span></div>
+        <div class="tp-layer-row"><span class="tp-layer-num">0</span><span class="tp-layer-name" style="color:#60FFB0;">Hardware</span><span class="tp-layer-status ls-active">YubiKey ✓</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STACK DETAIL SECTION -->
+<div class="stack-section" id="section-stack">
+  <div class="section-eyebrow">Architecture</div>
+  <div class="section-title">The full stack</div>
+  <p class="section-sub">Every service in the pane ecosystem placed at the layer where it actually operates. pane-integrated services tagged in teal. Docker-scoped in blue.</p>
+
+  <div class="stack-diagram">
+    <div class="stack-layer sl-6" id="section-comms"><div class="sl-num">6</div><div class="sl-body">
+      <div class="sl-title">Application & communications</div>
+      <div class="sl-desc">Secure comms, private search. Operates above the identity layer. Signal is always on regardless of tint level.</div>
+      <div class="sl-services">
+        <span class="sl-service pane-integrated">Signal</span><span class="sl-service">Matrix / Element</span><span class="sl-service">Session</span>
+        <span class="sl-service">DuckDuckGo</span><span class="sl-service">Startpage</span><span class="sl-service">Brave Search</span><span class="sl-service">SearXNG</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-5" id="section-identity"><div class="sl-num">5</div><div class="sl-body">
+      <div class="sl-title">Identity aliasing</div>
+      <div class="sl-desc">Email aliases, alias phone numbers. One alias per relationship — burn when done. The core layer pane is built around.</div>
+      <div class="sl-services">
+        <span class="sl-service pane-integrated">Addy.io</span><span class="sl-service pane-integrated">SimpleLogin</span>
+        <span class="sl-service pane-integrated">JMP.chat</span><span class="sl-service">DuckDuckGo Email</span><span class="sl-service">MySudo</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-4" id="section-payment"><div class="sl-num">4</div><div class="sl-body">
+      <div class="sl-title">Payment isolation</div>
+      <div class="sl-desc">Virtual cards and anonymous crypto. Monero closes the bootstrapping hole — Privacy.com requires a real bank account, Monero doesn't.</div>
+      <div class="sl-services">
+        <span class="sl-service pane-integrated">Privacy.com</span><span class="sl-service pane-integrated">Monero (XMR)</span>
+        <span class="sl-service">Revolut</span><span class="sl-service">Wise</span><span class="sl-service">Cash (physical)</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-3" id="section-browser"><div class="sl-num">3</div><div class="sl-body">
+      <div class="sl-title">Browser, fingerprint & document isolation</div>
+      <div class="sl-desc">Canvas/WebGL/font randomisation, tracker blocking, container isolation, document metadata stripping. pane's Docker context and Playwright automation live here.</div>
+      <div class="sl-services">
+        <span class="sl-service pane-integrated">Playwright + Stealth</span><span class="sl-service docker-integrated">Docker context</span>
+        <span class="sl-service pane-integrated">Brave</span><span class="sl-service">Firefox containers</span><span class="sl-service">Tor Browser</span>
+        <span class="sl-service">MAT2 / ExifTool</span><span class="sl-service">Dangerzone</span><span class="sl-service">2captcha</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-2" id="section-network"><div class="sl-num">2</div><div class="sl-body">
+      <div class="sl-title">Network, DNS & traffic</div>
+      <div class="sl-desc">IP masking, DNS privacy, traffic shaping. VPNs and Tor sit here. Per-context exit IPs via Mullvad API. DNS leaks can correlate your activity even through a VPN.</div>
+      <div class="sl-services">
+        <span class="sl-service pane-integrated">Mullvad</span><span class="sl-service pane-integrated">ProtonVPN</span>
+        <span class="sl-service">IVPN</span><span class="sl-service docker-integrated">Tor Network</span>
+        <span class="sl-service">NextDNS</span><span class="sl-service">dnscrypt-proxy</span><span class="sl-service">Pi-hole</span>
+      </div>
+    </div></div>
+
+    <!-- NEW: Onion Services sub-layer -->
+    <div class="stack-layer sl-2b" style="border-left:3px dashed #60D0A0"><div class="sl-num">2b</div><div class="sl-body">
+      <div class="sl-title">Onion Services (.onion) <span style="font-family:'DM Mono',monospace;font-size:.65rem;background:#1A3020;color:#60D0A0;padding:.1rem .4rem;border-radius:3px;margin-left:.4rem;">future</span></div>
+      <div class="sl-desc">Traffic that never exits the Tor network. Unlike regular Tor, .onion services eliminate the exit node entirely — metadata logging removed on both ends. The Tor paper (Dingledine et al, 2004) distinguishes this explicitly: traffic confirmation attacks that work against Tor exit routing don't apply here. Future: pane infrastructure accessible via .onion.</div>
+      <div class="sl-services">
+        <span class="sl-service">Tor hidden services</span><span class="sl-service">SecureDrop (.onion)</span>
+        <span class="sl-service">ProtonMail (.onion)</span><span class="sl-service">pane API endpoint (planned)</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-1" id="section-os"><div class="sl-num">1</div><div class="sl-body">
+      <div class="sl-title">OS & host isolation <span style="font-family:'DM Mono',monospace;font-size:.65rem;background:#3A2828;color:#E8A0A0;padding:.1rem .4rem;border-radius:3px;margin-left:.4rem;">upstream of pane</span></div>
+      <div class="sl-desc">Amnesic live OS, VM-based network isolation, hardened mobile OS. pane currently assumes a trustworthy host — this layer is upstream of everything pane does. If your machine is compromised, the aliases don't matter.</div>
+      <div class="sl-services">
+        <span class="sl-service">Tails</span><span class="sl-service">Whonix</span><span class="sl-service">Qubes OS</span>
+        <span class="sl-service">GrapheneOS</span><span class="sl-service">CalyxOS</span><span class="sl-service docker-integrated">Docker (pane ctx)</span>
+        <span class="sl-service">VeraCrypt</span><span class="sl-service">Cryptomator</span>
+      </div>
+    </div></div>
+
+    <div class="stack-layer sl-0" id="section-hardware"><div class="sl-num">0</div><div class="sl-body">
+      <div class="sl-title">Hardware & physical security</div>
+      <div class="sl-desc">Hardware security keys for protecting pane's own accounts. The only 2FA that resists phishing and SIM swap simultaneously. If pane manages your aliases, it needs a hardware key protecting its access.</div>
+      <div class="sl-services">
+        <span class="sl-service">YubiKey</span><span class="sl-service">Nitrokey</span><span class="sl-service">OnlyKey</span>
+        <span class="sl-service">FIDO2 passkeys</span><span class="sl-service">Bitwarden</span><span class="sl-service">Prepaid SIM (cash)</span>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- DOCKER SECTION -->
+<div class="docker-section" id="section-docker">
+  <div class="docker-card">
+    <div class="docker-eyebrow">pane · Later tier — Docker isolation</div>
+    <div class="docker-title">The sensitive transaction<br><em>container</em></div>
+    <p class="docker-sub">For interactions with your government, your insurer, your bank — where you can't use a fake identity, but you can't afford a fingerprint leak. pane spins an ephemeral Docker container: clean Chromium, Tor exit, randomised fingerprint, no host disk access. Burns on close.</p>
+    <div class="docker-grid">
+      <div class="docker-feature"><div class="df-icon">🧱</div><div class="df-title">Filesystem isolation</div><div class="df-desc">No access to your host filesystem. Downloads go to a named volume deleted on <code>pane.expire()</code>.</div></div>
+      <div class="docker-feature"><div class="df-icon">🌐</div><div class="df-title">Tor exit node</div><div class="df-desc">All container traffic routes through Tor. The DMV sees a Tor exit IP, not your ISP address.</div></div>
+      <div class="docker-feature"><div class="df-icon">🎭</div><div class="df-title">Fresh fingerprint</div><div class="df-desc">Each container gets a unique seeded canvas hash, WebGL renderer, screen resolution, and font set.</div></div>
+    </div>
+    <div class="docker-code">
+<span style="color:#3A5060;">// pane.enroll() — NEXT tier, form fill via Playwright</span><br>
+<span style="color:#3A5060;">// pane.enroll(url, opts) — LATER tier, with Docker isolation</span><br><br>
+<span style="color:#1D63ED;">pane</span>.<span style="color:#1D63ED;">enroll</span>(<span style="color:#A0E8B0;">'https://dmv.virginia.gov/online/'</span>, {<br>
+&nbsp;&nbsp;isolation: <span style="color:#A0E8B0;">'docker'</span>,&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// spin ephemeral container</span><br>
+&nbsp;&nbsp;network:   <span style="color:#A0E8B0;">'tor'</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// route through Tor exit</span><br>
+&nbsp;&nbsp;identity:  <span style="color:#A0E8B0;">'real'</span>,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// use your actual identity fields</span><br>
+&nbsp;&nbsp;alias:     <span style="color:#A0E8B0;">'dmv-2025'</span>,&nbsp;&nbsp;<span style="color:#3A5060;">// but a forwarding alias for email</span><br>
+&nbsp;&nbsp;ttl:       <span style="color:#A0E8B0;">'session'</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3A5060;">// container burns after close</span><br>
+});
+    </div>
+    <div class="docker-tiers">
+      <span class="docker-tier dt-now">NOW — context + alias + card</span>
+      <span class="docker-tier dt-next">NEXT — Playwright form fill</span>
+      <span class="docker-tier dt-later">LATER — Docker isolation + Tor</span>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES SECTION -->
+<div class="services-section">
+  <div class="section-eyebrow">All services</div>
+  <div class="section-title">Full ecosystem map</div>
+  <p class="section-sub" style="margin-bottom:1.5rem;">Every service tagged by pane integration tier and stack layer.</p>
+  <div class="filter-row">
+    <span class="filter-label">Category:</span>
+    <button class="fb active" onclick="filterSvc('all',this)">All</button>
+    <button class="fb" onclick="filterSvc('os',this)">🖥 OS</button>
+    <button class="fb" onclick="filterSvc('network',this)">🌐 Network</button>
+    <button class="fb" onclick="filterSvc('browser',this)">🔍 Browser</button>
+    <button class="fb" onclick="filterSvc('identity',this)">✉️ Identity</button>
+    <button class="fb" onclick="filterSvc('payment',this)">💳 Payment</button>
+    <button class="fb" onclick="filterSvc('comms',this)">💬 Comms</button>
+    <button class="fb" onclick="filterSvc('hardware',this)">🔑 Hardware</button>
+  </div>
+
+  <!-- OS -->
+  <div class="cat-section" data-cat="os">
+    <div class="cat-header"><span class="cat-icon">🖥</span><span class="cat-title">OS layer</span><span class="cat-count">5 services</span><span class="cat-layer cl-1">Layer 1</span></div>
+    <div class="service-grid">
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Tails</span><span class="sc-tier st-standalone">Blackout</span></div><div class="sc-desc">Amnesic live OS. Boots from USB, routes all traffic through Tor, leaves zero trace. Boot it for sensitive transactions — don't touch the hard drive.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">amnesic</span><span class="sc-tag">Tor-routed</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Tor Project</span><span>tails.boum.org</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Whonix</span><span class="sc-tier st-standalone">Blackout</span></div><div class="sc-desc">Two-VM architecture isolating the network stack from the workstation. Even a compromised app can't leak your IP — the network is structurally isolated.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">VM isolation</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span>whonix.org</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Qubes OS</span><span class="sc-tier st-standalone">Blackout</span></div><div class="sc-desc">Security through compartmentalisation. Every app runs in a separate VM. If one qube is compromised, others remain isolated.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">VM compartments</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span>qubes-os.org</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">GrapheneOS</span><span class="sc-tier st-standalone">Mobile</span></div><div class="sc-desc">Hardened Android for Pixel phones. Sandboxed Google Play, memory hardening, strong app isolation. The only serious privacy option for a smartphone.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">hardened Android</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span>grapheneos.org</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">VeraCrypt</span><span class="sc-tier st-standalone">Storage</span></div><div class="sc-desc">Disk encryption for pane's DB, key material, downloaded documents. Cross-platform. Hidden volumes for plausible deniability.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">hidden volumes</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span>veracrypt.fr</span></div></div>
+    </div>
+  </div>
+
+  <!-- NETWORK -->
+  <div class="cat-section" data-cat="network">
+    <div class="cat-header"><span class="cat-icon">🌐</span><span class="cat-title">Network & DNS</span><span class="cat-count">6 services</span><span class="cat-layer cl-2">Layer 2</span></div>
+    <div class="service-grid">
+      <div class="sc tier-mvp"><div class="sc-top"><span class="sc-name">ProtonVPN</span><span class="sc-tier st-mvp">MVP · free</span></div><div class="sc-desc">Swiss, audited no-logs, free tier for MVP. Covers the network layer for users without Mullvad.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag">audited</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇨🇭 Switzerland</span><span class="sc-pane">free VPN tier</span></div></div>
+      <div class="sc tier-next"><div class="sc-top"><span class="sc-name">Mullvad</span><span class="sc-tier st-next">Next · integrated</span></div><div class="sc-desc">No account required. Cash + Monero accepted. API for per-context exit node assignment. The most privacy-respecting VPN available.</div><div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">no account</span><span class="sc-tag">API</span><span class="sc-tag">Monero</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇸🇪 Sweden</span><span class="sc-pane">MULLVAD_ACCOUNT=</span></div></div>
+      <div class="sc tier-later"><div class="sc-top"><span class="sc-name">Tor Network</span><span class="sc-tier st-later">Later · Docker</span></div><div class="sc-desc">Onion routing. Structural anonymity, not just privacy. pane Docker contexts route through Tor. Note: doesn't protect against end-to-end timing confirmation (per Tor paper §3.1).</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">onion routing</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Decentralised</span><span class="sc-docker">Docker context</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Onion Services (.onion)</span><span class="sc-tier st-standalone">Future</span></div><div class="sc-desc">Traffic that never exits Tor. No exit node means no exit metadata. The Tor paper's rendezvous point design eliminates the exit observation vector entirely. Future pane API endpoint.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">no exit node</span><span class="sc-tag">metadata-free</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Tor Project</span><span>pane .onion (planned)</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">NextDNS</span><span class="sc-tier st-standalone">DNS layer</span></div><div class="sc-desc">Encrypted DNS resolver with per-profile blocking. Prevents DNS leaks that correlate activity even through a VPN. Free tier covers personal use.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">DoH / DoT</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇫🇷 France</span><span>nextdns.io</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">ExpressVPN / NordVPN</span><span class="sc-tier st-avoid">⚠ Avoid</span></div><div class="sc-desc">Mass-market VPNs. Logs disclosed under legal compulsion. Heavy advertising is a red flag for a privacy product.</div><div class="sc-tags"><span class="sc-tag">logs disclosed</span></div><div class="sc-meta"><span class="sc-jurisdiction">Various</span></div><div class="sc-caveat">Not recommended for any pane context.</div></div>
+    </div>
+  </div>
+
+  <!-- BROWSER -->
+  <div class="cat-section" data-cat="browser">
+    <div class="cat-header"><span class="cat-icon">🔍</span><span class="cat-title">Browser & documents</span><span class="cat-count">5 services</span><span class="cat-layer cl-3">Layer 3</span></div>
+    <div class="service-grid">
+      <div class="sc tier-next"><div class="sc-top"><span class="sc-name">Playwright + Stealth</span><span class="sc-tier st-next">Next · integrated</span></div><div class="sc-desc">playwright-extra stealth randomises canvas, WebGL, fonts, UA per context. Powers <code>pane.enroll()</code>.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">fingerprint spoof</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span class="sc-pane">pane.enroll()</span></div></div>
+      <div class="sc tier-later"><div class="sc-top"><span class="sc-name">Docker context</span><span class="sc-tier st-docker">Later · pane</span></div><div class="sc-desc">Ephemeral container: Chromium + stealth + Tor proxy + no host disk. For sensitive real-identity transactions. Burns on close.</div><div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">ephemeral</span><span class="sc-tag">Tor</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span class="sc-docker">isolation: docker</span></div></div>
+      <div class="sc tier-mvp"><div class="sc-top"><span class="sc-name">Brave</span><span class="sc-tier st-mvp">MVP · manual</span></div><div class="sc-desc">Built-in fingerprint randomisation, tracker blocking. Recommended for manual browsing while pane automation is in development.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA</span><span>brave.com</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">MAT2 / ExifTool</span><span class="sc-tier st-standalone">Metadata</span></div><div class="sc-desc">Strips metadata from documents before sharing. Author names, GPS, edit history — all leak your identity even from an aliased account.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Dangerzone</span><span class="sc-tier st-standalone">Doc safety</span></div><div class="sc-desc">Converts potentially malicious documents to safe PDFs via an isolated container. Built by Freedom of the Press Foundation.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 FPF</span><span>dangerzone.rocks</span></div></div>
+    </div>
+  </div>
+
+  <!-- IDENTITY -->
+  <div class="cat-section" data-cat="identity">
+    <div class="cat-header"><span class="cat-icon">✉️</span><span class="cat-title">Identity aliasing</span><span class="cat-count">4 services</span><span class="cat-layer cl-5">Layer 5</span></div>
+    <div class="service-grid">
+      <div class="sc tier-mvp"><div class="sc-top"><span class="sc-name">Addy.io</span><span class="sc-tier st-mvp">MVP · primary</span></div><div class="sc-desc">Open source, API-first, generous free tier. pane's primary alias engine. Create, inspect, and burn aliases programmatically.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 UK</span><span class="sc-pane">pane.create_alias()</span></div></div>
+      <div class="sc tier-next"><div class="sc-top"><span class="sc-name">SimpleLogin</span><span class="sc-tier st-next">Next · alt</span></div><div class="sc-desc">Proton-owned, Swiss jurisdiction. Best fallback for users already in the Proton ecosystem.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇨🇭 Switzerland</span><span class="sc-pane">EMAIL_PROVIDER=simplelogin</span></div></div>
+      <div class="sc tier-next"><div class="sc-top"><span class="sc-name">JMP.chat</span><span class="sc-tier st-next">Next · phone</span></div><div class="sc-desc">XMPP-based alias phone numbers with SMS. API provisioning per context. One number per relationship, same burn-when-done discipline as email.</div><div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">API</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA</span><span class="sc-pane">JMP_API_KEY=</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Prepaid SIM</span><span class="sc-tier st-standalone">Hard fallback</span></div><div class="sc-desc">Cash-purchased SIM for services that blocklist VOIP. Last resort when JMP fails. Maximum friction, maximum acceptance.</div><div class="sc-tags"><span class="sc-tag">carrier-grade</span><span class="sc-tag">cash purchase</span></div><div class="sc-meta"><span class="sc-jurisdiction">Local carrier</span></div></div>
+    </div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="cat-section" data-cat="payment">
+    <div class="cat-header"><span class="cat-icon">💳</span><span class="cat-title">Payment isolation</span><span class="cat-count">4 services</span><span class="cat-layer cl-4">Layer 4</span></div>
+    <div class="service-grid">
+      <div class="sc tier-mvp"><div class="sc-top"><span class="sc-name">Privacy.com</span><span class="sc-tier st-mvp">MVP · integrated</span></div><div class="sc-desc">Real Visa numbers, merchant-locked, amount-capped. US only. pane creates a $0 card per context, funded only when needed.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">API</span><span class="sc-tag">merchant lock</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA only</span><span class="sc-pane">pane.create_card()</span></div></div>
+      <div class="sc tier-next"><div class="sc-top"><span class="sc-name">Monero (XMR)</span><span class="sc-tier st-next">Next · bootstrapping</span></div><div class="sc-desc">The bootstrapping fix: Privacy.com requires a real bank account. Monero closes it — pay for Mullvad, JMP, ProtonMail without a real card. Ring signatures make transactions untraceable.</div><div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">ring sigs</span><span class="sc-tag">untraceable</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Decentralised</span><span class="sc-pane">service payments</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Revolut</span><span class="sc-tier st-standalone">Non-US alt</span></div><div class="sc-desc">Virtual card per merchant on paid plans. For EU/UK/global where Privacy.com doesn't reach.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">EU / UK</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 UK</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Bitcoin</span><span class="sc-tier st-avoid">⚠ Not sufficient</span></div><div class="sc-desc">Pseudonymous, not anonymous. Every transaction is public on-chain. Chain analysis routinely de-anonymises BTC flows. Use Monero instead.</div><div class="sc-tags"><span class="sc-tag">pseudonymous only</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Decentralised</span></div><div class="sc-caveat">Use Monero. BTC is traceable.</div></div>
+    </div>
+  </div>
+
+  <!-- COMMS -->
+  <div class="cat-section" data-cat="comms">
+    <div class="cat-header"><span class="cat-icon">💬</span><span class="cat-title">Communications</span><span class="cat-count">4 services</span><span class="cat-layer cl-6">Layer 6</span></div>
+    <div class="service-grid">
+      <div class="sc tier-mvp"><div class="sc-top"><span class="sc-name">Signal</span><span class="sc-tier st-always">Always</span></div><div class="sc-desc">The non-negotiable. E2E encrypted, sealed sender, disappearing messages, minimal metadata. Use regardless of tint level.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">sealed sender</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA (non-profit)</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Session</span><span class="sc-tier st-standalone">No phone needed</span></div><div class="sc-desc">Signal-like but no phone number required. Onion-routed. Ideal for high-tint contexts where you can't anchor to a phone.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">no phone</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇦🇺 Australia</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Matrix / Element</span><span class="sc-tier st-standalone">Groups</span></div><div class="sc-desc">Decentralised, self-hostable, encrypted groups. No single company controls the infrastructure.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 UK</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">WhatsApp / Telegram</span><span class="sc-tier st-avoid">⚠ Avoid</span></div><div class="sc-desc">WhatsApp: message contents E2E but everything else goes to Meta. Telegram: group chats not E2E by default. Use Signal.</div><div class="sc-tags"><span class="sc-tag">metadata harvested</span></div><div class="sc-meta"><span class="sc-jurisdiction">Various</span></div><div class="sc-caveat">Use Signal. These are postcards.</div></div>
+    </div>
+  </div>
+
+  <!-- HARDWARE -->
+  <div class="cat-section" data-cat="hardware">
+    <div class="cat-header"><span class="cat-icon">🔑</span><span class="cat-title">Hardware & keys</span><span class="cat-count">4 services</span><span class="cat-layer cl-0">Layer 0</span></div>
+    <div class="service-grid">
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">YubiKey</span><span class="sc-tier st-standalone">Blackout tier</span></div><div class="sc-desc">Hardware 2FA for protecting pane's own accounts. The only 2FA that resists both phishing and SIM swap. If pane manages your aliases, it needs a hardware key protecting it.</div><div class="sc-tags"><span class="sc-tag">FIDO2</span><span class="sc-tag">phishing-resistant</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇸🇪 Sweden</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Nitrokey</span><span class="sc-tier st-standalone">OSS alt</span></div><div class="sc-desc">Open source hardware key — firmware is auditable unlike YubiKey's proprietary implementation.</div><div class="sc-tags"><span class="sc-tag oss">OSS hardware</span><span class="sc-tag">FIDO2</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇩🇪 Germany</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Passkeys (FIDO2)</span><span class="sc-tier st-standalone">Recommended</span></div><div class="sc-desc">Phishing-resistant, passwordless login. Increasingly supported by Proton, Addy.io, and other pane-ecosystem services.</div><div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag">phishing-resistant</span></div><div class="sc-meta"><span class="sc-jurisdiction">🌍 Open standard</span></div></div>
+      <div class="sc tier-standalone"><div class="sc-top"><span class="sc-name">Bitwarden</span><span class="sc-tier st-standalone">Credential store</span></div><div class="sc-desc">Open source password manager for pane context credentials. Self-hostable. Protected by hardware key + master password.</div><div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span></div><div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTNOTE -->
+<div class="footnote">
+  <div class="fn-inner">
+    <div class="fn-grid">
+      <div>
+        <div class="fn-title">Why tint levels?</div>
+        <div class="fn-body">Window tint is graded by VLT — Visible Light Transmission. The lower the percentage, the less visible you are through the glass. Different transactions call for different opacity. A newsletter signup is 50% VLT. Your DMV appointment is 10%. The goal isn't maximum opacity everywhere — it's <em>appropriate</em> opacity for each context.</div>
+      </div>
+      <div>
+        <div class="fn-title">The bootstrapping problem</div>
+        <div class="fn-body">You can't use Privacy.com without a real bank account. You can't buy Mullvad anonymously without Monero. You can't get a YubiKey without a delivery address. There is no perfect starting point. Start from where you are, add layers over time, and use Monero for new service payments once the initial layer is in place.</div>
+      </div>
+      <div>
+        <div class="fn-title">pane's scope boundary</div>
+        <div class="fn-body">pane addresses layers 3–6: identity aliasing, virtual cards, browser automation, fingerprint spoofing. Layers 0–2 are recommended but not integrated. pane cannot protect against a compromised host OS or end-to-end traffic confirmation by a global adversary (per Dingledine et al., Tor paper §3.1). The OS layer is upstream of everything pane does.</div>
+      </div>
+    </div>
+    <!-- LEGAL FOOTER -->
+    <div class="fn-legal">
+      <div class="fn-legal-title">Legal notice</div>
+      <p class="fn-legal-text">
+        <strong>pane is designed for lawful privacy protection.</strong> This software is intended to help individuals protect themselves from commercial data collection, behavioral profiling, and advertising-affiliated tracking networks. It is not designed, intended, or licensed for use in furtherance of any illegal activity. Users are solely responsible for ensuring their use of pane complies with all applicable local, state, federal, and international laws. pane does not provide legal advice. <strong>Privacy is a fundamental human right</strong> — exercising it lawfully is not only your right but your responsibility. If you are subject to legal process requiring disclosure of information, you must comply with that process regardless of what privacy tools you use. pane does not obstruct legitimate law enforcement, does not facilitate illegal activity, and does not operate in jurisdictions where providing this software would itself be illegal. See also: <a href="https://www.eff.org/issues/privacy" style="color:var(--teal);">EFF Privacy Rights</a> · <a href="https://www.torproject.org/about/history/" style="color:var(--teal);">Tor Project Mission</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLTIP DIV -->
+<div id="svg-tooltip" style="position:fixed;z-index:500;pointer-events:none;opacity:0;transition:opacity .15s;max-width:280px;">
+  <div id="tooltip-content" style="background:#26211C;color:#FAF8F3;padding:.7rem 1rem;border-radius:6px;font-family:'Outfit',sans-serif;font-size:.77rem;line-height:1.65;box-shadow:0 8px 24px rgba(0,0,0,.3);">
+    <strong id="tt-name" style="display:block;margin-bottom:.3rem;color:white;font-size:.82rem;"></strong>
+    <span id="tt-tip"></span>
+  </div>
+</div>
+
+<script>
+// ── TINT SELECTOR ──
+function selectTint(level, el) {
+  document.querySelectorAll('.tint-band').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tint-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + level).classList.add('active');
+}
+
+// ── SERVICE FILTER ──
+function filterSvc(cat, btn) {
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(s => {
+    if (cat === 'all' || s.dataset.cat === cat) s.classList.remove('hidden');
+    else s.classList.add('hidden');
+  });
+}
+
+// ── SVG LAYER HOVER & CLICK ──
+const tooltip = document.getElementById('svg-tooltip');
+const ttName  = document.getElementById('tt-name');
+const ttTip   = document.getElementById('tt-tip');
+
+document.querySelectorAll('.stack-layer-group').forEach(g => {
+  g.addEventListener('mouseenter', (e) => {
+    ttName.textContent = g.dataset.name || '';
+    ttTip.textContent  = g.dataset.tip  || '';
+    tooltip.style.opacity = '1';
+  });
+  g.addEventListener('mousemove', (e) => {
+    const pad = 18;
+    let x = e.clientX + pad;
+    let y = e.clientY - 10;
+    // keep within viewport
+    const tw = tooltip.offsetWidth || 280;
+    const th = tooltip.offsetHeight || 80;
+    if (x + tw > window.innerWidth - 16) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - 16) y = window.innerHeight - th - 16;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top  = y + 'px';
+  });
+  g.addEventListener('mouseleave', () => {
+    tooltip.style.opacity = '0';
+  });
+  g.addEventListener('click', () => {
+    const target = g.dataset.target;
+    if (target) {
+      const el = document.querySelector(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pane / services — Full ecosystem map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FAF8F4;--linen:#F3EEE6;--warm:#EDE6DA;--fog:#DDD6C8;
+  --stone:#B8AFA0;--ink:#28231E;--ink-soft:#524840;--ink-faint:#9C9088;
+  --teal:#3D9688;--teal-mid:#5AADA0;--teal-light:#DFF0EE;
+  --amber:#C97A4A;--amber-light:#FAF0E6;
+  --sage:#6B9468;--sage-light:#EBF3EA;
+  --lilac:#8070B0;--lilac-light:#EEEAF6;
+  --red:#C0584A;--red-light:#FAEDEA;
+  --blue:#4A78C0;--blue-light:#E8EFF8;
+  --docker:#1D63ED;--docker-light:#E0ECFF;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--cream);color:var(--ink);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(250,248,244,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(180,170,158,.3);padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--teal);text-decoration:none;letter-spacing:.06em;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:.74rem;font-weight:400;color:var(--ink-faint);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink);}
+
+/* HEADER */
+.page-header{padding:5rem 3rem 3rem;max-width:1200px;margin:0 auto;}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--teal);letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:.8rem;}
+.eyebrow::before{content:'';width:2rem;height:1px;background:var(--teal);}
+h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:300;line-height:1;letter-spacing:-.02em;margin-bottom:.8rem;}
+h1 em{font-style:italic;color:var(--teal);}
+.page-sub{font-size:.95rem;color:var(--ink-soft);max-width:560px;line-height:1.85;}
+
+/* LEGEND */
+.legend{max-width:1200px;margin:0 auto;padding:0 3rem 2.5rem;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;}
+.legend-label{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--ink-faint);letter-spacing:.12em;text-transform:uppercase;margin-right:.5rem;}
+.lbadge{font-family:'DM Mono',monospace;font-size:.62rem;padding:.2rem .7rem;border-radius:2rem;border:1px solid;}
+.lb-mvp{background:var(--teal-light);color:var(--teal);border-color:#B8DDD8;}
+.lb-next{background:var(--amber-light);color:var(--amber);border-color:#E8C8A8;}
+.lb-later{background:var(--lilac-light);color:var(--lilac);border-color:#C0B4DC;}
+.lb-rec{background:var(--warm);color:var(--ink-faint);border-color:var(--fog);}
+.lb-always{background:var(--sage-light);color:var(--sage);border-color:#C0D8BE;}
+.lb-avoid{background:var(--red-light);color:var(--red);border-color:#E8C0B8;}
+.lsep{width:1px;height:1.2rem;background:var(--fog);}
+.pane-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--teal);margin-right:.35rem;vertical-align:middle;}
+.docker-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--docker);margin-right:.35rem;vertical-align:middle;}
+
+/* FILTERS */
+.filters{max-width:1200px;margin:0 auto;padding:0 3rem 3rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;}
+.filter-label{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--ink-faint);letter-spacing:.12em;text-transform:uppercase;margin-right:.4rem;}
+.fb{font-family:'DM Mono',monospace;font-size:.67rem;padding:.3rem .85rem;border-radius:2rem;border:1px solid var(--fog);background:white;color:var(--ink-soft);cursor:pointer;transition:all .2s;}
+.fb:hover{border-color:var(--teal);color:var(--teal);}
+.fb.active{background:var(--teal);color:white;border-color:var(--teal);}
+.sep-filter{width:1px;height:1.2rem;background:var(--fog);}
+
+/* CATEGORY */
+.services-body{max-width:1200px;margin:0 auto;padding:0 3rem 6rem;}
+.cat-section{margin-bottom:4rem;}
+.cat-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.5rem;padding-bottom:.8rem;border-bottom:2px solid var(--fog);}
+.cat-icon{font-size:1.2rem;}
+.cat-name{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--ink);}
+.cat-count{font-family:'DM Mono',monospace;font-size:.63rem;color:var(--ink-faint);}
+.cat-layer-tag{font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .5rem;border-radius:2rem;color:white;}
+.clt-6{background:#1A3820;} .clt-5{background:#3A2060;} .clt-4{background:#5A4830;}
+.clt-3{background:#2B6B60;} .clt-2{background:#2B4060;} .clt-1{background:#1A2030;} .clt-0{background:#0A0C10;}
+.service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+
+/* SERVICE CARD */
+.sc{background:white;border:1px solid var(--fog);border-radius:10px;padding:1.4rem;position:relative;overflow:hidden;transition:box-shadow .2s,border-color .2s;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc.t-mvp::before{background:var(--teal);}
+.sc.t-next::before{background:var(--amber);}
+.sc.t-later::before{background:var(--lilac);}
+.sc.t-rec::before{background:var(--fog);}
+.sc.t-always::before{background:var(--sage);}
+.sc.t-avoid::before{background:var(--red);}
+.sc.t-docker::before{background:var(--docker);}
+.sc:hover{box-shadow:0 8px 28px rgba(40,35,30,.09);border-color:var(--stone);}
+.sc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.7rem;}
+.sc-name{font-weight:600;font-size:.92rem;color:var(--ink);}
+.sc-tier{font-family:'DM Mono',monospace;font-size:.55rem;padding:.18rem .5rem;border-radius:2rem;flex-shrink:0;white-space:nowrap;border:1px solid;}
+.t-mvp .sc-tier{background:var(--teal-light);color:var(--teal);border-color:#B8DDD8;}
+.t-next .sc-tier{background:var(--amber-light);color:var(--amber);border-color:#E8C8A8;}
+.t-later .sc-tier{background:var(--lilac-light);color:var(--lilac);border-color:#C0B4DC;}
+.t-rec .sc-tier{background:var(--warm);color:var(--ink-faint);border-color:var(--fog);}
+.t-always .sc-tier{background:var(--sage-light);color:var(--sage);border-color:#C0D8BE;}
+.t-avoid .sc-tier{background:var(--red-light);color:var(--red);border-color:#E8C0B8;}
+.t-docker .sc-tier{background:var(--docker-light);color:var(--docker);border-color:#B0CDF8;}
+.sc-desc{font-size:.8rem;color:var(--ink-soft);line-height:1.65;margin-bottom:.9rem;}
+.sc-tags{display:flex;flex-wrap:wrap;gap:.25rem;margin-bottom:.8rem;}
+.sc-tag{font-family:'DM Mono',monospace;font-size:.56rem;padding:.12rem .45rem;border-radius:3px;border:1px solid var(--fog);color:var(--ink-faint);background:var(--cream);}
+.sc-tag.free{border-color:#B8D8B0;color:var(--sage);background:var(--sage-light);}
+.sc-tag.oss{border-color:#B0C8E8;color:var(--blue);background:var(--blue-light);}
+.sc-tag.e2e{border-color:#D8B8D8;color:var(--lilac);background:var(--lilac-light);}
+.sc-meta{display:flex;align-items:center;justify-content:space-between;padding-top:.6rem;border-top:1px solid var(--warm);font-size:.62rem;}
+.sc-jurisdiction{font-family:'DM Mono',monospace;color:var(--ink-faint);}
+.sc-pane-tag{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--teal);}
+.sc-docker-tag{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--docker);}
+.sc-caveat{font-size:.73rem;color:var(--amber);margin-top:.5rem;font-style:italic;line-height:1.55;}
+.hidden{display:none!important;}
+
+/* FOOTER */
+.site-footer{background:var(--linen);border-top:1px solid var(--fog);padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;}
+.ft-brand{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--teal);}
+.ft-links{display:flex;gap:2rem;}
+.ft-links a{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;}
+.ft-links a:hover{color:var(--ink);}
+.ft-note{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sc{animation:fadeIn .25s ease both;}
+@media(max-width:768px){
+  nav{padding:.9rem 1.5rem;}
+  .nav-links{display:none;}
+  .page-header,.legend,.filters,.services-body{padding-left:1.5rem;padding-right:1.5rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-brand">pane</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Why it matters</a></li>
+    <li><a href="stack.html">The Stack</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="https://github.com/yourhandle/pane" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Full ecosystem map</div>
+  <h1>Every service.<br><em>Layered.</em></h1>
+  <p class="page-sub">Every privacy service pane works with, evaluates, or defers to — tagged by integration tier, stack layer, and whether it's already wired into the MCP suite.</p>
+</div>
+
+<div class="legend">
+  <span class="legend-label">Tier:</span>
+  <span class="lbadge lb-mvp">MVP — wired in now</span>
+  <span class="lbadge lb-next">NEXT — roadmap</span>
+  <span class="lbadge lb-later">LATER — future</span>
+  <span class="lbadge lb-rec">Recommended</span>
+  <span class="lbadge lb-always">Always on</span>
+  <span class="lbadge lb-avoid">⚠ Avoid</span>
+  <span class="lsep"></span>
+  <span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink-faint);"><span class="pane-dot"></span>pane-integrated</span>
+  <span style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink-faint);"><span class="docker-dot"></span>Docker-scoped</span>
+</div>
+
+<div class="filters">
+  <span class="filter-label">Show:</span>
+  <button class="fb active" onclick="filterCat('all',this)">All</button>
+  <button class="fb" onclick="filterCat('comms',this)">💬 Comms</button>
+  <button class="fb" onclick="filterCat('identity',this)">✉️ Identity</button>
+  <button class="fb" onclick="filterCat('payment',this)">💳 Payment</button>
+  <button class="fb" onclick="filterCat('browser',this)">🔍 Browser</button>
+  <button class="fb" onclick="filterCat('network',this)">🌐 Network</button>
+  <button class="fb" onclick="filterCat('os',this)">🖥 OS</button>
+  <button class="fb" onclick="filterCat('hardware',this)">🔑 Hardware</button>
+  <button class="fb" onclick="filterCat('photo',this)">📷 Photo cloaking</button>
+  <button class="fb" onclick="filterCat('surveillance',this)">🚗 Physical surveillance</button>
+  <span class="sep-filter"></span>
+  <button class="fb" onclick="filterTier('mvp',this)">MVP only</button>
+  <button class="fb" onclick="filterTier('pane',this)">pane-integrated</button>
+</div>
+
+<div class="services-body">
+
+  <!-- LAYER 6: Comms -->
+  <div class="cat-section" data-cat="comms">
+    <div class="cat-header">
+      <span class="cat-icon">💬</span>
+      <span class="cat-name">Communications</span>
+      <span class="cat-count">4 services</span>
+      <span class="cat-layer-tag clt-6">Layer 6</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-always" data-cat="comms" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Signal</span><span class="sc-tier">Always on</span></div>
+        <div class="sc-desc">End-to-end encrypted, sealed sender, disappearing messages, minimal metadata retention. The baseline for any real conversation — use regardless of tint level. WhatsApp is a postcard. Signal is a sealed letter.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E sealed sender</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Signal Foundation (non-profit)</span><span class="sc-pane-tag">🪟 recommended</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="comms">
+        <div class="sc-top"><span class="sc-name">Session</span><span class="sc-tier">No phone needed</span></div>
+        <div class="sc-desc">Signal-equivalent but requires no phone number. Onion-routed message delivery. For high-tint contexts where anchoring to a phone number is the threat.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">no phone</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇦🇺 Session / Oxen</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="comms">
+        <div class="sc-top"><span class="sc-name">Matrix / Element</span><span class="sc-tier">Decentralised groups</span></div>
+        <div class="sc-desc">Federated, self-hostable, encrypted group communications. No single company controls the infrastructure. pane's natural community layer for coordination across contexts.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">self-hostable</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 Matrix.org Foundation</span></div>
+      </div>
+      <div class="sc t-avoid" data-cat="comms">
+        <div class="sc-top"><span class="sc-name">WhatsApp / Telegram</span><span class="sc-tier">⚠ Avoid</span></div>
+        <div class="sc-desc">WhatsApp: message content E2E, but who/when/how often goes to Meta. Telegram: group chats default to unencrypted; UAE legal jurisdiction; metadata-heavy. Neither suitable for pane contexts.</div>
+        <div class="sc-tags"><span class="sc-tag">metadata harvested</span><span class="sc-tag">centralised</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">Various</span></div>
+        <div class="sc-caveat">Use Signal. These are postcards with end-to-end writing on the inside but the envelope is still visible.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 5: Identity -->
+  <div class="cat-section" data-cat="identity">
+    <div class="cat-header">
+      <span class="cat-icon">✉️</span>
+      <span class="cat-name">Identity aliasing</span>
+      <span class="cat-count">5 services</span>
+      <span class="cat-layer-tag clt-5">Layer 5</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-mvp" data-cat="identity" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Addy.io</span><span class="sc-tier">MVP · primary</span></div>
+        <div class="sc-desc">Open source, API-first alias email service. Free tier generates unlimited aliases. pane's primary alias engine — create, inspect, and burn via API. One alias per relationship.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">API</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 UK</span><span class="sc-pane-tag">🪟 pane.create_alias()</span></div>
+      </div>
+      <div class="sc t-next" data-cat="identity" data-pane="true">
+        <div class="sc-top"><span class="sc-name">SimpleLogin</span><span class="sc-tier">NEXT · alt</span></div>
+        <div class="sc-desc">Proton-owned, Swiss jurisdiction, PGP support, custom domains. Best fallback for users already in the Proton ecosystem or wanting Swiss data residency for aliases.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E + PGP</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇨🇭 Switzerland (Proton)</span><span class="sc-pane-tag">🪟 EMAIL_PROVIDER=simplelogin</span></div>
+      </div>
+      <div class="sc t-next" data-cat="identity" data-pane="true">
+        <div class="sc-top"><span class="sc-name">JMP.chat</span><span class="sc-tier">NEXT · phone</span></div>
+        <div class="sc-desc">XMPP-based alias phone numbers with full SMS and voice capability. API provisioning per context. One number per relationship — same burn-when-done discipline as email aliases.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">API</span><span class="sc-tag">SMS + voice</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA</span><span class="sc-pane-tag">🪟 JMP_API_KEY=</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="identity">
+        <div class="sc-top"><span class="sc-name">DuckDuckGo Email</span><span class="sc-tier">Simple alias</span></div>
+        <div class="sc-desc">@duck.com aliases with email tracker stripping. No API — manual use only. Good for casual signups where you don't need pane's full context management.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag">tracker strip</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA (DDG)</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="identity">
+        <div class="sc-top"><span class="sc-name">Prepaid SIM</span><span class="sc-tier">Hard fallback</span></div>
+        <div class="sc-desc">Cash-purchased SIM for services that blocklist VOIP numbers. Last resort when JMP fails. Carrier-grade acceptance, maximum friction. Used only when all alias phone options fail.</div>
+        <div class="sc-tags"><span class="sc-tag">carrier-grade</span><span class="sc-tag">cash purchase</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">Local carrier</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 4: Payment -->
+  <div class="cat-section" data-cat="payment">
+    <div class="cat-header">
+      <span class="cat-icon">💳</span>
+      <span class="cat-name">Payment isolation</span>
+      <span class="cat-count">5 services</span>
+      <span class="cat-layer-tag clt-4">Layer 4</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-mvp" data-cat="payment" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Privacy.com</span><span class="sc-tier">MVP · integrated</span></div>
+        <div class="sc-desc">Real Visa numbers, merchant-locked, amount-capped, instantly freezable. pane creates a $0 card per context, funded only at use. Free tier covers the full MVP. US only.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">API</span><span class="sc-tag">merchant lock</span><span class="sc-tag">instant freeze</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA only</span><span class="sc-pane-tag">🪟 pane.create_card()</span></div>
+      </div>
+      <div class="sc t-next" data-cat="payment" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Monero (XMR)</span><span class="sc-tier">NEXT · bootstrapping</span></div>
+        <div class="sc-desc">Closes the bootstrapping hole: Privacy.com requires a real bank account. Monero lets you pay for Mullvad, JMP, ProtonMail, and hosting without anchoring to a real card or identity. Ring signatures make all transactions untraceable.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">ring signatures</span><span class="sc-tag">untraceable</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Decentralised</span><span class="sc-pane-tag">🪟 service payments</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="payment">
+        <div class="sc-top"><span class="sc-name">Revolut</span><span class="sc-tier">Non-US alt</span></div>
+        <div class="sc-desc">Virtual card per merchant on paid plans. Available in EU, UK, and global markets where Privacy.com doesn't operate. No programmatic API — manual creation only.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">EU / UK / global</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇬🇧 UK (FCA)</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="payment">
+        <div class="sc-top"><span class="sc-name">Cash</span><span class="sc-tier">Physical layer</span></div>
+        <div class="sc-desc">For prepaid SIM purchase, physical hardware keys, and anything requiring zero digital trace. ATM withdrawal is the only traceable event. The only truly anonymous payment method.</div>
+        <div class="sc-tags"><span class="sc-tag">zero digital trace</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">Physical</span></div>
+      </div>
+      <div class="sc t-avoid" data-cat="payment">
+        <div class="sc-top"><span class="sc-name">Bitcoin</span><span class="sc-tier">⚠ Not sufficient</span></div>
+        <div class="sc-desc">Pseudonymous, not anonymous. Every transaction is public on-chain. Chain analysis firms routinely de-anonymise BTC flows from exchange KYC back to wallet activity. Use Monero for actual payment privacy.</div>
+        <div class="sc-tags"><span class="sc-tag">pseudonymous only</span><span class="sc-tag">public ledger</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Decentralised</span></div>
+        <div class="sc-caveat">BTC is traceable. On-chain analytics (Chainalysis, Elliptic) routinely link wallets to identities via exchange KYC. Use Monero.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 3: Browser -->
+  <div class="cat-section" data-cat="browser">
+    <div class="cat-header">
+      <span class="cat-icon">🔍</span>
+      <span class="cat-name">Browser, fingerprint & documents</span>
+      <span class="cat-count">7 services</span>
+      <span class="cat-layer-tag clt-3">Layer 3</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-next" data-cat="browser" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Playwright + Stealth</span><span class="sc-tier">NEXT · automation</span></div>
+        <div class="sc-desc">playwright-extra stealth plugin randomises canvas hash, WebGL renderer, installed fonts, user agent, and screen resolution per context. Powers <code style="font-family:'DM Mono',monospace;font-size:.8em;color:var(--teal);">pane.enroll()</code> automated form fill.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">fingerprint spoof</span><span class="sc-tag">per-context seed</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span class="sc-pane-tag">🪟 pane.enroll(url)</span></div>
+      </div>
+      <div class="sc t-docker" data-cat="browser" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Docker context</span><span class="sc-tier">LATER · isolation</span></div>
+        <div class="sc-desc">Ephemeral container: clean Chromium + stealth + Tor SOCKS5 proxy + no host disk access. For sensitive real-identity transactions (DMV, SSA, healthcare). Burns on session close. Nothing persists.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">ephemeral</span><span class="sc-tag">no host disk</span><span class="sc-tag">Tor-routed</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span><span class="sc-docker-tag">🐳 isolation: docker</span></div>
+      </div>
+      <div class="sc t-mvp" data-cat="browser" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Brave Browser</span><span class="sc-tier">MVP · manual</span></div>
+        <div class="sc-desc">Built-in fingerprint randomisation and aggressive tracker blocking. Recommended for manual browsing while Playwright automation is being built out. No configuration required.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">fingerprint resist</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Brave Software</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="browser">
+        <div class="sc-top"><span class="sc-name">Firefox + uBlock + Containers</span><span class="sc-tier">Manual setup</span></div>
+        <div class="sc-desc">Multi-Account Containers extension + uBlock Origin is the most powerful manual multi-identity browser configuration. Each container is session-isolated — no shared cookies or storage between contexts.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">containers</span><span class="sc-tag">session isolation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Mozilla</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="browser">
+        <div class="sc-top"><span class="sc-name">MAT2 / ExifTool</span><span class="sc-tier">Document hygiene</span></div>
+        <div class="sc-desc">Strips metadata from documents and images before sharing. Author names, GPS coordinates, creation software, and revision history are all embedded by default in Office docs, PDFs, and photos — and all leak identity from an aliased account.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">metadata strip</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="browser">
+        <div class="sc-top"><span class="sc-name">Dangerzone</span><span class="sc-tier">Document safety</span></div>
+        <div class="sc-desc">Converts potentially malicious documents to safe PDFs by rendering them in an isolated container and re-creating a clean output. Built by Freedom of the Press Foundation for journalists receiving untrusted files.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">Docker isolation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Freedom of the Press Foundation</span></div>
+      </div>
+      <div class="sc t-later" data-cat="browser" data-pane="true">
+        <div class="sc-top"><span class="sc-name">2captcha</span><span class="sc-tier">LATER · CAPTCHA</span></div>
+        <div class="sc-desc">CAPTCHA solving API. Prevents handing Google a confirmed behavioral fingerprint on every CAPTCHA solve — important for automated alias provisioning at scale without training reCAPTCHA on your sessions.</div>
+        <div class="sc-tags"><span class="sc-tag">CAPTCHA bypass</span><span class="sc-tag">API</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 USA</span><span class="sc-pane-tag">🪟 TWOCAPTCHA_API_KEY=</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2: Network -->
+  <div class="cat-section" data-cat="network">
+    <div class="cat-header">
+      <span class="cat-icon">🌐</span>
+      <span class="cat-name">Network & DNS</span>
+      <span class="cat-count">7 services</span>
+      <span class="cat-layer-tag clt-2">Layer 2</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-mvp" data-cat="network" data-pane="true">
+        <div class="sc-top"><span class="sc-name">ProtonVPN</span><span class="sc-tier">MVP · free</span></div>
+        <div class="sc-desc">Swiss jurisdiction, audited no-logs policy, free tier available for MVP users without spend. Covers the network layer until Mullvad API integration lands.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag">audited</span><span class="sc-tag">no logs</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇨🇭 Switzerland</span><span class="sc-pane-tag">🪟 free network layer</span></div>
+      </div>
+      <div class="sc t-next" data-cat="network" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Mullvad</span><span class="sc-tier">NEXT · per-context</span></div>
+        <div class="sc-desc">No account required, no email. Accepts cash and Monero. API for per-context exit node assignment — each pane context can use a different exit IP. The most privacy-respecting commercial VPN.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">no account</span><span class="sc-tag">API</span><span class="sc-tag">Monero</span><span class="sc-tag">no logs</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇸🇪 Sweden</span><span class="sc-pane-tag">🪟 MULLVAD_ACCOUNT=</span></div>
+      </div>
+      <div class="sc t-later" data-cat="network" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Tor Network</span><span class="sc-tier">LATER · Docker</span></div>
+        <div class="sc-desc">Onion routing — structural anonymity. pane Docker contexts route through Tor for highest-sensitivity transactions. Slower but no exit node to observe. Note: does not protect against end-to-end timing confirmation by a global passive adversary.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">onion routing</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Tor Project</span><span class="sc-docker-tag">🐳 Docker context</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="network">
+        <div class="sc-top"><span class="sc-name">Onion Services (.onion)</span><span class="sc-tier">Future</span></div>
+        <div class="sc-desc">Traffic that never exits Tor. Unlike regular Tor usage, .onion services have no exit node — metadata logging eliminated on both ends. Future: pane API and dashboard accessible via .onion, eliminating the last metadata exposure point.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">no exit node</span><span class="sc-tag">metadata-free</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Tor Project</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="network">
+        <div class="sc-top"><span class="sc-name">IVPN</span><span class="sc-tier">Strong alt</span></div>
+        <div class="sc-desc">No account, no email, accepts cash. Multi-hop routing. Independently audited. Equally trustworthy to Mullvad — good fallback if Mullvad is unavailable in your region.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS</span><span class="sc-tag">no account</span><span class="sc-tag">multi-hop</span><span class="sc-tag">audited</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇬🇮 Gibraltar</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="network">
+        <div class="sc-top"><span class="sc-name">NextDNS</span><span class="sc-tier">DNS layer</span></div>
+        <div class="sc-desc">Encrypted DNS with per-profile blocking. Prevents DNS leaks that correlate your browsing activity even through a VPN. DNS-over-HTTPS and DNS-over-TLS supported. Free tier covers personal use.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag">DoH / DoT</span><span class="sc-tag">blocklists</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇫🇷 France</span></div>
+      </div>
+      <div class="sc t-avoid" data-cat="network">
+        <div class="sc-top"><span class="sc-name">ExpressVPN / NordVPN</span><span class="sc-tier">⚠ Avoid</span></div>
+        <div class="sc-desc">Mass-market VPNs with significant advertising spend. Logs have been disclosed under legal compulsion. Heavy advertising is a structural red flag for a privacy product. Not suitable for pane use.</div>
+        <div class="sc-tags"><span class="sc-tag">logs disclosed</span><span class="sc-tag">commercial</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">Various</span></div>
+        <div class="sc-caveat">Not recommended. See: privacyguides.org VPN recommendations for independent assessments.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 1: OS -->
+  <div class="cat-section" data-cat="os">
+    <div class="cat-header">
+      <span class="cat-icon">🖥</span>
+      <span class="cat-name">OS & host isolation</span>
+      <span class="cat-count">6 services</span>
+      <span class="cat-layer-tag clt-1">Layer 1 — upstream of pane</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">Tails</span><span class="sc-tier">Blackout tier</span></div>
+        <div class="sc-desc">Amnesic live OS. Boots from USB, routes all traffic through Tor, leaves zero trace on the host machine after shutdown. For the highest-sensitivity transactions: boot Tails, do the thing, close. Nothing persists.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">amnesic</span><span class="sc-tag">Tor-routed</span><span class="sc-tag">no persistence</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Tor Project</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">Whonix</span><span class="sc-tier">Structural isolation</span></div>
+        <div class="sc-desc">Two-VM architecture: Whonix-Gateway handles all Tor routing; Whonix-Workstation runs your apps. The network is structurally isolated — even a fully compromised app cannot leak your real IP. Persistent but isolated.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">VM isolation</span><span class="sc-tag">stream isolation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">Qubes OS</span><span class="sc-tier">Compartmentalisation</span></div>
+        <div class="sc-desc">Security through VM compartmentalisation. Every application runs in a separate "qube." If one qube is compromised, others remain isolated. Steep learning curve, exceptional threat model for advanced users.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">VM compartments</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">GrapheneOS</span><span class="sc-tier">Mobile OS</span></div>
+        <div class="sc-desc">Hardened Android for Pixel phones. Sandboxed Google Play, memory hardening, strong app isolation, network permission controls. The only serious privacy option for a smartphone. Pairs with JMP.chat alias number.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">hardened Android</span><span class="sc-tag">sandboxed GPlay</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">VeraCrypt</span><span class="sc-tier">Disk encryption</span></div>
+        <div class="sc-desc">Disk encryption for pane's SQLite database, key material, and downloaded documents. Cross-platform. Hidden volumes for plausible deniability. Use for pane's ~/.pane directory on sensitive systems.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">hidden volumes</span><span class="sc-tag">cross-platform</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="os">
+        <div class="sc-top"><span class="sc-name">Cryptomator</span><span class="sc-tier">Cloud files</span></div>
+        <div class="sc-desc">Client-side encryption for cloud storage. If you keep pane context exports or document archives in cloud storage, Cryptomator ensures the provider sees only ciphertext. Works with Dropbox, Google Drive, iCloud.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">client-side E2E</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇩🇪 Germany</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 0: Hardware -->
+  <div class="cat-section" data-cat="hardware">
+    <div class="cat-header">
+      <span class="cat-icon">🔑</span>
+      <span class="cat-name">Hardware & physical security</span>
+      <span class="cat-count">4 services</span>
+      <span class="cat-layer-tag clt-0">Layer 0</span>
+    </div>
+    <div class="service-grid">
+      <div class="sc t-rec" data-cat="hardware">
+        <div class="sc-top"><span class="sc-name">YubiKey</span><span class="sc-tier">Blackout tier</span></div>
+        <div class="sc-desc">Hardware 2FA for protecting pane's own accounts (Addy.io, Privacy.com, Mullvad, ProtonMail). The only 2FA that resists both phishing and SIM swap simultaneously. If pane manages your aliases, hardware protects pane.</div>
+        <div class="sc-tags"><span class="sc-tag">FIDO2 / U2F</span><span class="sc-tag">phishing-resistant</span><span class="sc-tag">SIM-swap-proof</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇸🇪 Yubico</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="hardware">
+        <div class="sc-top"><span class="sc-name">Nitrokey</span><span class="sc-tier">OSS hardware alt</span></div>
+        <div class="sc-desc">Open source hardware key — firmware is fully auditable unlike YubiKey's proprietary implementation. FIDO2, OpenPGP, and TOTP support. The only fully open hardware security key available.</div>
+        <div class="sc-tags"><span class="sc-tag oss">OSS hardware</span><span class="sc-tag">FIDO2</span><span class="sc-tag">auditable firmware</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇩🇪 Germany</span></div>
+      </div>
+      <div class="sc t-rec" data-cat="hardware">
+        <div class="sc-top"><span class="sc-name">Passkeys (FIDO2)</span><span class="sc-tier">Recommended</span></div>
+        <div class="sc-desc">Phishing-resistant, passwordless login based on device-bound cryptographic keys. Increasingly supported across the pane ecosystem — Proton, Addy.io, others. Prefer passkeys over TOTP for pane-managed accounts.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag">phishing-resistant</span><span class="sc-tag">passwordless</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 FIDO Alliance open standard</span></div>
+      </div>
+      <div class="sc t-mvp" data-cat="hardware" data-pane="true">
+        <div class="sc-top"><span class="sc-name">Bitwarden</span><span class="sc-tier">MVP · credential store</span></div>
+        <div class="sc-desc">Open source password manager for pane context credentials — the real credentials behind each alias. Self-hostable. Protected by hardware key + master password. Free tier covers all pane use cases.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tier</span><span class="sc-tag oss">OSS</span><span class="sc-tag e2e">E2E</span><span class="sc-tag">self-hostable</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Bitwarden Inc.</span><span class="sc-pane-tag">🪟 context credentials</span></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PHOTO CLOAKING & BIOMETRIC DEFENCE -->
+  <div class="cat-section" data-cat="photo">
+    <div class="cat-header">
+      <span class="cat-icon">📷</span>
+      <span class="cat-name">Photo cloaking & biometric defence</span>
+      <span class="cat-count">8 tools + techniques</span>
+      <span class="cat-layer-tag" style="background:#4A3060;">Layer 3.5 — biometric</span>
+      <span class="spec-badge" style="display:inline-block;font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;background:#1E1608;border:1px solid #3C2C14;color:#C07840;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;vertical-align:middle;margin-left:.4rem;">partially speculative</span>
+    </div>
+
+    <div style="padding:.9rem 1.2rem;background:#FFF8F0;border:1px solid #F0DCC8;border-radius:6px;margin-bottom:1.5rem;font-size:.8rem;color:var(--ink-soft);line-height:1.75;">
+      <strong style="color:var(--amber);">What this layer defends against:</strong> Clearview AI has scraped 30+ billion photos from the public web and sells facial recognition searches to law enforcement, landlords, and private investigators. PimEyes allows any person to upload a photo and find your other photos across the internet. These aren't speculative threats — they're running now, at scale, against every public photo you've ever posted.<br>
+      <strong style="color:var(--ink);">What this layer cannot defend against:</strong> Government-grade live biometric systems (border control, CCTV), KYC liveness checks (Persona, Jumio), or retroactive searches against photos already in databases. Cloaking protects future uploads. It doesn't unscramble what's already indexed.
+    </div>
+
+    <div class="service-grid">
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">Fawkes</span><span class="sc-tier">Primary cloaker</span></div>
+        <div class="sc-desc">From the SAND Lab at University of Chicago. Applies imperceptible pixel-level perturbations to your photos — invisible to human eyes, but causes facial recognition systems to misidentify you as someone else entirely. Tested against Amazon Rekognition, Microsoft Azure Face, and commercial systems. Free, downloadable, runs locally. <strong style="color:var(--ink);">Run every profile photo through Fawkes before posting.</strong></div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">runs locally</span><span class="sc-tag">adversarial perturbation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 SAND Lab, UChicago</span><span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--sage);">sandlab.cs.uchicago.edu/fawkes</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">LowKey</span><span class="sc-tier">FR-targeted</span></div>
+        <div class="sc-desc">Adversarial perturbations specifically optimised against commercial facial recognition APIs. Where Fawkes targets general FR, LowKey was benchmarked specifically against Microsoft, Amazon, and Clarifai. Useful as a second pass on photos where Fawkes protection needs reinforcing for high-stakes contexts.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">commercial FR targeted</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Academic research</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">MAT2 / ExifTool</span><span class="sc-tier">Metadata strip — always</span></div>
+        <div class="sc-desc">EXIF metadata in a photo includes: GPS coordinates precise to 3 meters, device model and serial, creation timestamp, and in some cases the owner's name embedded in the file itself. Strip this before posting anything. MAT2 handles images, docs, PDFs. ExifTool handles edge formats. This is non-optional — it's Layer 0 of photo hygiene.</div>
+        <div class="sc-tags"><span class="sc-tag free">free</span><span class="sc-tag oss">OSS</span><span class="sc-tag">GPS strip</span><span class="sc-tag">device info strip</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Open source</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">Background scrubbing</span><span class="sc-tier">Context hygiene</span></div>
+        <div class="sc-desc">Photos leak location through visible backgrounds: distinctive architecture, window light patterns, street signs, utility pole configurations, reflections in glasses. AI background analysis tools (used by intelligence agencies) can geolocate a photo from background context alone. Mitigation: use a neutral background, apply background blur before posting, or use a virtual background for anything not purely personal. Tools: rembg (Python, OSS), Blur Background apps.</div>
+        <div class="sc-tags"><span class="sc-tag free">free tools exist</span><span class="sc-tag">background blur</span><span class="sc-tag">context strip</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 Various OSS tools</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">Opt-out: Clearview AI</span><span class="sc-tier">Legal removal</span></div>
+        <div class="sc-desc">Clearview AI offers an opt-out process under CCPA and GDPR for US and EU residents. Submit a removal request via their privacy portal — they must delete your faceprint from their database and stop processing your face. This does not remove your photos from their source (social media, news sites) but removes your biometric profile. Re-scraping is possible; periodic re-submission is advised. CCPA §1798.100 applies.</div>
+        <div class="sc-tags"><span class="sc-tag">CCPA</span><span class="sc-tag">GDPR</span><span class="sc-tag">legal right</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 Clearview AI privacy@clearview.ai</span></div>
+        <div class="sc-caveat">Also opt-out from: PimEyes (pimeyes.com/en/opt-out), Amazon Rekognition (via AWS), FaceFirst, Paravision. Each requires a separate request.</div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">PimEyes opt-out</span><span class="sc-tier">Reverse image search</span></div>
+        <div class="sc-desc">PimEyes indexes publicly posted photos and allows anyone to search by face — upload a photo, get every other photo of that person across the internet. This is the easiest doxxing tool most people have never heard of. They offer an opt-out at pimeyes.com. Submit your face images and they suppress future matches. This is also a good test: run yourself before opting out to see your own exposure.</div>
+        <div class="sc-tags"><span class="sc-tag">opt-out available</span><span class="sc-tag">reverse face search</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🌍 PimEyes</span></div>
+      </div>
+
+      <div class="sc t-later" data-cat="photo" data-pane="false" style="position:relative;">
+        <div style="position:absolute;top:.7rem;right:.7rem;" class="spec-badge" style="font-family:'DM Mono',monospace;font-size:.55rem;padding:.12rem .5rem;background:#1E1608;border:1px solid #3C2C14;color:#C07840;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;">speculation</div>
+        <div class="sc-top"><span class="sc-name">KYC liveness defence</span><span class="sc-tier">Hard problem · watching</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.8rem;">
+          <p>Persona, Jumio, and Onfido require a live selfie + ID — adversarial photo perturbations don't work here. The technical solution doesn't exist yet. The legal one does.</p>
+          <div style="padding:.8rem 1rem;background:#FFF8F0;border-left:2px solid var(--amber);border-radius:0 6px 6px 0;">
+            <strong style="font-size:.78rem;color:var(--amber);">🔴 Watching: Discord — February 2026</strong>
+            <p style="font-size:.78rem;color:var(--ink-soft);margin-top:.35rem;line-height:1.7;">Discord rolled out global age verification requiring either a video selfie for facial age estimation or government ID upload through vendor k-ID or Persona. This is being framed as child safety. It is also a biometric data collection system at platform scale. In October 2025 — before the global rollout — a breach at Discord's previous vendor exposed government ID photos of 70,000 users. Discord responded by changing vendors and proceeding. Searches for "Discord alternatives" spiked 10,000% in 48 hours after announcement.</p>
+          </div>
+          <p><strong>Current realistic playbook:</strong></p>
+          <p><strong style="color:var(--ink);">(1) Request a waiver before submitting.</strong> Many platforms that use Persona, Jumio, or Onfido have an alternative process — they just don't advertise it. Email their support and state explicitly: "I am not willing to submit biometric data or government ID to a third-party vendor. What alternative verification options are available?" Some platforms accept a manual review, a credit card match, or a phone call. The waiver exists because the legal exposure of requiring biometrics with no alternative is significant. You need to ask.</p>
+          <p><strong style="color:var(--ink);">(2) TSA parallel: opt-out of body scan, request pat-down.</strong> This is the correct mental model. TSA full-body scanners are optional — you have a legal right to opt out and request a manual pat-down instead. The alternative is slower, more annoying, and still invasive — but it produces no biometric data. Apply the same frame to every KYC liveness check: there is almost always a slower, more friction-laden alternative that doesn't require you to hand a third-party vendor your face geometry. Ask for it explicitly. "I'm opting out of biometric verification. What is the manual alternative?"</p>
+          <p><strong style="color:var(--ink);">(3) CCPA §1798.105 deletion request after every use.</strong> They collect biometrics as a condition of using someone else's platform, which does not exempt them from deletion rights. Fire a deletion request to Persona, Jumio, or Onfido within 30 days of every KYC interaction. Document date, platform, vendor. This is your evidence chain if a breach occurs.</p>
+          <p><strong style="color:var(--ink);">(4) Build the paper trail.</strong> If you're compelled to use KYC and no alternative exists, document everything: screenshot the vendor disclosure, log the date and platform, save the confirmation. When these vendors are inevitably breached, documented interactions are the difference between standing in a class action and not.</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag" style="background:#FFF0EE;border-color:#E8C0B0;color:#C04040;">⚠ Discord Feb 2026</span><span class="sc-tag">CCPA deletion</span><span class="sc-tag">request waiver first</span><span class="sc-tag">TSA opt-out model</span><span class="sc-tag">document every use</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">Platform-dependent · k-ID · Persona · Jumio</span><span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--amber);">🔴 active issue</span></div>
+        <div class="sc-caveat">We are seeking connection with EFF for support on this specific pattern — platform-scale biometric collection framed as safety compliance. If you have an EFF contact or are affiliated with a digital rights org working this issue, reach out.</div>
+      </div>
+
+      <div class="sc t-rec" data-cat="photo" data-pane="false">
+        <div class="sc-top"><span class="sc-name">Photo discipline (no tool)</span><span class="sc-tier">Behavioural layer</span></div>
+        <div class="sc-desc">The layer no tool replaces. Separate identity photos: your real-identity social presence gets your real face; alias-identity accounts get no face photo or a consistently different one. Never post the same photo to both. Facial recognition cross-links identities that are meticulous about every other vector. Your face is the most stable identifier you have — it doesn't change when you burn an alias. Compartmentalise it like you do your email.</div>
+        <div class="sc-tags"><span class="sc-tag">behavioural</span><span class="sc-tag">no tool required</span><span class="sc-tag">compartmentalisation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">N/A — cognitive layer</span></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- PHYSICAL SURVEILLANCE: FLOCK, ALPR, BIOMETRIC INFRASTRUCTURE -->
+  <div class="cat-section" data-cat="surveillance">
+    <div class="cat-header">
+      <span class="cat-icon">🚗</span>
+      <span class="cat-name">Physical surveillance infrastructure</span>
+      <span class="cat-count">Active litigation · 6 entries</span>
+      <span class="cat-layer-tag" style="background:#3A1A1A;">Physical layer</span>
+      <span style="display:inline-block;font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;background:#FEE8E8;border:1px solid #F0C0C0;color:#C04040;border-radius:3px;letter-spacing:.1em;text-transform:uppercase;vertical-align:middle;margin-left:.4rem;">🔴 active cases</span>
+    </div>
+
+    <div style="padding:.9rem 1.2rem;background:#FEF4F0;border:1px solid #F0D8D0;border-radius:6px;margin-bottom:1.5rem;font-size:.8rem;color:var(--ink-soft);line-height:1.75;">
+      <strong style="color:#C04040;">The physical surveillance layer is real, operating at scale, and being actively contested in courts.</strong> Flock Safety operates in 5,000+ communities across 49 states, scanning 20 billion vehicle plates per month. The EFF, ACLU, and Institute for Justice are currently litigating against municipal Flock deployments. Cities are dropping contracts. The legal theory is working — and it's a model for how to push back against other forms of physical surveillance infrastructure.<br><br>
+      <strong>We are seeking to connect with EFF</strong> on both the Flock litigation and broader platform biometric collection patterns (Discord, Clearview, KYC vendors). If you have a contact or are working these issues, reach out.
+    </div>
+
+    <div class="service-grid">
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">Flock Safety — what it is</span><span class="sc-tier" style="background:#FEE8E8;color:#C04040;border-color:#F0C0C0;">Know the system</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p>Flock Safety sells automated license plate readers (ALPRs) to law enforcement, neighborhood associations, and private property owners. As of 2025: 5,000+ communities, 49 states, 20 billion plate scans per month. Cameras photograph every vehicle that passes. Data is shared across a nationwide network accessible to 3,900+ agencies. The company also acquired drone manufacturer Aerodome in 2024 and is developing "Nova" — a product that supplements ALPR data with breach databases and public records to track individuals without a warrant.</p>
+          <p>Flock's CEO referred to DeFlock.me — a crowdsourced map of camera locations — as "terroristic." The map exists because people are legally mapping public infrastructure on public streets.</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">ALPR</span><span class="sc-tag">20B scans/month</span><span class="sc-tag">3,900+ agencies</span><span class="sc-tag">warrantless</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 5,000+ US communities</span><span style="font-family:'DM Mono',monospace;font-size:.6rem;color:#C04040;">deflock.me — camera map</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">The litigation — what's working</span><span class="sc-tier" style="background:#EEF8EE;color:var(--sage);border-color:#C0D8C0;">Active wins</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p><strong style="color:var(--ink);">Norfolk, VA Circuit Court (June 2024):</strong> Judge ruled Flock ALPR data constitutes a "search" under the 4th Amendment and cannot be used as evidence without a warrant. The court likened ALPR databases to tracking devices — previously ruled unconstitutional without a warrant in US v. Jones.</p>
+          <p><strong style="color:var(--ink);">EFF + ACLU of NorCal v. San Jose (Nov 2025):</strong> Lawsuit challenging 3.9 million warrantless ALPR searches by SJPD between June 2024 and June 2025. Filed in state court.</p>
+          <p><strong style="color:var(--ink);">Secure Justice v. Oakland (Nov 2025):</strong> Oakland sued for sharing Flock data with federal agencies including ICE in violation of California SB34 and its own sanctuary city policy.</p>
+          <p><strong style="color:var(--ink);">CA Attorney General v. El Cajon (Oct 2025):</strong> AG Rob Bonta sued El Cajon for systematically sharing Flock data with out-of-state agencies in violation of state law.</p>
+          <p><strong style="color:var(--ink);">Moore v. SFPD (Dec 2025):</strong> Class action challenging SF's Flock network as an unconstitutional warrantless surveillance dragnet. Every SF licensed driver is potentially a class member.</p>
+          <p><strong style="color:var(--ink);">Institute for Justice v. Norfolk PD (Oct 2024):</strong> Federal lawsuit against 170+ Flock ALPRs. Federal judge allowed the case to proceed: "a reasonable person could believe society's expectations of privacy are being violated."</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">4th Amendment</span><span class="sc-tag">class action</span><span class="sc-tag">state AG enforcement</span><span class="sc-tag">warrantless search</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">EFF · ACLU NorCal · Institute for Justice · Secure Justice</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">Municipalities dropping contracts</span><span class="sc-tier" style="background:#EEF8EE;color:var(--sage);border-color:#C0D8C0;">Momentum</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p>30+ localities have deactivated Flock cameras or canceled contracts since early 2025, including: Flagstaff AZ, Cambridge MA, Eugene OR, Santa Cruz CA, and Mountain View CA (which shut down its entire Flock network after Flock allegedly enabled out-of-state access without department authorization).</p>
+          <p>The tipping point for many: reports that Flock enabled CBP and DHS access to local data — and that the company's CEO had previously denied any federal contracts before acknowledging a CBP pilot program to 9News Denver in August 2025.</p>
+          <p>Illinois Secretary of State launched a state audit after EFF showed Flock allowed CBP access to Illinois data in violation of state privacy law. Representatives Krishnamoorthi and Robert Garcia launched a formal federal investigation into Flock's surveillance practices.</p>
+          <p style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--ink-faint);">Map of camera locations: <a href="https://deflock.me" target="_blank" rel="noopener" style="color:var(--teal);">deflock.me</a> — crowdsourced, 76,000+ readers mapped</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">30+ contracts canceled</span><span class="sc-tag">state audits</span><span class="sc-tag">federal investigation</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">EFF 2025 Year in Review · NPR Feb 2026</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">The security vulnerability angle</span><span class="sc-tier" style="background:#FFF0EE;color:var(--amber);border-color:#E8C8A0;">Key legal lever</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p>EFF's July 2025 analysis made explicit what the litigation implies: "ALPR surveillance systems are inherently vulnerable to both technical exploitation and human manipulation. These vulnerabilities are not theoretical — they represent real pathways for bad actors to access vast databases containing millions of Americans' location data."</p>
+          <p>The specific legal theory for municipalities: Flock operates as a single point of failure. When a city contracts with Flock, it is creating a centralized database of its residents' movements — a database the city does not fully control, cannot fully audit, and whose security failures expose the city to liability. The Mountain View case is instructive: the city claims Flock turned on out-of-state access without their knowledge. If true, the city contracted for a surveillance system whose operator can modify access controls unilaterally.</p>
+          <p><strong style="color:var(--ink);">The argument to your city council:</strong> "You do not fully control this system. Flock can modify who has access. You have already been shown to be in breach of state law as a result. The security vulnerability is in the contract structure itself, not just the cameras. You are liable for a vendor's decisions about your residents' data."</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">single point of failure</span><span class="sc-tag">vendor liability</span><span class="sc-tag">city council argument</span><span class="sc-tag">security architecture</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">EFF deeplinks/2025/06 · Mountain View case</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">Counter-surveillance: operational</span><span class="sc-tier">Personal mitigation</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p><strong style="color:var(--ink);">Know where the cameras are.</strong> DeFlock.me has crowdsourced 76,000+ Flock camera locations. This is public infrastructure on public streets — mapping it is legal and protected.</p>
+          <p><strong style="color:var(--ink);">License plate covers and sprays don't work and are illegal.</strong> Don't bother — they don't defeat IR illumination and will get you pulled over. The correct approach is legal, not technical.</p>
+          <p><strong style="color:var(--ink);">If you're organizing or attending a protest:</strong> EFF documented that 80+ agencies used Flock to search for vehicles at specific protest events, including the 50501, Hands Off, and No Kings protests in 2025. Assume your plate is being logged. Carpool from a location not directly associated with your home address. Parking garage > street.</p>
+          <p><strong style="color:var(--ink);">ALPR data access requests.</strong> In many jurisdictions you can submit a public records request for all ALPR searches run on your plate. This is how EFF obtained the 12 million search logs. If you suspect you've been searched inappropriately, this is your evidentiary path.</p>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">deflock.me</span><span class="sc-tag">FOIA / records request</span><span class="sc-tag">protest operational</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">EFF · ACLU resources</span></div>
+      </div>
+
+      <div class="sc t-rec" data-cat="surveillance" style="border-top-color:#C04040;">
+        <div class="sc-top"><span class="sc-name">EFF + digital rights orgs — we're connecting</span><span class="sc-tier" style="background:#F0F8FF;color:var(--blue);border-color:#B0CCF0;">Coalition</span></div>
+        <div class="sc-desc" style="display:flex;flex-direction:column;gap:.6rem;">
+          <p>pane is a technical tool. The legal and policy layer requires organizations with standing, litigation experience, and lobbying infrastructure. The EFF is the most active organization currently pursuing Flock accountability, Clearview regulation, and platform biometric collection limits. We are seeking to establish a working relationship to understand where pane's documentation capabilities (alias-based data sale detection, KYC vendor logs, breach timestamping) could support their evidentiary work.</p>
+          <p>Other orgs pursuing overlapping issues:</p>
+          <ul style="font-size:.8rem;color:var(--ink-soft);line-height:1.9;margin-top:.3rem;padding-left:1.2rem;">
+            <li><a href="https://www.eff.org/deeplinks/2025/12/effs-investigations-expose-flock-safetys-surveillance-abuses-2025-review" target="_blank" rel="noopener" style="color:var(--teal);">EFF — Flock 2025 Year in Review</a></li>
+            <li><a href="https://ij.org/issues/property-rights/plate-privacy-project/" target="_blank" rel="noopener" style="color:var(--teal);">Institute for Justice — Plate Privacy Project</a></li>
+            <li><a href="https://github.com/yaelwrites/Big-Ass-Data-Broker-Opt-Out-List" target="_blank" rel="noopener" style="color:var(--teal);">yaelwrites / Big-Ass-Data-Broker-Opt-Out-List</a> — 200+ broker opt-out procedures</li>
+            <li>ACLU of Northern California — co-counsel on San Jose Flock suit</li>
+            <li>Secure Justice (Brian Hofer) — Oakland ALPR litigation</li>
+          </ul>
+        </div>
+        <div class="sc-tags"><span class="sc-tag">EFF</span><span class="sc-tag">IJ Plate Privacy Project</span><span class="sc-tag">ACLU NorCal</span><span class="sc-tag">coalition building</span></div>
+        <div class="sc-meta"><span class="sc-jurisdiction">🇺🇸 US digital rights orgs</span><span style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--teal);">seeking connection</span></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /services-body -->
+
+<footer style="background:var(--linen);border-top:1px solid var(--fog);padding:2.5rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+  <span style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--teal);">pane / services</span>
+  <div style="display:flex;gap:2rem;">
+    <a href="index.html" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Why it matters</a>
+    <a href="stack.html" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">The Stack</a>
+    <a href="https://github.com/yourhandle/pane" target="_blank" style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">GitHub ↗</a>
+  </div>
+  <span style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--ink-faint);">Privacy is a right, not a feature.</span>
+</footer>
+
+<script>
+function filterCat(cat, btn) {
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(s => {
+    if (cat === 'all' || s.dataset.cat === cat) s.classList.remove('hidden');
+    else s.classList.add('hidden');
+  });
+}
+function filterTier(tier, btn) {
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(s => s.classList.remove('hidden'));
+  document.querySelectorAll('.sc').forEach(card => {
+    if (tier === 'mvp' && !card.classList.contains('t-mvp')) card.classList.add('hidden');
+    else if (tier === 'pane' && !card.dataset.pane) card.classList.add('hidden');
+    else card.classList.remove('hidden');
+  });
+}
+</script>
+</body>
+</html>
