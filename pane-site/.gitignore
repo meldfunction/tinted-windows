@@ -1,0 +1,25 @@
+# environment — never commit keys
+.env
+
+# dependencies
+node_modules/
+
+# local db
+*.db
+*.db-shm
+*.db-wal
+
+# pane data directory
+.pane/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+*.swp
+
+# build
+dist/
