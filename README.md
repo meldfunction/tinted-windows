@@ -119,7 +119,7 @@ pane/
 **Install:**
 
 ```bash
-git clone https://github.com/meldfunction/pane
+git clone https://github.com/meldfunction/tinted-windows
 cd pane
 npm install
 cp .env.example .env
